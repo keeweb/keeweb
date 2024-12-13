@@ -3,7 +3,9 @@ import { UrlFormat } from 'util/formatting/url-format';
 
 describe('UrlFormat', () => {
     it('should extract file name from url', () => {
-        expect(UrlFormat.getDataFileName('https://example.com/data/My.file.kDBx?x=1')).to.eql('My.file');
+        expect(UrlFormat.getDataFileName('https://keeweb.info/data/My.file.kDBx?x=1')).to.eql(
+            'My.file'
+        );
     });
 
     it('should determine if url represents a kdbx file', () => {
@@ -41,28 +43,32 @@ describe('UrlFormat', () => {
     });
 
     it('should remove anchor for short urls', () => {
-        expect(UrlFormat.presentAsShortUrl('https://example.com/path?query=1#anchor' + '0'.repeat(100))).to.eql(
-            'https://example.com/path?query=1#…'
+        const query = UrlFormat.presentAsShortUrl(
+            'https://keeweb.info/path?query=1#anchor' + '0'.repeat(100)
         );
+        expect(query).to.eql('https://keeweb.info/path?query=1#…');
     });
 
     it('should remove query string for short urls', () => {
         expect(
             UrlFormat.presentAsShortUrl(
-                'https://example.com/path?query=' + '1'.repeat(100) + '#anchor' + '0'.repeat(100)
+                'https://keeweb.info/path?query=' + '1'.repeat(100) + '#anchor' + '0'.repeat(100)
             )
-        ).to.eql('https://example.com/path?…');
+        ).to.eql('https://keeweb.info/path?…');
     });
 
     it('should remove query parts of path for short urls', () => {
         expect(
-            UrlFormat.presentAsShortUrl('https://example.com/path/' + '1'.repeat(100) + '/' + '0'.repeat(100))
-        ).to.eql('https://example.com/path/…');
+            UrlFormat.presentAsShortUrl(
+                'https://keeweb.info/path/' + '1'.repeat(100) + '/' + '0'.repeat(100)
+            )
+        ).to.eql('https://keeweb.info/path/…');
     });
 
     it('should not remove domain for short urls', () => {
-        expect(UrlFormat.presentAsShortUrl('https://example' + '0'.repeat(100) + '.com/' + '1'.repeat(100))).to.eql(
-            'https://example' + '0'.repeat(100) + '.com/…'
+        const url = UrlFormat.presentAsShortUrl(
+            'https://keeweb' + '0'.repeat(100) + '.info/' + '1'.repeat(100)
         );
+        expect(url).to.eql('https://keeweb' + '0'.repeat(100) + '.info/…');
     });
 });
