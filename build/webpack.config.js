@@ -282,7 +282,15 @@ console.log("%cNever do anything in this window if you are asked by someone outs
                             loader: 'sass-loader',
                             options: {
                                 sassOptions: {
-                                    outputStyle: 'expanded'
+                                    outputStyle: 'expanded',
+                                    quietDeps: true,
+                                    silenceDeprecations: [
+                                        'import',
+                                        'global-builtin',
+                                        'legacy-js-api',
+                                        'mixed-decls',
+                                        'color-functions'
+                                    ]
                                 },
                                 sourceMap: !devMode
                             }
