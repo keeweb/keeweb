@@ -32,7 +32,7 @@ body:
               - Other
               - Sass & CSS
               - Webpack
-          default: ⭐ New NodeJS Package
+          default: 0
       validations:
           required: true
 
