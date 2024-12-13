@@ -1,4 +1,4 @@
-import dompurify from 'dompurify';
+import DOMPurify from 'DOMPurify';
 import { Marked, marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import markedAlertFa from '@aetherinox/marked-alert-fa';
@@ -95,7 +95,7 @@ const MdToHtml = {
         if (htmlWithoutLineBreaks === mdWithoutLineBreaks) {
             return { text: md };
         } else {
-            const sanitized = dompurify.sanitize(html, { ADD_ATTR: ['target'] });
+            const sanitized = DOMPurify.sanitize(html, { ADD_ATTR: ['target'] });
             return { html: `<div class="markdown">${sanitized}</div>` };
         }
     }
