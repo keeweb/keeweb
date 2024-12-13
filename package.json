@@ -99,7 +99,7 @@
         "raw-loader": "4.0.2",
         "run-remote-task": "0.5.0",
         "sass": "1.83.0",
-        "sass-loader": "14.2.1",
+        "sass-loader": "16.0.4",
         "stats-webpack-plugin": "0.7.0",
         "string-replace-loader": "3.1.0",
         "strip-sourcemap-loader": "0.0.1",
