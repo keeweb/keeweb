@@ -10,8 +10,9 @@
 `+` feat: setting to allow for full file paths to be displayed in "Recently Opened" list (#2118)  
 `+` feat: wipe password text-field after 1 minute of inactivity on home vault page  
 `+` feat: otpauth now supports multiple otpauth syntax `otpauth://totp?secret=`, `otpauth://totp/default?secret=`  
-`+` feat: markdown attachment support - read/see properly formatted markdown files ending with extension `.md`  
+`+` feat: markdown attachment support - can view markdown files ending with `.md` and `.markdown`  
 `+` feat: dev-tools for Desktop using hotkey  
+`+` feat: opened vault files now appear centered in bottom / footer bar
 `+` new user setting: `Security` › `Enable reveal password`  
 `+` new user setting: `Storage` › `Show full paths for local storage`  
 `+` new user setting: `Appearance` › `Font Size` › `Smaller`  
@@ -32,6 +33,9 @@
 `-` fix: unable to remove keyfile from vault (#1924, #2030)  
 `-` fix: csv parser ignoring last entry due to imcorrect condition (#1904, #1944)  
 `-` fix: shortcuts from gdrive return 4XX error (#1519, #2008)  
+`!` vulnerability: [H] dompurify CVE-2024-47875
+`!` vulnerability: [H] dompurify CVE-2024-45801
+`!` vulnerability: [M] webpack CVE-2024-43788
 
 ##### v1.18.7 (2021-07-18)
 
