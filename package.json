@@ -157,6 +157,7 @@
         "lint": "grunt eslint",
         "test": "grunt test",
         "build-beta": "grunt --beta && cp dist/index.html ../keeweb-beta/index.html && cd ../keeweb-beta && git add index.html && git commit -a -m 'beta' && git push origin master",
+        "build-beta-win": "grunt --beta && xcopy dist\\index.html ..\\beta.keeweb.info /Y && xcopy dist\\wallpapers\\* ..\\beta.keeweb.info\\wallpapers\\ /Y && cd ..\\beta.keeweb.info && git add . && git commit -a -m \"chore(beta): update release\" && git push origin master",
         "electron": "noxenv KEEWEB_IS_PORTABLE=0 ELECTRON_DISABLE_SECURITY_WARNINGS=1 KEEWEB_EMULATE_HARDWARE_ENCRYPTION=persistent KEEWEB_HTML_PATH=http://localhost:8085 electron desktop --no-sandbox",
         "dev": "grunt dev",
         "dev-legacy": "noxenv NODE_OPTIONS='--openssl-legacy-provider' grunt dev",
