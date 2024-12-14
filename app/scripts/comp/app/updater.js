@@ -113,7 +113,7 @@ const Updater = {
             this.updateCheckDate = new Date();
         }
 
-        logger.error('<fnc>:check', '<msg>:Checking for updates');
+        logger.info('<fnc>:check', '<msg>:Checking for updates');
 
         Transport.httpGet({
             url: Links.UpdateJson,
