@@ -146,9 +146,6 @@
                 "events": "^3.3.0"
             }
         },
-        "eslint-config-standard": {
-            "eslint-plugin-n": "^17.2.1"
-        },
         "webpack-inject-plugin": {
             "loader-utils": "^1.4.2"
         }
