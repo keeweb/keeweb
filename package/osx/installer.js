@@ -106,7 +106,7 @@ function getArgs() {
         var arg = ObjC.unwrap(objcArgs.objectAtIndex(i));
         var match = arg.match(/^--([^=]+)(=(.*))?/);
         if (match) {
-            var argName = match[1].replace(/-./g, function (m) {
+            var argName = match[1].replace(/-./g, (m) => {
                 return m[1].toUpperCase();
             });
             args[argName] = match[3] || true;

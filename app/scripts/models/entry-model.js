@@ -170,6 +170,7 @@ class EntryModel extends Model {
 
     _attachmentsToModel(binaries) {
         const att = [];
+        // eslint-disable-next-line prefer-const
         for (let [title, data] of binaries) {
             if (data && data.ref) {
                 data = data.value;
