@@ -11,10 +11,20 @@ const parserBabel = require('@babel/eslint-parser');
     Plugins
 */
 
-const pluginBabel = require('eslint-plugin-babel');
+const pluginBabel = require('@babel/eslint-plugin');
 const pluginImport = require('eslint-plugin-import');
+const pluginNode = require('eslint-plugin-n');
 const pluginPrettier = require('eslint-plugin-prettier');
 const pluginChaiFriendly = require('eslint-plugin-chai-friendly');
+
+/*
+    Globals
+*/
+
+const customGlobals = {
+    guid: 'readable',
+    uuid: 'readable'
+};
 
 /*
     Compatibility
@@ -33,31 +43,33 @@ const compat = new FlatCompat({
 */
 
 module.exports = [
-    ...compat.extends(
-        'standard',
-        'eslint:recommended',
-        'plugin:prettier/recommended',
-        'plugin:chai-friendly/recommended'
-    ),
+    ...compat.extends('eslint:recommended', 'plugin:prettier/recommended', 'plugin:chai-friendly/recommended'),
     {
         ignores: [
             'coverage/**',
             'node_modules/**',
             '**/node_modules/**',
             '**/dist/**/*',
-            '**/__tmp__/**/*'
+            '**/__tmp__/**/*',
+            'eslint.config.cjs'
         ],
         files: ['**/*.js', './src/**/*.js', './test/**/*.js'],
         plugins: {
+            'n': pluginNode,
             'prettier': pluginPrettier,
             'babel': pluginBabel,
             'import': pluginImport,
             'chai-friendly': pluginChaiFriendly
         },
 
+        linterOptions: {
+            reportUnusedDisableDirectives: false
+        },
+
         languageOptions: {
             parser: parserBabel,
             globals: {
+                ...customGlobals,
                 ...globals.browser,
                 ...globals.node,
                 ...globals.jest,
@@ -110,6 +122,7 @@ module.exports = [
                 }
             ],
 
+            'no-unused-vars': 'off',
             'no-console': 'off',
             'no-alert': 'error',
             'no-debugger': 'error',
@@ -123,7 +136,6 @@ module.exports = [
             'strict': ['error', 'never'],
             'no-mixed-operators': 'off',
             'prefer-promise-reject-errors': 'off',
-            'standard/no-callback-literal': 0,
             'object-curly-spacing': 'off',
             'quote-props': 'off',
             'no-new-object': 'error',
@@ -139,7 +151,7 @@ module.exports = [
             'no-duplicate-imports': 'error',
             'eqeqeq': 'error',
             'no-unneeded-ternary': 'error',
-            'curly': 'error',
+            'curly': 'off',
 
             'no-empty': 'off',
             'no-restricted-syntax': [
@@ -180,6 +192,17 @@ module.exports = [
                     singleAttributePerLine: true
                 }
             ]
+        }
+    },
+    {
+        files: ['package/osx/*.js'],
+        languageOptions: {
+            ecmaVersion: 5
+        },
+        rules: {
+            'no-console': 'off',
+            'no-undef': 'off',
+            'no-var': 'off'
         }
     }
 ];
