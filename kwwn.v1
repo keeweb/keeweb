@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# #
+#   @version        1
+#   @file           kwwn.v1
+#   @date           12-15-24
+#   @usage          makes use of s6-overlay for docker containers
+#                   https://github.com/just-containers/s6-overlay
+# #
+
+KWWN_SCRIPT_VER='1.20241215'
+
+# #
+#   Define > General
+# #
+
+MAX_DEPTH=('-maxdepth' '0')
+OPTIONS=()
+
+# #
+#   Get Options
+# #
+
+while getopts RcfvhHLP OPTION
+do
+    if [[ "${OPTION}" != "?" && "${OPTION}" != "R" ]]; then
+        OPTIONS+=("-${OPTION}")
+    fi
+    if [[ "${OPTION}" = "R" ]]; then
+        MAX_DEPTH=()
+    fi
+done
+
+# #
+#   Permissions / Owner
+# #
+
+shift $((OPTIND - 1))
+OWNER=$1
+IFS=: read -r USER GROUP <<< "${OWNER}"
+if [[ -z "${GROUP}" ]]; then
+    printf '**** Permissions could not be set. Group is missing or incorrect, expecting USER:GROUP. ****\n'
+    exit 0
+fi
+
+ERROR='**** Permissions cannot be set. Your volume mounts are remote or read-only. ****\n**** The app may not work properly. ****\n'
+PATH=("${@:2}")
+
+/usr/bin/find "${PATH[@]}" "${MAX_DEPTH[@]}" ! -xtype l \( ! -group "${GROUP}" -o ! -user "${USER}" \) -exec chown "${OPTIONS[@]}" "${USER}":"${GROUP}" {} + || printf "${ERROR}"
