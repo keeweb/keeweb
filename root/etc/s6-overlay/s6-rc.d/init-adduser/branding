@@ -1,0 +1,14 @@
+──────────────────────────────────────────────────────────────────────────────────────────
+                              Keeweb Password Manager                             
+──────────────────────────────────────────────────────────────────────────────────────────
+  Thanks for choosing Keeweb. Get started with some of the links below:
+
+        Official Repo           https://github.com/keeweb/keeweb
+        Official Site           https://keeweb.info/
+        Beta Demo               https://beta.keeweb.info/
+        Web App                 https://app.keeweb.info/
+        Favicon Service         https://services.keeweb.info/favicon
+
+  If you are making this copy of Keeweb available on a public-facing domain,
+  please consider using Traefik and Authentik to protect this container from
+  outside access.

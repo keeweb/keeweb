@@ -1,0 +1,31 @@
+# #
+#   @file           .gitattritutes
+#   @author         Aetherinox <https://github.com/Aetherinox>
+# #
+
+# #
+#   Auto detect text files and set LF
+# #
+
+* text=auto
+
+# #
+#   Visual Studio
+# #
+
+*.cs     diff=csharp
+
+# #
+#   msysgit
+# #
+
+*.doc   diff=astextplain
+*.DOC   diff=astextplain
+*.docx  diff=astextplain
+*.DOCX  diff=astextplain
+*.dot   diff=astextplain
+*.DOT   diff=astextplain
+*.pdf   diff=astextplain
+*.PDF   diff=astextplain
+*.rtf   diff=astextplain
+*.RTF   diff=astextplain

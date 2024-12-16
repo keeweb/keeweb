@@ -1,0 +1,58 @@
+# #
+#   @file           .dockerignore
+#   @author         Aetherinox <https://github.com/Aetherinox>
+#   @ref            https://docker.com
+# #
+
+# #
+#   General
+# #
+
+READMETEMPLATE.md
+README.md
+
+# #
+#   Git
+# #
+
+.git
+.gitignore
+.github
+.gitattributes
+
+# #
+#   NodeJS
+# #
+
+**/node_modules/
+**/dist
+npm-debug.log
+.coverage
+.coverage.*
+.env
+.aws
+
+# #
+#   Python
+# #
+
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
