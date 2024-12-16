@@ -4,7 +4,7 @@
 
 <br />
 
-This repository contains the Keeweb password manager within a docker image, which allows you to host it as a container, instead of a bare-metal or local install.
+The `docker/keeweb` branch contains the Keeweb password manager within a docker image, which allows you to host it within [Docker](https://docker.com), instead of a bare-metal or local install.
 
 </p>
 
@@ -606,12 +606,14 @@ This image spits out detailed information about its current progress. You can ei
   [github-commit-uri]: https://github.com/keeweb/keeweb/commits/main/
 
 <!-- BADGE > DOCKER HUB > VERSION -->
-  [dockerhub-version-img]: https://img.shields.io/docker/v/keeweb/keeweb/latest?logo=docker&logoColor=FFFFFF&label=Docker%20Version&color=ba5225
-  [dockerhub-version-uri]: https://hub.docker.com/repository/docker/keeweb/keeweb/general
+  [dockerhub-version-img]: https://img.shields.io/docker/v/antelle/keeweb/latest?logo=docker&logoColor=FFFFFF&label=Docker%20Version&color=ba5225
+  [dockerhub-version-uri]: https://hub.docker.com/repository/docker/antelle/keeweb/general
 
 <!-- BADGE > DOCKER HUB > VERSION (For the Badge) -->
-  [dockerhub-version-ftb-img]: https://img.shields.io/docker/v/keeweb/keeweb/latest?style=for-the-badge&logo=docker&logoColor=FFFFFF&logoSize=34&label=%20&color=ba5225
-  [dockerhub-version-ftb-uri]: https://hub.docker.com/repository/docker/keeweb/keeweb/tags
+  [dockerhub-version-ftb-img]: https://img.shields.io/docker/v/antelle/keeweb/latest?style=for-the-badge&logo=docker&logoColor=FFFFFF&logoSize=34&label=%20&color=ba5225
+  [dockerhub-version-ftb-uri]: https://hub.docker.com/repository/docker/antelle/keeweb/tags
 
 <!-- BADGE > DOCKER HUB > PULLS -->
-  [dockerhub-pulls-img]: https://img.shields.io/docker/pulls/keeweb/keeweb?logo=docker&logoColor=FFFFFF&label=Docker%20Pulls&color=af9a00
+  [dockerhub-pulls-img]: https://img.shields.io/docker/pulls/antelle/keeweb?logo=docker&logoColor=FFFFFF&label=Docker%20Pulls&color=af9a00
+  [dockerhub-pulls-uri]: https://hub.docker.com/repository/docker/antelle/keeweb/general
+
