@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>KeeWeb</title>
+    </head>
+    <body>
+        <script>
+            window.opener.postMessage(
+                { storage: 'onedrive', search: location.search },
+                window.location.origin
+            );
+            window.close();
+        </script>
+    </body>
+</html>

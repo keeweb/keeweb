@@ -1,0 +1,92 @@
+# #
+#   @project        keeweb
+#   @usage          Nginx site-configs default configuration file
+#   @file           /root/defaults/nginx/nginx.conf.sample
+#   @repo           https://github.com/keeweb/keeweb
+#                   https://github.com/keeweb/docker-alpine-base
+#                   https://hub.docker.com/repository/docker/keeweb/keeweb
+#                   https://hub.docker.com/repository/docker/keeweb/alpine-base
+# #
+
+user keeweb;
+
+# Set number of worker processes automatically based on number of CPU cores.
+include /config/nginx/worker_processes.conf;
+
+# Enables the use of JIT for regular expressions to speed-up their processing.
+pcre_jit on;
+
+# Configures default error logger.
+error_log /config/log/nginx/error.log;
+
+# Includes files with directives to load dynamic modules.
+include /etc/nginx/modules/*.conf;
+
+# Include files with config snippets into the root context.
+include /etc/nginx/conf.d/*.conf;
+
+events
+{
+    # The maximum number of simultaneous connections that can be opened by
+    # a worker process.
+    worker_connections 1024;
+}
+
+http
+{
+    # Includes mapping of file name extensions to MIME types of responses
+    # and defines the default type.
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # Name servers used to resolve names of upstream servers into addresses.
+    # It's also needed when using tcpsocket and udpsocket in Lua modules.
+    #resolver 1.1.1.1 1.0.0.1 2606:4700:4700::1111 2606:4700:4700::1001;
+    include /config/nginx/resolver.conf;
+
+    # Don't tell nginx version to the clients. Default is 'on'.
+    server_tokens off;
+
+    # Specifies the maximum accepted body size of a client request, as
+    # indicated by the request header Content-Length. If the stated content
+    # length is greater than this size, then the client receives the HTTP
+    # error code 413. Set to 0 to disable. Default is '1m'.
+    client_max_body_size 0;
+
+    # Sendfile copies data between one FD and other from within the kernel,
+    # which is more efficient than read() + write(). Default is off.
+    sendfile on;
+
+    # Causes nginx to attempt to send its HTTP response head in one packet,
+    # instead of using partial frames. Default is 'off'.
+    tcp_nopush on;
+
+    # all ssl related config moved to ssl.conf
+    # included in server blocks where listen 443 is defined
+
+    # Enable gzipping of responses.
+    #gzip on;
+
+    # Set the Vary HTTP header as defined in the RFC 2616. Default is 'off'.
+    gzip_vary on;
+
+    # Helper variable for proxying websockets.
+    map $http_upgrade $connection_upgrade
+    {
+        default upgrade;
+        '' close;
+    }
+
+    # Enable http2 by default for all servers
+    http2 on;
+
+    # Sets the path, format, and configuration for a buffered log write.
+    access_log /config/log/nginx/access.log;
+
+    # Includes virtual hosts configs.
+    include /etc/nginx/http.d/*.conf;
+    include /config/nginx/site-confs/*.conf;
+}
+
+daemon off;
+pid /run/nginx.pid;

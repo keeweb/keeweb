@@ -1,0 +1,14 @@
+/config/log/php/*.log {
+        rotate 7
+        weekly
+        missingok
+        notifempty
+        delaycompress
+        compress
+        nodateext
+        sharedscripts
+        postrotate
+                s6-svc -t /run/service/svc-php-fpm
+        endscript
+        su keeweb keeweb
+}

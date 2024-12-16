@@ -1,0 +1,37 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+PUID=${PUID:-911}
+PGID=${PGID:-911}
+
+if [[ -z ${KW_READ_ONLY_FS} ]] && [[ -z ${KW_NON_ROOT_USER} ]]; then
+    groupmod -o -g "$PGID" keeweb
+    usermod -o -u "$PUID" keeweb
+fi
+
+if { [[ -z ${KW_READ_ONLY_FS} ]] && [[ -z ${KW_NON_ROOT_USER} ]]; } || [[ ! ${KW_FIRST_PARTY} = "true" ]]; then
+    cat /etc/s6-overlay/s6-rc.d/init-adduser/branding
+else
+    cat /run/branding
+fi
+
+if [[ -z ${KW_NON_ROOT_USER} ]]; then
+echo "
+        User ID ........... $(id -u keeweb)
+        Group ID .......... $(id -g keeweb)"
+else
+echo "
+        User ID ........... $(stat /run -c %u)
+        Group ID .......... $(stat /run -c %g)"
+fi
+echo "
+        Port HTTP ......... $(echo $PORT_HTTP)
+        Port HTTPS ........ $(echo $PORT_HTTPS)"
+
+echo '──────────────────────────────────────────────────────────────────────────────────────────'
+
+if [[ -z ${KW_READ_ONLY_FS} ]] && [[ -z ${KW_NON_ROOT_USER} ]]; then
+    kwwn keeweb:keeweb /app
+    kwwn keeweb:keeweb /config
+    kwwn keeweb:keeweb /defaults
+fi

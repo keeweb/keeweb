@@ -1,0 +1,31 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# #
+#   @project        keeweb
+#   @about          Manages sample files such as nginx
+#   @file           /root/etc/s6-overlay/s6-rc.d/init-samples/run
+#   @repo           https://github.com/keeweb/keeweb
+#                   https://github.com/keeweb/docker-alpine-base
+#                   https://hub.docker.com/repository/docker/keeweb/keeweb
+#                   https://hub.docker.com/repository/docker/keeweb/alpine-base
+# #
+
+# remove old samples
+find /config/nginx/ \
+    -name "*.conf.sample" \
+    -type f \
+    -delete
+
+# copy new samples
+find /defaults/nginx/ \
+    -maxdepth 3 \
+    -name "*.conf.sample" \
+    -type f \
+    -exec cp "{}" /config/nginx/ \;
+
+find /defaults/nginx/site-confs/ \
+    -maxdepth 1 \
+    -name "*.conf.sample" \
+    -type f \
+    -exec cp "{}" /config/nginx/site-confs/ \;
