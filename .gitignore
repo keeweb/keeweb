@@ -52,6 +52,7 @@ tmp/
 bin/
 *.suo
 dist
+**/dist
 .opt-*
 
 # #
@@ -69,7 +70,8 @@ Temporary Items
 # #
 
 .nyc_output
-coverage
+*coverage
+.coverage*
 test/dist
 
 # #
@@ -87,5 +89,8 @@ keys
 #   NodeJS
 # #
 
-node_modules/
+**/node_modules/
+npm-debug.log
+.env
+.aws
 
