@@ -1,19 +1,91 @@
-workspace.xml
-misc.xml
+# #
+#    Windows image file caches
+# #
+
+Thumbs.db
+ehthumbs.db
+
+# #
+#    Folder config file
+# #
+
+Desktop.ini
+
+# #
+#    Recycle Bin used on file shares
+# #
+
+$RECYCLE.BIN/
+
+# #
+#    Windows Installer files
+# #
+
+*.cab
+*.msi
+*.msm
+*.msp
+
+
+# #
+#    Windows shortcuts
+# #
+
+*.lnk
+
+# #
+#    Operating System Files
+# #
+
 .DS_Store
-node_modules/
+.AppleDouble
+
+# #
+#    Other
+# #
+
+.Spotlight-V100
+.Trashes
 *.log
-/dist/
 tmp/
-coverage/
-keys
 *.user
 bin/
-obj/
-*.xcworkspace/
-xcuserdata/
 *.suo
-.idea/
-.vscode/
-*.iml
-test/dist/
+dist
+.opt-*
+
+# #
+#    Directories potentially created on remote AFP share
+# #
+
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# #
+#   Tests and coverage
+# #
+
+.nyc_output
+coverage
+test/dist
+
+# #
+#   Keeweb specific folders
+# #
+
+.dev
+.idea
+.vscode
+.env
+.aetherx
+keys
+
+# #
+#   NodeJS
+# #
+
+node_modules/
+
