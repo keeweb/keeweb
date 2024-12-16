@@ -29,7 +29,6 @@ The `docker/keeweb` branch contains the Keeweb password manager within a docker 
 [![Build Status][github-build-img]][github-build-uri]
 [![Size][github-size-img]][github-size-img]
 [![Last Commit][github-commit-img]][github-commit-img]
-[![Contributors][contribs-all-img]](#contributors-)
 <!-- prettier-ignore-end -->
 
 </div>
