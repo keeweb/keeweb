@@ -1,9 +1,19 @@
-# http://editorconfig.org
+# #
+#   @file           .editorconfig
+#   @author         Aetherinox <https://github.com/Aetherinox>
+#   @ref            http://editorconfig.org
+# #
 
-# is top-most EditorConfig file
+# #
+#   Is top-most EditorConfig file
+# #
+
 root = true
 
-# All Files
+# #
+#   All Files
+# #
+
 [*]
 indent_style = space
 indent_size = 4
@@ -12,11 +22,17 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-# Markdown Files
+# #
+#   Markdown Files
+# #
+
 [*.md]
 trim_trailing_whitespace = false
 
-# Other
+# #
+#   Other
+# #
+
 [{*.nsh,*.yml,*.yaml,*.json}]
 indent_style = space
 indent_size = 2
