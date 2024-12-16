@@ -221,7 +221,7 @@ module.exports = [
             'n/prefer-global/text-encoder': 'error',
             'n/prefer-global/url': 'error',
             'n/prefer-global/url-search-params': 'error',
-            'n/prefer-node-protocol': 'error',
+            'n/prefer-node-protocol': 'off',
             'n/prefer-promises/dns': 'off',
             'n/prefer-promises/fs': 'off',
             'n/process-exit-as-throw': 'error',
