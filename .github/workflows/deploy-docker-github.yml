@@ -33,7 +33,7 @@ on:
             IMAGE_NAME:
                 description:  "📦 Image Name"
                 required:     true
-                default:      'keeweb'
+                default:      'alpine-base'
                 type:         string
 
             # #
@@ -58,7 +58,7 @@ on:
             IMAGE_VERSION:
                 description:  "🏷️ Image Version"
                 required:     true
-                default:      '1.19.0'
+                default:      '3.20'
                 type:         string
 
             # #
@@ -97,9 +97,9 @@ on:
 # #
 
 env:
-    IMAGE_NAME:           ${{ github.event.inputs.IMAGE_NAME || 'keeweb' }}
+    IMAGE_NAME:           ${{ github.event.inputs.IMAGE_NAME || 'alpine-base' }}
     IMAGE_AUTHOR:         ${{ github.event.inputs.IMAGE_AUTHOR || 'keeweb' }}
-    IMAGE_VERSION:        ${{ github.event.inputs.IMAGE_VERSION || '1.19.0' }}
+    IMAGE_VERSION:        ${{ github.event.inputs.IMAGE_VERSION || '3.20' }}
     IMAGE_GHCR_USERNAME:  ${{ github.event.inputs.IMAGE_GHCR_USERNAME || 'keeweb' }}
     BOT_NAME_1:           EuropaServ
     BOT_NAME_DEPENDABOT:  dependabot[bot]
