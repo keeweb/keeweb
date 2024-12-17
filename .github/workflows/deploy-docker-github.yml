@@ -1,0 +1,381 @@
+# #
+#   @type               github workflow
+#   @desc               deploys docker container to github
+#   @author             Aetherinox
+#   @url                https://github.com/Aetherinox
+# #
+
+name: "⚙️ Deploy › Github"
+run-name: "⚙️ Deploy › Github"
+
+# #
+#   Triggers
+# #
+
+on:
+
+    # #
+    #   Trigger › Workflow Dispatch
+    #
+    #   If any values are not provided, will use fallback env variable
+    # #
+
+    workflow_dispatch:
+        inputs:
+
+            # #
+            #   Image Name
+            #
+            #   used in github image path
+            #       ghcr.io/${{ inputs.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME }}
+            # #
+
+            IMAGE_NAME:
+                description:  "📦 Image Name"
+                required:     true
+                default:      'alpine-base'
+                type:         string
+
+            # #
+            #   Image Author
+            #
+            #   used in github image path
+            #       ghcr.io/${{ inputs.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME }}
+            # #
+
+            IMAGE_AUTHOR:
+                description:  "🪪 Image Author"
+                required:     true
+                default:      'keeweb'
+                type:         string
+
+            # #
+            #   Image Version
+            #
+            #   used to create new release tag, and add version to docker image name
+            # #
+
+            IMAGE_VERSION:
+                description:  "🏷️ Image Version"
+                required:     true
+                default:      '1.19.0'
+                type:         string
+
+            # #
+            #   true:     runs all actions, even ones not scheduled
+            #   false:    only scheduled tasks will run
+            # #
+
+            PRINT_ONLY:
+                description:  "📑 Print Debugs Only"
+                required:     true
+                default:      false
+                type:         boolean
+
+    # #
+    #   Trigger › Push
+    # #
+
+    push:
+        tags:
+            - '*'
+
+# #
+#   Environment Vars
+# #
+
+env:
+    IMAGE_NAME:           ${{ github.event.inputs.IMAGE_NAME || 'alpine-base' }}
+    IMAGE_AUTHOR:         ${{ github.event.inputs.IMAGE_AUTHOR || 'keeweb' }}
+    BOT_NAME_1:           EuropaServ
+    BOT_NAME_DEPENDABOT:  dependabot[bot]
+    
+# #
+#   Jobs
+#
+#   The way pushed docker containers on Github work, the most recent image built goes at the top.
+#   We will use the order below which builds the :latest image last so that it appears at the very
+#   top of the packages page.
+# #
+
+jobs:
+
+    # #
+    #   Job › Create Tag
+    # #
+
+    job-docker-release-tags-create:
+        name: >-
+          📦 Release › Create Tag
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            packages: write
+            attestations: write
+            id-token: write
+        steps:
+
+            # #
+            #   Release › Tags › Start
+            # #
+
+            - name: "✅ Start"
+              id: task_ctags_start
+              run: |
+                  echo "Creating Tag"
+
+            # #
+            #   Release › Tags › Checkout
+            # #
+
+            - name: "☑️ Checkout"
+              id: task_ctags_checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            # #
+            #   Release › Tags › Create Tag
+            #
+            #   only called in dispatch mode
+            # #
+
+            - uses: rickstaa/action-create-tag@v1
+              id: task_ctags_create
+              if: ( github.event_name == 'workflow_dispatch' && inputs.PRINT_ONLY == false )
+              with:
+                  tag: "${{ INPUTS.IMAGE_VERSION }}"
+                  tag_exists_error: false
+                  message: '${{ inputs.IMAGE_NAME || env.IMAGE_NAME }}-${{ INPUTS.IMAGE_VERSION }}'
+                  gpg_private_key: ${{ secrets.ADMINSERV_GPG_KEY_ASC }}
+                  gpg_passphrase: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
+
+    # #
+    #   Job › Docker Release › Github › Arm64
+    # #
+
+    job-docker-release-github-arm64:
+        name: >-
+          📦 Release › Github › Arm64
+        runs-on: ubuntu-latest
+        needs: [ job-docker-release-tags-create ]
+        permissions:
+            contents: write
+            packages: write
+            attestations: write
+            id-token: write
+        steps:
+
+            # #
+            #   Release › Github › Start › Arm64
+            # #
+
+            - name: "✅ Start"
+              id: task_release_gh_start
+              run: |
+                  echo "Starting Github Docker arm64"
+
+            # #
+            #   Release › Github › Checkout › Arm64
+            # #
+
+            - name: "☑️ Checkout"
+              id: task_release_gh_checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            # #
+            #   Release › Github › QEMU › Arm64
+            # #
+
+            - name: "⚙️ Set up QEMU"
+              id: task_release_gh_qemu
+              uses: docker/setup-qemu-action@v3
+
+            # #
+            #   Release › Github › Setup BuildX › Arm64
+            # #
+
+            - name: "⚙️ Setup Buildx"
+              id: task_release_gh_buildx
+              uses: docker/setup-buildx-action@v3
+              with:
+                  version: latest
+                  driver-opts: 'image=moby/buildkit:v0.10.5'
+
+            # #
+            #   Release › Github › Registry Login › Arm64
+            # #
+
+            - name: "⚙️ Login to Github"
+              id: task_release_gh_registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ghcr.io
+                  username: ${{ inputs.IMAGE_AUTHOR }}
+                  password: ${{ secrets.KEEWEB_ORG_TOKEN }}
+
+            # #
+            #   Release › Github › Meta › Arm64
+            # #
+
+            - name: "🔨 Github: Meta - arm64"
+              id: task_release_gh_meta
+              uses: docker/metadata-action@v5
+              with:
+                  images: |
+                      ghcr.io/${{ inputs.IMAGE_AUTHOR || env.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME || env.IMAGE_NAME }}
+                  tags: |
+                      type=raw,value=latest,enable=false
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' }},priority=300,prefix=,suffix=-arm64,value=${{ INPUTS.IMAGE_VERSION }}
+                      type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push' }},priority=600,prefix=,suffix=-arm64,event=tag
+                  flavor: |
+                      latest=false
+
+            # #
+            #   Release › Github › Debug › Arm64
+            # #
+
+            - name: "🪪 Debug › Print"
+              id: task_release_gh_print
+              run: |
+                  echo "registry ............. Github"
+                  echo "github.actor.......... ${{ github.actor }}"
+                  echo "github.ref ........... ${{ github.ref }}"
+                  echo "github.event_name .... ${{ github.event_name }}"
+                  echo "inputs.PRINT_ONLY .... ${{ inputs.PRINT_ONLY }}"
+                  echo "inputs.AUTHOR ........ ${{ inputs.IMAGE_AUTHOR }}"
+                  echo "tags ................. ${{ steps.task_release_gh_meta.outputs.tags }}"
+                  echo "labels ............... ${{ steps.task_release_gh_meta.outputs.labels }}"
+
+            # #
+            #   Release › Github › Build and Push › Arm64
+            # #
+
+            - name: "📦 Build & Push (linux/arm64)"
+              id: task_release_gh_push
+              uses: docker/build-push-action@v6
+              if: ( github.event_name == 'workflow_dispatch' && inputs.PRINT_ONLY == false ) || ( github.event_name == 'push' )
+              with:
+                  context: .
+                  file: Dockerfile.aarch64
+                  platforms: linux/arm64
+                  push: ${{ github.event_name != 'pull_request' }}
+                  tags: ${{ steps.task_release_gh_meta.outputs.tags }}
+                  labels: ${{ steps.task_release_gh_meta.outputs.labels }}
+
+    # #
+    #   Job › Docker Release › Github › Amd64
+    # #
+
+    job-docker-release-github-amd64:
+        name: >-
+          📦 Release › Github › amd64
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            packages: write
+            attestations: write
+            id-token: write
+        needs: [ job-docker-release-tags-create, job-docker-release-github-arm64 ]
+        steps:
+
+            # #
+            #   Release › Github › Start › Amd64
+            # #
+
+            - name: "✅ Start"
+              id: task_release_gh_start
+              run: |
+                  echo "Starting Github docker release"
+
+            # #
+            #   Release › Github › Checkout › Amd64
+            # #
+
+            - name: "☑️ Checkout"
+              id: task_release_gh_checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            # #
+            #   Release › Github › QEMU › Amd64
+            # #
+
+            - name: "⚙️ Set up QEMU"
+              id: task_release_gh_qemu
+              uses: docker/setup-qemu-action@v3
+
+            # #
+            #   Release › Github › Setup BuildX › Amd64
+            # #
+
+            - name: "⚙️ Setup Buildx"
+              id: task_release_gh_buildx
+              uses: docker/setup-buildx-action@v3
+              with:
+                  version: latest
+                  driver-opts: 'image=moby/buildkit:v0.10.5'
+
+            # #
+            #   Release › Github › Registry Login › Amd64
+            # #
+
+            - name: "⚙️ Login to Github"
+              id: task_release_gh_registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ghcr.io
+                  username: ${{ inputs.IMAGE_AUTHOR }}
+                  password: ${{ secrets.KEEWEB_ORG_TOKEN }}
+
+            # #
+            #   Release › Github › Meta › Amd64
+            # #
+
+            - name: "🔨 Github: Meta - amd64"
+              id: task_release_gh_meta
+              uses: docker/metadata-action@v5
+              with:
+                  images: |
+                      ghcr.io/${{ inputs.IMAGE_AUTHOR || env.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME || env.IMAGE_NAME }}
+                  tags: |
+                      type=raw,value=latest,enable=${{ endsWith(github.ref, 'main') }}
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' }},priority=300,prefix=,suffix=-amd64,value=${{ INPUTS.IMAGE_VERSION }}
+                      type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push'}},priority=600,prefix=,suffix=-amd64,event=tag
+                  flavor: |
+                      latest=true
+
+            # #
+            #   Release › Github › Debug › Amd64
+            # #
+
+            - name: "🪪 Debug › Print"
+              id: task_release_gh_print
+              run: |
+                  echo "registry ............. Github"
+                  echo "github.actor.......... ${{ github.actor }}"
+                  echo "github.ref ........... ${{ github.ref }}"
+                  echo "github.event_name .... ${{ github.event_name }}"
+                  echo "inputs.PRINT_ONLY .... ${{ inputs.PRINT_ONLY }}"
+                  echo "inputs.AUTHOR ........ ${{ inputs.IMAGE_AUTHOR }}"
+                  echo "tags ................. ${{ steps.task_release_gh_meta.outputs.tags }}"
+                  echo "labels ............... ${{ steps.task_release_gh_meta.outputs.labels }}"
+
+            # #
+            #   Release › Github › Build and Push › Amd64
+            # #
+
+            - name: "📦 Build & Push (linux/amd64)"
+              id: task_release_gh_push
+              uses: docker/build-push-action@v6
+              if: ( github.event_name == 'workflow_dispatch' && inputs.PRINT_ONLY == false ) || ( github.event_name == 'push' )
+              with:
+                  context: .
+                  file: Dockerfile
+                  platforms: linux/amd64
+                  push: ${{ github.event_name != 'pull_request' }}
+                  tags: ${{ steps.task_release_gh_meta.outputs.tags }}
+                  labels: ${{ steps.task_release_gh_meta.outputs.labels }}
