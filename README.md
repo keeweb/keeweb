@@ -36,7 +36,19 @@ KeeWeb is a browser and desktop password manager which is capable of opening up 
 - [About](#about)
   - [Quick Links](#quick-links)
 - [Self-hosting](#self-hosting)
-  - [Docker Users:](#docker-users)
+  - [Docker:](#docker)
+    - [Run](#run)
+    - [Compose](#compose)
+    - [Traefik](#traefik)
+      - [Dynamic.yml](#dynamicyml)
+      - [Static.yml](#staticyml)
+        - [certificatesResolvers](#certificatesresolvers)
+        - [entryPoints (Normal)](#entrypoints-normal)
+        - [entryPoints (Cloudflare)](#entrypoints-cloudflare)
+  - [Env \& Volumes](#env--volumes)
+    - [Env Variables](#env-variables)
+    - [Volumes](#volumes)
+  - [Dropbox Support](#dropbox-support)
 - [Build From Source](#build-from-source)
   - [Platform: Windows](#platform-windows)
     - [Using Grunt](#using-grunt)
@@ -99,18 +111,289 @@ You can download the latest distribution files from [gh-pages](https://github.co
 
 <br />
 
-### Docker Users:
+### Docker:
 
-1. Place your `dh.pem`, `cert.pem`, `key.pem` to `/etc/nginx/external/`
-2. Then execute the command below:
+If you wish to host Keeweb within a Docker container, we provide pre-built images that you can pull into your environment.
 
 <br />
 
-```bash
-docker run --name keeweb -d -p 443:443 -p 80:80 -v $EXT_DIR:/etc/nginx/external/ antelle/keeweb
+#### Run
+If you want to bring the docker container up quickly, use the following command:
+
+```shell
+docker run -d --restart=unless-stopped -p 443:443 --name keeweb -v ${PWD}/keeweb:/config ghcr.io/keeweb/keeweb:latest
 ```
 
 <br />
+
+#### Compose
+Create a new `docker-compose.yml` with the following:
+
+```yml
+services:
+    keeweb:
+        container_name: keeweb
+        image: ghcr.io/keeweb/keeweb:latest       # Github image
+      # image: keeweb/keeweb:latest               # Dockerhub image
+        restart: unless-stopped
+        volumes:
+            - ./keeweb:/config
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Etc/UTC
+```
+
+<br />
+
+<br />
+
+#### Traefik
+You can put this container behind Traefik if you want to use a reverse proxy and let Traefik handle the SSL certificate.
+
+<br />
+
+> [!NOTE]
+> These steps are **optional**. 
+> 
+> If you do not use Traefik, you can skip this section of steps. This is only for users who wish to put this container behind Traefik.
+
+<br />
+
+##### Dynamic.yml
+Open the Traefik dynamic file which is usually named `dynamic.yml`. We need to add a new `middleware`, `router`, and `service` to our Traefik dynamic file so that it knows about our new Keeweb container and where it is.
+
+```yml
+http:
+    middlewares:
+        https-redirect:
+            redirectScheme:
+                scheme: "https"
+                permanent: true
+
+    routers:
+        keeweb-http:
+            service: keeweb
+            rule: Host(`keeweb.localhost`) || Host(`keeweb.domain.com`)
+            entryPoints:
+                - http
+            middlewares:
+                - https-redirect@file
+
+        keeweb-https:
+            service: keeweb
+            rule: Host(`keeweb.localhost`) || Host(`keeweb.domain.com`)
+            entryPoints:
+                - https
+            tls:
+                certResolver: cloudflare
+                domains:
+                    - main: "domain.com"
+                      sans:
+                          - "*.domain.com"
+
+    services:
+        keeweb:
+            loadBalancer:
+                servers:
+                    - url: "https://keeweb:443"
+```
+
+<br />
+
+##### Static.yml
+These entries will go in your Traefik `static.yml` file. Any changes made to this file requires that you reset Traefik afterward.
+
+<br />
+
+###### certificatesResolvers
+
+Open your Traefik `static.yml` file and add your `certResolver` from above. We are going to use Cloudflare in this exmaple, you can use whatever from the list at:
+- https://doc.traefik.io/traefik/https/acme/#providers
+
+<br />
+
+```yml
+certificatesResolvers:
+    cloudflare:
+        acme:
+            email: youremail@address.com
+            storage: /cloudflare/acme.json
+            keyType: EC256
+            preferredChain: 'ISRG Root X1'
+            dnsChallenge:
+                provider: cloudflare
+                delayBeforeCheck: 15
+                resolvers:
+                    - "1.1.1.1:53"
+                    - "1.0.0.1:53"
+                disablePropagationCheck: true
+```
+
+<br />
+
+Once you pick the DNS / SSL provider you want to use from the code above, you need to see if that provider has any special environment variables that must be set. The [Providers Page](https://doc.traefik.io/traefik/https/acme/#providers) lists all providers and also what env variables need set for each one.
+
+<br />
+
+In our example, since we are using Cloudflare for `dnsChallenge` -> `provider`, we must set:
+- `CF_API_EMAIL`
+- `CF_API_KEY`
+
+<br />
+
+Create a `.env` environment file in the same folder where your Traefik `docker-compose.yml` file is located, and add the following:
+
+```yml
+CF_API_EMAIL=yourcloudflare@email.com
+CF_API_KEY=Your-Cloudflare-API-Key
+```
+
+<br />
+
+Save the `.env` file and exit.
+
+<br />
+
+###### entryPoints (Normal)
+Finally, inside the Traefik `static.yml`, we need to make sure we have our `entryPoints` configured. Add the following to the Traefik `static.yml` file only if you **DON'T** have entry points set yet:
+
+```yml
+entryPoints:
+    http:
+        address: :80
+        http:
+            redirections:
+                entryPoint:
+                    to: https
+                    scheme: https
+
+    https:
+        address: :443
+        http3: {}
+        http:
+            tls:
+                options: default
+                certResolver: cloudflare
+                domains:
+                    - main: domain.com
+                      sans:
+                          - '*.domain.com'
+```
+
+<br />
+
+###### entryPoints (Cloudflare)
+If your website is behind Cloudflare's proxy service, you need to modify your `entryPoints` above so that you can automatically allow Cloudflare's IP addresses through. This means your entry points will look a bit different.
+
+<br />
+
+In the example below, we will add `forwardedHeaders` -> `trustedIPs` and add all of Cloudflare's IPs to the list which are available here:
+- https://cloudflare.com/ips/
+
+```yml
+    http:
+        address: :80
+        forwardedHeaders:
+            trustedIPs: &trustedIps
+                - 103.21.244.0/22
+                - 103.22.200.0/22
+                - 103.31.4.0/22
+                - 104.16.0.0/13
+                - 104.24.0.0/14
+                - 108.162.192.0/18
+                - 131.0.72.0/22
+                - 141.101.64.0/18
+                - 162.158.0.0/15
+                - 172.64.0.0/13
+                - 173.245.48.0/20
+                - 188.114.96.0/20
+                - 190.93.240.0/20
+                - 197.234.240.0/22
+                - 198.41.128.0/17
+                - 2400:cb00::/32
+                - 2606:4700::/32
+                - 2803:f800::/32
+                - 2405:b500::/32
+                - 2405:8100::/32
+                - 2a06:98c0::/29
+                - 2c0f:f248::/32
+        http:
+            redirections:
+                entryPoint:
+                    to: https
+                    scheme: https
+
+    https:
+        address: :443
+        http3: {}
+        forwardedHeaders:
+            trustedIPs: *trustedIps
+        http:
+            tls:
+                options: default
+                certResolver: cloudflare
+                domains:
+                    - main: domain.com
+                      sans:
+                          - '*.domain.com'
+```
+
+<br />
+
+Save the files and then give Traefik and your Keeweb containers a restart.
+
+<br />
+
+---
+
+<br />
+
+### Env & Volumes
+This section outlines that environment variables can be specified, and which volumes you can mount when the container is started.
+
+<br />
+
+#### Env Variables
+The following env variables can be modified before spinning up this container:
+
+<br />
+
+| Env Var | Default | Description |
+| --- | --- | --- |
+| `PUID` | 1000 | <sub>User ID running the container</sub> |
+| `PGID` | 1000 | <sub>Group ID running the container</sub> |
+| `TZ` | Etc/UTC | <sub>Timezone</sub> |
+| `PORT_HTTP` | 80 | <sub>Defines the HTTP port to run on</sub> |
+| `PORT_HTTPS` | 443 | <sub>Defines the HTTPS port to run on</sub> |
+
+<br />
+
+#### Volumes
+The following volumes can be mounted with this container:
+
+<br />
+
+| Volume | Description |
+| ---- | ---- |
+| `./keeweb:/config` | <sub>Path which stores Keeweb, nginx configs, and optional SSL certificate/keys</sub> |
+
+<br />
+
+By mounting the volume above, you should now have access to the following folders:
+<br />
+
+| Folder | Description |
+| ---- | ---- |
+| `📁 keys`   | <sub>Responsible for storing your ssl certificate `cert.crt` + key `cert.key`</sub> |
+| `📁 log`    | <sub>All nginx and php logs</sub> |
+| `📁 nginx`  | <sub>Contains `nginx.conf`, `resolver.conf`, `ssl.conf`, `site-confs`</sub> |
+| `📁 php`    | <sub>Contains `php-local.ini`, `www2.conf`</sub> |
+| `📁 www`    | <sub>Folder which stores the Keeweb files and images</sub> |
+
+<br />
+
+### Dropbox Support
 
 To configure Dropbox support on your self-hosted setup [view our Wiki page](https://github.com/keeweb/keeweb/wiki/Dropbox-and-GDrive).
 
@@ -138,11 +421,15 @@ KeeWeb can be built utilizing the **grunt commandline**. Each platform has multi
 
 You may build KeeWeb for `Windows` by executing ONE of the following two commands provided:
 
+<br />
+
 #### Using Grunt
 
 ```shell
 grunt dev-desktop-win32 --skip-sign
 ```
+
+<br />
 
 #### Using NPM
 
@@ -156,11 +443,15 @@ npm run dev-desktop-windows
 
 You may build KeeWeb for `Linux` by executing ONE of the following two commands provided:
 
+<br />
+
 #### Using Grunt
 
 ```shell
 grunt dev-desktop-linux --skip-sign
 ```
+
+<br />
 
 #### Using NPM
 
@@ -285,11 +576,6 @@ Want to help but can't write code?
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 <br />
-<br />
-
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-
 <br />
 
 ---
