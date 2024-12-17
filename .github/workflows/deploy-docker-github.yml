@@ -156,7 +156,7 @@ jobs:
 
             - uses: rickstaa/action-create-tag@v1
               id: task_ctags_create
-              if: ( github.event_name == 'workflow_dispatch' && inputs.PRINT_ONLY == false )
+              if: ( github.event_name != 'workflow_dispatch' && inputs.PRINT_ONLY == false )
               with:
                   tag: "${{ env.IMAGE_VERSION }}"
                   tag_exists_error: false
