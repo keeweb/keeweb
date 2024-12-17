@@ -27,20 +27,20 @@ on:
             #   Image Name
             #
             #   used in github image path
-            #       ghcr.io/${{ inputs.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME }}
+            #       ghcr.io/${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
             # #
 
             IMAGE_NAME:
                 description:  "📦 Image Name"
                 required:     true
-                default:      'alpine-base'
+                default:      'keeweb'
                 type:         string
 
             # #
             #   Image Author
             #
             #   used in github image path
-            #       ghcr.io/${{ inputs.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME }}
+            #       ghcr.io/${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
             # #
 
             IMAGE_AUTHOR:
@@ -58,7 +58,19 @@ on:
             IMAGE_VERSION:
                 description:  "🏷️ Image Version"
                 required:     true
-                default:      '3.20'
+                default:      '1.19.0'
+                type:         string
+
+            # #
+            #   Image ghcr username
+            #
+            #   this is the user to sign into ghcr as.
+            # #
+
+            IMAGE_GHCR_USERNAME:
+                description:  "🪪 ghcr.io Username"
+                required:     true
+                default:      'keeweb'
                 type:         string
 
             # #
@@ -85,8 +97,10 @@ on:
 # #
 
 env:
-    IMAGE_NAME:           ${{ github.event.inputs.IMAGE_NAME || 'alpine-base' }}
+    IMAGE_NAME:           ${{ github.event.inputs.IMAGE_NAME || 'keeweb' }}
     IMAGE_AUTHOR:         ${{ github.event.inputs.IMAGE_AUTHOR || 'keeweb' }}
+    IMAGE_VERSION:        ${{ github.event.inputs.IMAGE_VERSION || '1.19.0' }}
+    IMAGE_GHCR_USERNAME:  ${{ github.event.inputs.IMAGE_GHCR_USERNAME || 'keeweb' }}
     BOT_NAME_1:           EuropaServ
     BOT_NAME_DEPENDABOT:  dependabot[bot]
     
@@ -144,9 +158,9 @@ jobs:
               id: task_ctags_create
               if: ( github.event_name == 'workflow_dispatch' && inputs.PRINT_ONLY == false )
               with:
-                  tag: "${{ INPUTS.IMAGE_VERSION }}"
+                  tag: "${{ env.IMAGE_VERSION }}"
                   tag_exists_error: false
-                  message: '${{ inputs.IMAGE_NAME || env.IMAGE_NAME }}-${{ INPUTS.IMAGE_VERSION }}'
+                  message: '${{ env.IMAGE_NAME }}-${{ env.IMAGE_VERSION }}'
                   gpg_private_key: ${{ secrets.ADMINSERV_GPG_KEY_ASC }}
                   gpg_passphrase: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
 
@@ -213,8 +227,8 @@ jobs:
               uses: docker/login-action@v3
               with:
                   registry: ghcr.io
-                  username: ${{ inputs.IMAGE_AUTHOR }}
-                  password: ${{ secrets.KEEWEB_ORG_TOKEN }}
+                  username: ${{ env.IMAGE_GHCR_USERNAME }}
+                  password: ${{ secrets.IMAGE_GHCR_TOKEN }}
 
             # #
             #   Release › Github › Meta › Arm64
@@ -225,10 +239,10 @@ jobs:
               uses: docker/metadata-action@v5
               with:
                   images: |
-                      ghcr.io/${{ inputs.IMAGE_AUTHOR || env.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME || env.IMAGE_NAME }}
+                      ghcr.io/${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
                   tags: |
                       type=raw,value=latest,enable=false
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' }},priority=300,prefix=,suffix=-arm64,value=${{ INPUTS.IMAGE_VERSION }}
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' }},priority=300,prefix=,suffix=-arm64,value=${{ env.IMAGE_VERSION }}
                       type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push' }},priority=600,prefix=,suffix=-arm64,event=tag
                   flavor: |
                       latest=false
@@ -245,7 +259,7 @@ jobs:
                   echo "github.ref ........... ${{ github.ref }}"
                   echo "github.event_name .... ${{ github.event_name }}"
                   echo "inputs.PRINT_ONLY .... ${{ inputs.PRINT_ONLY }}"
-                  echo "inputs.AUTHOR ........ ${{ inputs.IMAGE_AUTHOR }}"
+                  echo "env.AUTHOR ........... ${{ env.IMAGE_AUTHOR }}"
                   echo "tags ................. ${{ steps.task_release_gh_meta.outputs.tags }}"
                   echo "labels ............... ${{ steps.task_release_gh_meta.outputs.labels }}"
 
@@ -328,8 +342,8 @@ jobs:
               uses: docker/login-action@v3
               with:
                   registry: ghcr.io
-                  username: ${{ inputs.IMAGE_AUTHOR }}
-                  password: ${{ secrets.KEEWEB_ORG_TOKEN }}
+                  username: ${{ env.IMAGE_GHCR_USERNAME }}
+                  password: ${{ secrets.IMAGE_GHCR_TOKEN }}
 
             # #
             #   Release › Github › Meta › Amd64
@@ -340,10 +354,10 @@ jobs:
               uses: docker/metadata-action@v5
               with:
                   images: |
-                      ghcr.io/${{ inputs.IMAGE_AUTHOR || env.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME || env.IMAGE_NAME }}
+                      ghcr.io/${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
                   tags: |
                       type=raw,value=latest,enable=${{ endsWith(github.ref, 'main') }}
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' }},priority=300,prefix=,suffix=-amd64,value=${{ INPUTS.IMAGE_VERSION }}
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' }},priority=300,prefix=,suffix=-amd64,value=${{ env.IMAGE_VERSION }}
                       type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push'}},priority=600,prefix=,suffix=-amd64,event=tag
                   flavor: |
                       latest=true
@@ -360,7 +374,7 @@ jobs:
                   echo "github.ref ........... ${{ github.ref }}"
                   echo "github.event_name .... ${{ github.event_name }}"
                   echo "inputs.PRINT_ONLY .... ${{ inputs.PRINT_ONLY }}"
-                  echo "inputs.AUTHOR ........ ${{ inputs.IMAGE_AUTHOR }}"
+                  echo "env.AUTHOR ........... ${{ env.IMAGE_AUTHOR }}"
                   echo "tags ................. ${{ steps.task_release_gh_meta.outputs.tags }}"
                   echo "labels ............... ${{ steps.task_release_gh_meta.outputs.labels }}"
 
