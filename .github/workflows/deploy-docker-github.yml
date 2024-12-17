@@ -67,10 +67,10 @@ on:
             # #
 
             PRINT_ONLY:
-              description:  "📑 Print Debugs Only"
-              required:     true
-              default:      false
-              type:         boolean
+                description:  "📑 Print Debugs Only"
+                required:     true
+                default:      false
+                type:         boolean
 
     # #
     #   Trigger › Push
@@ -122,7 +122,7 @@ jobs:
             - name: "✅ Start"
               id: task_ctags_start
               run: |
-                echo "Creating Tag"
+                  echo "Creating Tag"
 
             # #
             #   Release › Tags › Checkout
@@ -173,7 +173,7 @@ jobs:
             - name: "✅ Start"
               id: task_release_gh_start
               run: |
-                echo "Starting Github Docker arm64"
+                  echo "Starting Github Docker arm64"
 
             # #
             #   Release › Github › Checkout › Arm64
@@ -213,8 +213,8 @@ jobs:
               uses: docker/login-action@v3
               with:
                   registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.SELF_TOKEN_CL }}
+                  username: ${{ inputs.IMAGE_AUTHOR }}
+                  password: ${{ secrets.KEEWEB_ORG_TOKEN }}
 
             # #
             #   Release › Github › Meta › Arm64
@@ -245,6 +245,7 @@ jobs:
                   echo "github.ref ........... ${{ github.ref }}"
                   echo "github.event_name .... ${{ github.event_name }}"
                   echo "inputs.PRINT_ONLY .... ${{ inputs.PRINT_ONLY }}"
+                  echo "inputs.AUTHOR ........ ${{ inputs.IMAGE_AUTHOR }}"
                   echo "tags ................. ${{ steps.task_release_gh_meta.outputs.tags }}"
                   echo "labels ............... ${{ steps.task_release_gh_meta.outputs.labels }}"
 
@@ -287,7 +288,7 @@ jobs:
             - name: "✅ Start"
               id: task_release_gh_start
               run: |
-                echo "Starting Github docker release"
+                  echo "Starting Github docker release"
 
             # #
             #   Release › Github › Checkout › Amd64
@@ -327,8 +328,8 @@ jobs:
               uses: docker/login-action@v3
               with:
                   registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.SELF_TOKEN_CL }}
+                  username: ${{ inputs.IMAGE_AUTHOR }}
+                  password: ${{ secrets.KEEWEB_ORG_TOKEN }}
 
             # #
             #   Release › Github › Meta › Amd64
@@ -359,6 +360,7 @@ jobs:
                   echo "github.ref ........... ${{ github.ref }}"
                   echo "github.event_name .... ${{ github.event_name }}"
                   echo "inputs.PRINT_ONLY .... ${{ inputs.PRINT_ONLY }}"
+                  echo "inputs.AUTHOR ........ ${{ inputs.IMAGE_AUTHOR }}"
                   echo "tags ................. ${{ steps.task_release_gh_meta.outputs.tags }}"
                   echo "labels ............... ${{ steps.task_release_gh_meta.outputs.labels }}"
 
