@@ -205,6 +205,7 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version-file: '.nvmrc'
+                  cache: 'npm'
 
             # #
             #   Lint › NPM Install
@@ -223,28 +224,6 @@ jobs:
               id: task_lint_npm_lint
               run: |
                   npm run lint
-
-            # #
-            #   Lint › Generate Coverage
-            # #
-
-            - name: '🕘 NPM › Coverage'
-              id: task_lint_npm_coverage
-              if: always()
-              run: |
-                  npm run coverage
-
-            # #
-            #   Lint › Upload Coverage to Codecov
-            # #
-
-            - name: '📝 Upload Coverage Reports › Codecov'
-              id: task_lint_codecov_upload
-              if: steps.task_lint_npm_coverage.outcome == 'success'
-              uses: codecov/codecov-action@v4.0.1
-              with:
-                  token: ${{ secrets.CODECOV_TOKEN }}
-                  slug: keeweb/keeweb
 
     # #
     #   Job › Test
@@ -287,6 +266,7 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version-file: '.nvmrc'
+                  cache: 'npm'
 
             # #
             #   Test › NPM Install
