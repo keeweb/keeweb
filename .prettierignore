@@ -1,0 +1,112 @@
+# #
+#   @usage          ignore listed extensions / files from having pretty / prettier linting ran on them
+#   @file           .prettierignore
+# #
+
+# #
+#   Tests
+# #
+
+.nyc_output
+coverage
+
+# #
+#   Build
+# #
+
+.build
+backup.sql
+build
+data
+dist
+lock
+
+# #
+#   Linter
+# #
+
+.editorconfig
+.eslintignore
+.prettierignore
+
+# #
+#   Git
+# #
+
+.git/*
+.gitignore
+
+# #
+#   Other
+# #
+
+.all-contributorsrc
+.DS_Store
+.firebaserc
+.flowconfig
+.graphqlconfig
+.haxt
+.serverless
+.upignore
+
+# #
+#   Docker / Node
+# #
+
+**/*.Dockerfile
+**/*.Dockerfile.*
+**/*.yarn.lock
+**/*.yarnclean
+**/*.yarnrc
+package-lock.json
+.dockerignore
+.npmignore
+.npmrc
+.nvmrc
+license
+
+# #
+#   Recursive
+# #
+
+**/*._env*
+**/*.conf
+**/*.dat
+**/*.dms
+**/*.env
+**/*.env.*
+**/*.eot
+**/*.gif
+**/*.graphcool
+**/*.hbs
+**/*.html
+**/*.ico
+**/*.jar
+**/*.jpg
+**/*.ldb
+**/*.log
+**/*.logfile
+**/*.map
+**/*.md
+**/*.opts
+**/*.out
+**/*.pem
+**/*.png
+**/*.re
+**/*.scss
+**/*.sh
+**/*.sketch
+**/*.snap
+**/*.svg
+**/*.tab
+**/*.tar.gz
+**/*.toml
+**/*.ttf
+**/*.ttf
+**/*.txt
+**/*.wasm
+**/*.woff
+**/*.woff2
+**/*.xml
+**/*.yml
+**/*.zip
