@@ -58,7 +58,7 @@ on:
             IMAGE_VERSION:
                 description:  "🏷️ Image Version"
                 required:     true
-                default:      '1.19.0'
+                default:      '3.20'
                 type:         string
 
             # #
@@ -220,7 +220,7 @@ jobs:
             #   Release › Github › Meta › Arm64
             # #
 
-            - name: "🔨 Github: Meta - arm64"
+            - name: "🔨 Github: Meta - Arm64"
               id: task_release_gh_meta
               uses: docker/metadata-action@v5
               with:
@@ -271,7 +271,7 @@ jobs:
 
     job-docker-release-github-amd64:
         name: >-
-          📦 Release › Github › amd64
+          📦 Release › Github › Amd64
         runs-on: ubuntu-latest
         permissions:
             contents: write
@@ -335,7 +335,7 @@ jobs:
             #   Release › Github › Meta › Amd64
             # #
 
-            - name: "🔨 Github: Meta - amd64"
+            - name: "🔨 Github: Meta - Amd64"
               id: task_release_gh_meta
               uses: docker/metadata-action@v5
               with:
