@@ -52,13 +52,13 @@ env:
     BOT_NAME_DEPENDABOT:    dependabot[bot]
 
 # #
-#   jobs
+#   Jobs
 # #
 
 jobs:
 
     # #
-    #   JOB > INITIALIZE
+    #   Job › Initialize
     # #
 
     job-initialize:
@@ -75,7 +75,7 @@ jobs:
         steps:
 
             # #
-            #   Job > Init > Start
+            #   Job › Init › Start
             # #
 
             - name: '✅ Start'
@@ -84,7 +84,7 @@ jobs:
                   echo "Starting linter"
 
             # #
-            #   Job > Init > Checkout
+            #   Job › Init › Checkout
             # #
 
             - name: '☑️ Checkout'
@@ -94,7 +94,7 @@ jobs:
                   fetch-depth: 0
 
             # #
-            #   Job > Init > Setup Node
+            #   Job › Init › Setup Node
             # #
 
             - name: '⚙️ Setup Node'
@@ -104,7 +104,7 @@ jobs:
                   node-version-file: '.nvmrc'
 
             # #
-            #   Job > Lint > NPM Install
+            #   Job › Lint › NPM Install
             # #
 
             - name: '🕛 NPM › Clean Install'
@@ -159,7 +159,7 @@ jobs:
                   echo "UUID: ${{ steps.task_init_dotenv_get.outputs.UUID }}"
 
     # #
-    #   JOB > LINT
+    #   Job › Lint
     # #
 
     job-lint:
@@ -176,7 +176,7 @@ jobs:
         steps:
 
             # #
-            #   Job > Lint > Checkout
+            #   Job › Lint › Checkout
             # #
 
             - name: '☑️ Checkout'
@@ -184,7 +184,7 @@ jobs:
               uses: actions/checkout@v4
 
             # #
-            #   Job > Lint > Setup Node
+            #   Job › Lint › Setup Node
             # #
 
             - name: '⚙️ Setup Node'
@@ -194,7 +194,7 @@ jobs:
                   node-version-file: '.nvmrc'
 
             # #
-            #   Job > Lint > NPM Install
+            #   Job › Lint › NPM Install
             # #
 
             - name: '🕛 NPM › Clean Install'
@@ -203,7 +203,7 @@ jobs:
                   npm ci
 
             # #
-            #   Job > Lint > Run
+            #   Job › Lint › Run
             # #
 
             - name: '🕞 NPM › Lint'
@@ -212,7 +212,7 @@ jobs:
                   npm run lint
 
             # #
-            #   Job > Lint > Generate Coverage
+            #   Job › Lint › Generate Coverage
             # #
 
             - name: '🕘 NPM › Coverage'
@@ -222,7 +222,7 @@ jobs:
                   npm run coverage
 
             # #
-            #   Job > Lint > Upload Coverage to Codecov
+            #   Job › Lint › Upload Coverage to Codecov
             # #
 
             - name: '📝 Upload Coverage Reports › Codecov'
@@ -234,7 +234,7 @@ jobs:
                   slug: keeweb/keeweb
 
     # #
-    #   JOB > TESTS
+    #   Job › Tests
     # #
 
     job-test:
@@ -249,7 +249,7 @@ jobs:
         steps:
 
             # #
-            #   Job > Tests > Fix Line Endings
+            #   Job › Tests › Fix Line Endings
             # #
 
             - name: '🛒 Fix Git Checkout Line Endings'
@@ -258,7 +258,7 @@ jobs:
                   git config --global core.autocrlf input
 
             # #
-            #   Job > Tests > Checkout
+            #   Job › Tests › Checkout
             # #
 
             - name: '☑️ Checkout'
@@ -266,7 +266,7 @@ jobs:
               uses: actions/checkout@v4
 
             # #
-            #   Job > Tests > Setup Node
+            #   Job › Tests › Setup Node
             # #
 
             - name: '⚙️ Setup Node'
@@ -276,7 +276,7 @@ jobs:
                   node-version-file: '.nvmrc'
 
             # #
-            #   Job > Tests > NPM Install
+            #   Job › Tests › NPM Install
             # #
 
             - name: '🕛 NPM › Clean Install'
@@ -285,7 +285,7 @@ jobs:
                   npm ci
 
             # #
-            #   Job > Tests > Run
+            #   Job › Tests › Run
             # #
 
             - name: '🕘 NPM › Test'
@@ -294,7 +294,7 @@ jobs:
                   npm run test
 
     # #
-    #   JOB > COMPLETE
+    #   Job › Complete
     # #
 
     job-complete-run:
@@ -311,7 +311,7 @@ jobs:
         steps:
 
             # #
-            #   Job > Complete > Get publish timestamp
+            #   Job › Complete › Get publish timestamp
             # #
 
             - name: '🕛 Get Timestamp'
@@ -320,7 +320,7 @@ jobs:
                   echo "NOW=$(date +'%m-%d-%Y %H:%M:%S')" >> $GITHUB_ENV
 
             # #
-            #   Job > Complete > Debug Print
+            #   Job › Complete › Debug Print
             # #
 
             - name: "🔖 Output"
@@ -329,7 +329,7 @@ jobs:
                 echo "TEST_SUCCESS: ${{ env.TEST_SUCCESS }}"
 
             # #
-            #   Job > Complete > Summary of publish
+            #   Job › Complete › Summary of publish
             # #
 
             - name: '🆗 Summary: ${{ env.NOW }} - ${{ env.PACKAGE_VERSION }}'
