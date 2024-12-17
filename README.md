@@ -361,11 +361,11 @@ The following env variables can be modified before spinning up this container:
 
 | Env Var | Default | Description |
 | --- | --- | --- |
-| `PUID` | 1000 | <sub>User ID running the container</sub> |
-| `PGID` | 1000 | <sub>Group ID running the container</sub> |
-| `TZ` | Etc/UTC | <sub>Timezone</sub> |
-| `PORT_HTTP` | 80 | <sub>Defines the HTTP port to run on</sub> |
-| `PORT_HTTPS` | 443 | <sub>Defines the HTTPS port to run on</sub> |
+| `PUID`        | 1000      | <sub>User ID running the container</sub> |
+| `PGID`        | 1000      | <sub>Group ID running the container</sub> |
+| `TZ`          | Etc/UTC   | <sub>Timezone</sub> |
+| `PORT_HTTP`   | 80        | <sub>Defines the HTTP port to run on</sub> |
+| `PORT_HTTPS`  | 443       | <sub>Defines the HTTPS port to run on</sub> |
 
 <br />
 
@@ -386,9 +386,8 @@ By mounting the volume above, you should now have access to the following folder
 | Folder | Description |
 | ---- | ---- |
 | `📁 keys`   | <sub>Responsible for storing your ssl certificate `cert.crt` + key `cert.key`</sub> |
-| `📁 log`    | <sub>All nginx and php logs</sub> |
+| `📁 log`    | <sub>All nginx / container logs</sub> |
 | `📁 nginx`  | <sub>Contains `nginx.conf`, `resolver.conf`, `ssl.conf`, `site-confs`</sub> |
-| `📁 php`    | <sub>Contains `php-local.ini`, `www2.conf`</sub> |
 | `📁 www`    | <sub>Folder which stores the Keeweb files and images</sub> |
 
 <br />
