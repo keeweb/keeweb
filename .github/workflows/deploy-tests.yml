@@ -1,0 +1,369 @@
+# #
+#   @type           github workflow
+#   @desc           run linter and build tests on repository
+#   @author         Aetherinox
+#   @project        KeeWeb
+#   @repo           https://github.com/keeweb/keeweb
+# #
+
+name: '📦 Deploy › Tests'
+run-name: '📦 Deploy › Tests'
+
+# #
+#   Triggers
+# #
+
+on:
+
+    # #
+    #   Trigger › Workflow Dispatch
+    #
+    #   If any values are not provided, will use fallback env variable
+    # #
+
+    workflow_dispatch:
+        inputs:
+
+            # #
+            #   Name of the plugin to use when creating the release zip / exe filename
+            #     e.g: keeweb-v1.0.0.zip
+            # #
+
+            PLUGIN_NAME:
+                description:  "📦 Name of App"
+                required:     true
+                default:      'keeweb'
+                type:         string
+
+    # #
+    #   Trigger › Push
+    # #
+
+    push:
+        branches:
+            - 'main'
+            - 'master'
+            - 'develop/v?[0-9]+.[0-9]+.[0-9]+'
+            - 'v?[0-9]+.[0-9]+.[0-9]+'
+            - '!all-contributors/**'
+
+    # #
+    #   Trigger › Pull Requests
+    # #
+
+    pull_request:
+
+# #
+#   Environment Vars
+#
+#   PLUGIN_NAME                 This is the project name used in Cloudflare.
+# #
+
+env:
+    PLUGIN_NAME:            ${{ github.event.inputs.PLUGIN_NAME || 'keeweb' }}
+    BOT_NAME_1:             EuropaServ
+    BOT_NAME_DEPENDABOT:    dependabot[bot]
+
+# #
+#   Jobs
+# #
+
+jobs:
+
+    # #
+    #   Jobs › Initialize
+    # #
+
+    job-initialize:
+        name: >-
+            💡 Initialize
+        runs-on: ubuntu-latest
+        outputs:
+            package_version: ${{ steps.task_init_pkg_ver_get.outputs.PACKAGE_VERSION }}
+            guid: ${{ steps.task_init_dotenv_get.outputs.GUID }}
+            uuid: ${{ steps.task_init_dotenv_get.outputs.UUID }}
+        permissions:
+            contents: write
+            packages: write
+        steps:
+
+            # #
+            #   Initialize › Start
+            # #
+
+            - name: '✅ Start'
+              id: task_init_start
+              run: |
+                  echo "Starting linter"
+
+            # #
+            #   Initialize › Checkout
+            # #
+
+            - name: '☑️ Checkout'
+              id: task_init_checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            # #
+            #   Initialize › Setup Node
+            # #
+
+            - name: '⚙️ Setup Node'
+              id: task_init_node_setup
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+
+            # #
+            #   Initialize › Node Clean Install
+            # #
+
+            - name: '🕛 NPM › Clean Install'
+              id: task_init_npm_install
+              run: |
+                  npm ci
+
+            # #
+            #   Initialize › Get Package Version
+            # #
+
+            - name: '👁️‍🗨️ Get Package Version'
+              id: task_init_pkg_ver_get
+              run: |
+                  VER=$(cat package.json | jq -r '.version')
+                  echo "PACKAGE_VERSION=$VER" >> $GITHUB_OUTPUT
+
+            - name: '👁️‍🗨️ Found KeeWeb v${{ steps.task_init_pkg_ver_get.outputs.PACKAGE_VERSION }}'
+              id: task_init_pkg_ver_print
+              run: |
+                  echo Found KeeWeb ${{ steps.task_init_pkg_ver_get.outputs.PACKAGE_VERSION }}
+
+            # #
+            #   Initialize › generate guid and uuid
+            # #
+
+            - name: '🪪 .ENV › Generate'
+              id: task_init_pkg_env_generate
+              continue-on-error: true
+              run: |
+                  npm run keeweb:generate
+
+            # #
+            #   Initialize › assign guid and uuid to env variable
+            # #
+
+            - name: '🪪 .ENV › Get'
+              id: task_init_dotenv_get
+              if: steps.task_init_pkg_env_generate.outcome == 'success'
+              uses: falti/dotenv-action@v1
+
+            # #
+            #   Initialize › read back guid and uuid
+            # #
+
+            - name: '🪪 .ENV › Read'
+              id: task_init_dotenv_print
+              if: steps.task_init_pkg_env_generate.outcome == 'success'
+              run: |
+                  echo "VER: ${{ steps.task_init_dotenv_get.outputs.VERSION }}"
+                  echo "GUID: ${{ steps.task_init_dotenv_get.outputs.GUID }}"
+                  echo "UUID: ${{ steps.task_init_dotenv_get.outputs.UUID }}"
+
+    # #
+    #   Job › Lint
+    # #
+
+    job-lint:
+        name: >-
+            📚 Lint
+        runs-on: ubuntu-latest
+        needs: [job-initialize]
+        env:
+            PACKAGE_VERSION: ${{ needs.job-initialize.outputs.package_version }}
+            GUID: ${{ needs.job-initialize.outputs.guid }}
+            UUID: ${{ needs.job-initialize.outputs.uuid }}
+        outputs:
+            lint_success: ${{ steps.task_lint_npm_lint.outcome }}
+        steps:
+
+            # #
+            #   Lint › Checkout
+            # #
+
+            - name: '☑️ Checkout'
+              id: task_lint_checkout
+              uses: actions/checkout@v4
+
+            # #
+            #   Lint › Setup Node
+            # #
+
+            - name: '⚙️ Setup Node'
+              id: task_lint_node_setup
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+
+            # #
+            #   Lint › NPM Install
+            # #
+
+            - name: '🕛 NPM › Clean Install'
+              id: task_lint_npm_install
+              run: |
+                  npm ci
+
+            # #
+            #   Lint › Run
+            # #
+
+            - name: '🕞 NPM › Lint'
+              id: task_lint_npm_lint
+              run: |
+                  npm run lint
+
+            # #
+            #   Lint › Generate Coverage
+            # #
+
+            - name: '🕘 NPM › Coverage'
+              id: task_lint_npm_coverage
+              if: always()
+              run: |
+                  npm run coverage
+
+            # #
+            #   Lint › Upload Coverage to Codecov
+            # #
+
+            - name: '📝 Upload Coverage Reports › Codecov'
+              id: task_lint_codecov_upload
+              if: steps.task_lint_npm_coverage.outcome == 'success'
+              uses: codecov/codecov-action@v4.0.1
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  slug: keeweb/keeweb
+
+    # #
+    #   Job › Test
+    # #
+
+    job-test:
+        name: >-
+            🧪 Tests
+        runs-on: ubuntu-latest
+        needs: [job-initialize]
+        env:
+            PACKAGE_VERSION: ${{ needs.job-initialize.outputs.package_version }}
+        outputs:
+            test_success: ${{ steps.task_test_npm_test.outcome }}
+        steps:
+
+            # #
+            #   Test › Fix Line Endings
+            # #
+
+            - name: '🛒 Fix Git Checkout Line Endings'
+              id: task_test_git_fixlines
+              run: |
+                  git config --global core.autocrlf input
+
+            # #
+            #   Test › Checkout
+            # #
+
+            - name: '☑️ Checkout'
+              id: task_test_checkout
+              uses: actions/checkout@v4
+
+            # #
+            #   Test › Setup Node
+            # #
+
+            - name: '⚙️ Setup Node'
+              id: task_test_node_setup
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+
+            # #
+            #   Test › NPM Install
+            # #
+
+            - name: '🕛 NPM › Clean Install'
+              id: task_test_npm_install
+              run: |
+                  npm ci
+
+            # #
+            #   Test › Run
+            # #
+
+            - name: '🕘 NPM › Test'
+              id: task_test_npm_test
+              run: |
+                  npm run test
+
+    # #
+    #   Job › Complete
+    # #
+
+    job-complete-run:
+        name: >-
+            ✅ Complete
+        runs-on: ubuntu-latest
+        needs: [job-initialize, job-lint, job-test]
+        env:
+            PACKAGE_VERSION: ${{ needs.job-initialize.outputs.package_version }}
+            TEST_SUCCESS: ${{ needs.job-test.outputs.test_success }}
+            LINT_SUCCESS: ${{ needs.job-lint.outputs.lint_success }}
+            GUID: ${{ needs.job-initialize.outputs.guid }}
+            UUID: ${{ needs.job-initialize.outputs.uuid }}
+        steps:
+
+            # #
+            #   Complete › Get publish timestamp
+            # #
+
+            - name: '🕛 Get Timestamp'
+              id: task_tests_complete_timestamp
+              run: |
+                  echo "NOW=$(date +'%m-%d-%Y %H:%M:%S')" >> $GITHUB_ENV
+
+            # #
+            #   Complete › Debug Print
+            # #
+
+            - name: "🔖 Output"
+              run: |
+                echo "LINT_SUCCESS: ${{ env.LINT_SUCCESS }}"
+                echo "TEST_SUCCESS: ${{ env.TEST_SUCCESS }}"
+
+            # #
+            #   Complete › Summary of publish
+            # #
+
+            - name: '🆗 Summary: ${{ env.NOW }} - ${{ env.PACKAGE_VERSION }}'
+              id: task_tests_complete_summary
+              shell: bash
+              run: |
+                  echo ""
+                  echo ""
+                  echo "| File                            | Result                                                          |" >> $GITHUB_STEP_SUMMARY
+                  echo "| ------------------------------- | -----------------------                                         |" >> $GITHUB_STEP_SUMMARY
+                  echo "| **Project**                     | ${{ env.PLUGIN_NAME || github.event.inputs.PLUGIN_NAME }}       |" >> $GITHUB_STEP_SUMMARY
+                  echo "| **Deploy Time**                 | ${{ env.NOW }}                                                  |" >> $GITHUB_STEP_SUMMARY
+                  echo "| **GUID**                        | ${{ env.GUID }}                                                 |" >> $GITHUB_STEP_SUMMARY
+                  echo "| **UUID**                        | ${{ env.UUID }}                                                 |" >> $GITHUB_STEP_SUMMARY
+                  if [ ${{ env.LINT_SUCCESS }} == 'true' ] || [ ${{ env.LINT_SUCCESS }} == 'success' ]; then
+                      echo "| **Lint Results**            | ✔️                                                              |" >> $GITHUB_STEP_SUMMARY
+                  else
+                      echo "| **Lint Results**            | ❌                                                              |" >> $GITHUB_STEP_SUMMARY
+                  fi
+                  if [ ${{ env.TEST_SUCCESS }} == 'true' ] || [ ${{ env.TEST_SUCCESS }} == 'success' ]; then
+                      echo "| **Test Results**            | ✔️                                                              |" >> $GITHUB_STEP_SUMMARY
+                  else
+                      echo "| **Test Results**            | ❌                                                              |" >> $GITHUB_STEP_SUMMARY
+                  fi
