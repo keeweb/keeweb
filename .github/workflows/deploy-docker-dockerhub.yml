@@ -21,56 +21,79 @@ on:
     # #
 
     workflow_dispatch:
-      inputs:
+        inputs:
 
-          # #
-          #   Image Name
-          #
-          #   used in github image path
-          #       ghcr.io/${{ inputs.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME }}
-          # #
+            # #
+            #   Image Name
+            #
+            #   used in github image path
+            #       ${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
+            # #
 
-          IMAGE_NAME:
-              description:  "📦 Image Name"
-              required:     true
-              default:      'keeweb'
-              type:         string
+            IMAGE_NAME:
+                description:  "📦 Image Name"
+                required:     true
+                default:      'keeweb'
+                type:         string
 
-          # #
-          #   Image Author
-          #
-          #   used in github image path
-          #       ghcr.io/${{ inputs.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME }}
-          # #
+            # #
+            #   Image Author
+            #
+            #   used in github image path
+            #       ${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
+            # #
 
-          IMAGE_AUTHOR:
-              description:  "🪪 Image Author"
-              required:     true
-              default:      'keeweb'
-              type:         string
+            IMAGE_AUTHOR:
+                description:  "🪪 Image Author"
+                required:     true
+                default:      'antelle'
+                type:         string
 
-          # #
-          #   Image Version
-          #
-          #   used to create new release tag, and add version to docker image name
-          # #
+            # #
+            #   Image Version
+            #
+            #   used to create new release tag, and add version to docker image name
+            # #
 
-          IMAGE_VERSION:
-              description:  "🏷️ Image Version"
-              required:     true
-              default:      '1.19.0'
-              type:         string
+            IMAGE_VERSION:
+                description:  "🏷️ Image Version"
+                required:     true
+                default:      '1.19.0'
+                type:         string
 
-          # #
-          #   true:     runs all actions, even ones not scheduled
-          #   false:    only scheduled tasks will run
-          # #
+            # #
+            #   Image Dockerhub username
+            #
+            #   this is the user to sign into Dockerhub as.
+            # #
 
-          PRINT_ONLY:
-            description:  "📑 Print Debugs Only"
-            required:     true
-            default:      false
-            type:         boolean
+            IMAGE_DOCKERHUB_USERNAME:
+                description:  "🪪 Dockerhub Username"
+                required:     true
+                default:      'antelle'
+                type:         string
+
+            # #
+            #   true:     runs all actions, even ones not scheduled
+            #   false:    only scheduled tasks will run
+            # #
+
+            PRINT_ONLY:
+                description:  "📑 Print Debugs Only"
+                required:     true
+                default:      false
+                type:         boolean
+
+            # #
+            #   ENABLE:       released version will be marked as beta and receive beta tag for docker
+            #   DISABLE:      release version will be marked as stable / normal release
+            # #
+
+            BETA_RELEASE:
+                description:  "🧪 Beta (Pre-release)"
+                required:     true
+                default:      false
+                type:         boolean
 
     # #
     #   Trigger › Push
@@ -85,15 +108,17 @@ on:
 # #
 
 env:
-    IMAGE_NAME:           ${{ github.event.inputs.IMAGE_NAME || 'keeweb' }}
-    IMAGE_AUTHOR:         ${{ github.event.inputs.IMAGE_AUTHOR || 'keeweb' }}
-    BOT_NAME_1:           EuropaServ
-    BOT_NAME_DEPENDABOT:  dependabot[bot]
+    IMAGE_NAME:                 ${{ github.event.inputs.IMAGE_NAME || 'keeweb' }}
+    IMAGE_AUTHOR:               ${{ github.event.inputs.IMAGE_AUTHOR || 'antelle' }}
+    IMAGE_VERSION:              ${{ github.event.inputs.IMAGE_VERSION || '1.19.0' }}
+    IMAGE_DOCKERHUB_USERNAME:   ${{ github.event.inputs.IMAGE_DOCKERHUB_USERNAME || 'antelle' }}
+    BOT_NAME_1:                 EuropaServ
+    BOT_NAME_DEPENDABOT:        dependabot[bot]
     
 # #
 #   Jobs
 #
-#   The way pushed docker containers on Github work, the most recent image built goes at the top.
+#   The way pushed docker containers on Dockerhub work, the most recent image built goes at the top.
 #   We will use the order below which builds the :latest image last so that it appears at the very
 #   top of the packages page.
 # #
@@ -122,7 +147,7 @@ jobs:
             - name: "✅ Start"
               id: task_ctags_start
               run: |
-                echo "Creating Tag"
+                  echo "Creating Tag"
 
             # #
             #   Release › Tags › Checkout
@@ -142,21 +167,21 @@ jobs:
 
             - uses: rickstaa/action-create-tag@v1
               id: task_ctags_create
-              if: ( github.event_name == 'workflow_dispatch' && inputs.PRINT_ONLY == false )
+              if: ( github.event_name != 'workflow_dispatch' && inputs.PRINT_ONLY == false )
               with:
-                  tag: "${{ INPUTS.IMAGE_VERSION }}"
+                  tag: "${{ env.IMAGE_VERSION }}"
                   tag_exists_error: false
-                  message: '${{ inputs.IMAGE_NAME || env.IMAGE_NAME }}-${{ INPUTS.IMAGE_VERSION }}'
+                  message: '${{ env.IMAGE_NAME }}-${{ env.IMAGE_VERSION }}'
                   gpg_private_key: ${{ secrets.ADMINSERV_GPG_KEY_ASC }}
                   gpg_passphrase: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
 
     # #
-    #   Job › Docker Release › Github › Arm64
+    #   Job › Docker Release › Dockerhub › Arm64
     # #
 
-    job-docker-release-dockerhub-arm64:
+    job-docker-release-github-arm64:
         name: >-
-          📦 Release › Dockerhub › arm64
+          📦 Release › Dockerhub › Arm64
         runs-on: ubuntu-latest
         needs: [ job-docker-release-tags-create ]
         permissions:
@@ -173,7 +198,7 @@ jobs:
             - name: "✅ Start"
               id: task_release_dh_start
               run: |
-                echo "Starting Dockerhub Release"
+                  echo "Starting Dockerhub Docker arm64"
 
             # #
             #   Release › Dockerhub › Checkout › Arm64
@@ -208,27 +233,36 @@ jobs:
             #   Release › Dockerhub › Registry Login › Arm64
             # #
 
-            - name: "⚙️ Login to DockerHub"
+            - name: "⚙️ Login to Dockerhub"
               id: task_release_dh_registry
               uses: docker/login-action@v3
               with:
-                  username: ${{ inputs.IMAGE_AUTHOR || env.IMAGE_AUTHOR }}
-                  password: ${{ secrets.SELF_DOCKERHUB_TOKEN }}
+                  username: ${{ env.IMAGE_DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.IMAGE_DOCKERHUB_TOKEN }}
 
             # #
             #   Release › Dockerhub › Meta › Arm64
             # #
 
-            - name: "🔨 Dockerhub: Meta - arm64"
+            - name: "🔨 Dockerhub: Meta - Arm64"
               id: task_release_dh_meta
               uses: docker/metadata-action@v5
               with:
                   images: |
-                      ${{ inputs.IMAGE_AUTHOR || env.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME || env.IMAGE_NAME }}
+                      ${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
                   tags: |
+
+                      #  latest no
                       type=raw,value=latest,enable=false
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' }},priority=300,prefix=,suffix=-arm64,value=${{ INPUTS.IMAGE_VERSION }}
-                      type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push'}},priority=600,prefix=,suffix=-arm64,event=tag
+
+                      #  dispatch       add x1.x.x-arm64
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == false }},priority=300,prefix=,suffix=-arm64,value=${{ env.IMAGE_VERSION }}
+
+                      #  dispatch       add arm64-development
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == true }},priority=300,prefix=,suffix=-development,value=arm64
+
+                      #  tag            add tag-arm64
+                      type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push' }},priority=600,prefix=,suffix=-arm64,event=tag
                   flavor: |
                       latest=false
 
@@ -244,6 +278,7 @@ jobs:
                   echo "github.ref ........... ${{ github.ref }}"
                   echo "github.event_name .... ${{ github.event_name }}"
                   echo "inputs.PRINT_ONLY .... ${{ inputs.PRINT_ONLY }}"
+                  echo "env.AUTHOR ........... ${{ env.IMAGE_AUTHOR }}"
                   echo "tags ................. ${{ steps.task_release_dh_meta.outputs.tags }}"
                   echo "labels ............... ${{ steps.task_release_dh_meta.outputs.labels }}"
 
@@ -264,19 +299,19 @@ jobs:
                   labels: ${{ steps.task_release_dh_meta.outputs.labels }}
 
     # #
-    #   Job › Docker Release › Github › Amd64
+    #   Job › Docker Release › Dockerhub › Amd64
     # #
 
-    job-docker-release-dockerhub-amd64:
+    job-docker-release-github-amd64:
         name: >-
-          📦 Release › Dockerhub › amd64
+          📦 Release › Dockerhub › Amd64
         runs-on: ubuntu-latest
         permissions:
             contents: write
             packages: write
             attestations: write
             id-token: write
-        needs: [ job-docker-release-tags-create, job-docker-release-dockerhub-arm64 ]
+        needs: [ job-docker-release-tags-create, job-docker-release-github-arm64 ]
         steps:
 
             # #
@@ -286,7 +321,7 @@ jobs:
             - name: "✅ Start"
               id: task_release_dh_start
               run: |
-                echo "Starting Github docker release"
+                  echo "Starting Dockerhub docker release"
 
             # #
             #   Release › Dockerhub › Checkout › Amd64
@@ -321,29 +356,40 @@ jobs:
             #   Release › Dockerhub › Registry Login › Amd64
             # #
 
-            - name: "⚙️ Login to DockerHub"
+            - name: "⚙️ Login to Dockerhub"
               id: task_release_dh_registry
               uses: docker/login-action@v3
               with:
-                  username: ${{ inputs.IMAGE_AUTHOR || env.IMAGE_AUTHOR }}
-                  password: ${{ secrets.SELF_DOCKERHUB_TOKEN }}
+                  username: ${{ env.IMAGE_DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.IMAGE_DOCKERHUB_TOKEN }}
 
             # #
             #   Release › Dockerhub › Meta › Amd64
             # #
 
-            - name: "🔨 Dockerhub: Meta - amd64"
+            - name: "🔨 Dockerhub: Meta - Amd64"
               id: task_release_dh_meta
               uses: docker/metadata-action@v5
               with:
                   images: |
-                      ${{ inputs.IMAGE_AUTHOR || env.IMAGE_AUTHOR }}/${{ inputs.IMAGE_NAME || env.IMAGE_NAME }}
+                      ${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
                   tags: |
-                      type=raw,value=latest,enable=${{ endsWith(github.ref, 'main') }}
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' }},priority=300,prefix=,suffix=-amd64,value=${{ INPUTS.IMAGE_VERSION }}
+                      #  latest yes
+                      type=raw,value=latest,enable=${{ !inputs.BETA_RELEASE }}
+
+                      #  dispatch       add x1.x.x-amd64
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == false }},priority=300,prefix=,suffix=-amd64,value=${{ env.IMAGE_VERSION }}
+
+                      #  dispatch       add amd64-development
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == true }},priority=300,prefix=,suffix=-development,value=amd64
+
+                      #  tag            add tag-arm64
                       type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push'}},priority=600,prefix=,suffix=-amd64,event=tag
+
+                      #  add development tag
+                      type=raw,enable=${{ inputs.BETA_RELEASE }},priority=400,prefix=,suffix=,value=development
                   flavor: |
-                      latest=true
+                      latest=${{ !inputs.BETA_RELEASE }}
 
             # #
             #   Release › Dockerhub › Debug › Amd64
@@ -357,6 +403,7 @@ jobs:
                   echo "github.ref ........... ${{ github.ref }}"
                   echo "github.event_name .... ${{ github.event_name }}"
                   echo "inputs.PRINT_ONLY .... ${{ inputs.PRINT_ONLY }}"
+                  echo "env.AUTHOR ........... ${{ env.IMAGE_AUTHOR }}"
                   echo "tags ................. ${{ steps.task_release_dh_meta.outputs.tags }}"
                   echo "labels ............... ${{ steps.task_release_dh_meta.outputs.labels }}"
 
