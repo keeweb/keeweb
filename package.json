@@ -95,7 +95,7 @@
         "pikaday": "1.8.2",
         "pkcs11-smartcard-sign": "1.0.1",
         "pkg-dir": "^8.0.0",
-        "postcss": "8.4.38",
+        "postcss": "8.4.49",
         "postcss-loader": "8.1.1",
         "raw-loader": "4.0.2",
         "run-remote-task": "0.5.0",
