@@ -24,6 +24,9 @@ This branch `docker/base-alpine` contains the base docker alpine image that is u
 <br />
 
 - [About](#about)
+- [Before Building](#before-building)
+  - [LF over CRLF](#lf-over-crlf)
+  - [Set +x Executable](#set-x-executable)
 - [Build Base Image](#build-base-image)
 - [Usage with Keeweb Docker Image](#usage-with-keeweb-docker-image)
 
@@ -45,6 +48,38 @@ This branch contains builds for the following architectures:
 | --- | --- |
 | **amd64** | `Dockerfile` |
 | **arm64** | `Dockerfile.aarch64` |
+
+<br />
+
+---
+
+<br />
+
+## Before Building
+
+Prior to building the docker image, you must ensure that the following conditions are met. If the below tasks are not performed, your docker container will throw the following errors when started:
+
+- `/etc/s6-overlay/s6-rc.d/init-adduser/run: /usr/bin/kwown: cannot execute: required file not found`
+- `unable to exec /etc/s6-overlay/s6-rc.d/init-envfile/run: Permission denied`
+
+<br />
+
+### LF over CRLF
+
+You cannot utilize Windows' `Carriage Return Line Feed`. All files must be converted over to Unix' `Line Feed`.  This can be done in applications such as Visual Studio Code. Or you can run Linux terminal commands to convert these files:
+
+```shell
+dos2unix FILENAME
+```
+
+<br />
+
+### Set +x Executable
+All binaries (files named `run`) - must have `+x` executable flag _or 755_, this can be quickly achived with the command:
+
+```shell
+find ./ -name 'run' -exec chmod +x {} \;
+```
 
 <br />
 
