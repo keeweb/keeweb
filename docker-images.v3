@@ -4,12 +4,12 @@
 # #
 #   @version        3
 #   @file           docker-images.v3
-#   @date           12-15-24
+#   @date           12-18-2024
 #   @usage          makes use of s6-overlay for docker containers
 #                   https://github.com/just-containers/s6-overlay
 # #
 
-MOD_SCRIPT_VER='3.20241215'
+MOD_SCRIPT_VER='3.20241218'
 
 # #
 #   Custom folder paths

@@ -3,12 +3,12 @@
 # #
 #   @version        1
 #   @file           with-contenv.v1
-#   @date           12-15-24
+#   @date           12-18-2024
 #   @usage          makes use of s6-overlay for docker containers
 #                   https://github.com/just-containers/s6-overlay
 # #
 
-WITHCONTENV_VER='1.20241215'
+WITHCONTENV_VER='1.20241218'
 
 # #
 #   UMASK

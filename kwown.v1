@@ -2,13 +2,13 @@
 
 # #
 #   @version        1
-#   @file           kwwn.v1
-#   @date           12-15-24
+#   @file           kwown.v1
+#   @date           12-18-2024
 #   @usage          makes use of s6-overlay for docker containers
 #                   https://github.com/just-containers/s6-overlay
 # #
 
-KWWN_SCRIPT_VER='1.20241215'
+KWOWN_SCRIPT_VER='1.20241218'
 
 # #
 #   Define > General
