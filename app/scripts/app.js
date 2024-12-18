@@ -133,6 +133,7 @@ ready(() => {
                 }
             })
             .then(() => {
+                $('html').attr('lang', SettingsManager.activeLocale);
                 StartProfiler.milestone('loading remote config');
             });
     }
