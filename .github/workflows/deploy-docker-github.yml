@@ -92,8 +92,8 @@ on:
             #   DISABLE:      release version will be marked as stable / normal release
             # #
 
-            BETA_RELEASE:
-                description:  "🧪 Beta (Pre-release)"
+            DEV_RELEASE:
+                description:  "🧪 Development Release"
                 required:     true
                 default:      false
                 type:         boolean
@@ -260,10 +260,10 @@ jobs:
                       type=raw,value=latest,enable=false
 
                       #  dispatch       add x1.x.x-arm64
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == false }},priority=300,prefix=,suffix=-arm64,value=${{ env.IMAGE_VERSION }}
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == false }},priority=300,prefix=,suffix=-arm64,value=${{ env.IMAGE_VERSION }}
 
                       #  dispatch       add arm64-development
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == true }},priority=300,prefix=,suffix=-development,value=arm64
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == true }},priority=300,prefix=,suffix=-development,value=arm64
 
                       #  tag            add tag-arm64
                       type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push' }},priority=600,prefix=,suffix=-arm64,event=tag
@@ -380,21 +380,21 @@ jobs:
                       ghcr.io/${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
                   tags: |
                       #  latest yes
-                      type=raw,value=latest,enable=${{ !inputs.BETA_RELEASE }}
+                      type=raw,value=latest,enable=${{ !inputs.DEV_RELEASE }}
 
                       #  dispatch       add x1.x.x-amd64
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == false }},priority=300,prefix=,suffix=-amd64,value=${{ env.IMAGE_VERSION }}
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == false }},priority=300,prefix=,suffix=-amd64,value=${{ env.IMAGE_VERSION }}
 
                       #  dispatch       add amd64-development
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == true }},priority=300,prefix=,suffix=-development,value=amd64
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == true }},priority=300,prefix=,suffix=-development,value=amd64
 
                       #  tag            add tag-arm64
                       type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push'}},priority=600,prefix=,suffix=-amd64,event=tag
 
                       #  add development tag
-                      type=raw,enable=${{ inputs.BETA_RELEASE }},priority=400,prefix=,suffix=,value=development
+                      type=raw,enable=${{ inputs.DEV_RELEASE }},priority=400,prefix=,suffix=,value=development
                   flavor: |
-                      latest=${{ !inputs.BETA_RELEASE }}
+                      latest=${{ !inputs.DEV_RELEASE }}
 
             # #
             #   Release › Github › Debug › Amd64
