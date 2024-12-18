@@ -5,8 +5,8 @@
 #   @url                https://github.com/Aetherinox
 # #
 
-name: "⚙️ Deploy › Github"
-run-name: "⚙️ Deploy › Github"
+name: "📦 Deploy › Docker › Github"
+run-name: "📦 Deploy › Docker › Github"
 
 # #
 #   Triggers

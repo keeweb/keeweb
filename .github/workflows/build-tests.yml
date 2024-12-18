@@ -6,8 +6,8 @@
 #   @repo           https://github.com/keeweb/keeweb
 # #
 
-name: '📦 Deploy › Tests'
-run-name: '📦 Deploy › Tests'
+name: '🔨 Build › Tests'
+run-name: '🔨 Deploy › Tests'
 
 # #
 #   Triggers

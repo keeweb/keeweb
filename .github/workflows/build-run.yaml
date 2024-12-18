@@ -29,8 +29,8 @@
 #                                 updated node-version: '16'                › node-version: '18'
 # #
 
-name: '🔨 Build › Keeweb'
-run-name: '🔨 Build › Keeweb'
+name: '🔨 Build › Run'
+run-name: '🔨 Deploy › Run'
 
 # #
 #   Triggers
