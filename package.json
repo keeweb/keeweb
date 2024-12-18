@@ -97,8 +97,6 @@
         "pkg-dir": "^8.0.0",
         "postcss": "8.4.38",
         "postcss-loader": "8.1.1",
-        "prettier": "3.2.5",
-        "puppeteer": "23.10.4",
         "raw-loader": "4.0.2",
         "run-remote-task": "0.5.0",
         "sass": "1.83.0",
@@ -136,7 +134,9 @@
         "eslint-plugin-standard": "4.1.0",
         "mocha": "11.0.1",
         "nyc": "^17.1.0",
+        "prettier": "3.2.5",
         "prettier-eslint": "^16.3.0",
+        "puppeteer": "23.10.4",
         "webpack-bundle-analyzer": "4.10.2",
         "webpack-dev-server": "5.0.4"
     },
