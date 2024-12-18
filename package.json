@@ -128,7 +128,6 @@
         "all-contributors-cli": "^6.26.1",
         "chai": "5.1.2",
         "eslint": "9.17.0",
-        "eslint-config-prettier": "9.1.0",
         "eslint-plugin-chai-friendly": "^1.0.1",
         "eslint-plugin-import": "2.31.0",
         "eslint-plugin-n": "17.15.0",
