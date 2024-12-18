@@ -31,7 +31,7 @@ echo "
 echo '──────────────────────────────────────────────────────────────────────────────────────────'
 
 if [[ -z ${KW_READ_ONLY_FS} ]] && [[ -z ${KW_NON_ROOT_USER} ]]; then
-    kwwn keeweb:keeweb /app
-    kwwn keeweb:keeweb /config
-    kwwn keeweb:keeweb /defaults
+    kwown keeweb:keeweb /app
+    kwown keeweb:keeweb /config
+    kwown keeweb:keeweb /defaults
 fi
