@@ -144,14 +144,15 @@ flowchart TB
 subgraph GRAPH_KEEWEB ["Build keeweb:latest"]
 
     direction TB
-    obj_step10["`\> git clone -b docker/keeweb github.com/keeweb/keeweb.git`"]
+    obj_step10["`&gt; git clone -b docker/keeweb github.com/keeweb/keeweb.git`"]
     obj_step11["`**Dockerfile
      Dockerfile.aarch64**`"]
-    obj_step12["`\> docker build --build-arg VERSION=1.19.0 \\
-    --build-arg BUILD_DATE=20241216 \\
-    -t keeweb:latest \\
-    -t keeweb:1.19.0-amd64 \\
-    -f Dockerfile . \\`"]
+    obj_step12["`&gt; docker build &bsol;
+    --build-arg VERSION=1.19.0 &bsol;
+    --build-arg BUILD_DATE=20241216 &bsol;
+    -t keeweb:latest &bsol;
+    -t keeweb:1.19.0-amd64 &bsol;
+    -f Dockerfile . &bsol;`"]
     obj_step13["`Download **alpine-base** from branch **docker/alpine-base**`"]
     obj_step14["`New Image: **keeweb:latest**`"]
 
@@ -165,14 +166,15 @@ style GRAPH_KEEWEB text-align:center,stroke-width:1px,stroke:transparent,fill:tr
 
 subgraph GRAPH_ALPINE["Build alpine-base:latest Image"]
 direction TB
-    obj_step20["`\> git clone -b docker/alpine-base github.com/keeweb/keeweb.git`"]
+    obj_step20["`&gt; git clone -b docker/alpine-base github.com/keeweb/keeweb.git`"]
     obj_step21["`**Dockerfile
      Dockerfile.aarch64**`"]
-    obj_step22["`\> docker build --build-arg VERSION=3.20 \\
-    --build-arg BUILD_DATE=20241216 \\
-    -t docker-alpine-base:latest \\
-    -t docker-alpine-base:3.20-amd64 \\
-    -f Dockerfile . \\`"]
+    obj_step22["`&gt; docker build &bsol;
+    --build-arg VERSION=3.20 &bsol;
+    --build-arg BUILD_DATE=20241216 &bsol;
+    -t docker-alpine-base:latest &bsol;
+    -t docker-alpine-base:3.20-amd64 &bsol;
+    -f Dockerfile . &bsol;`"]
     obj_step23["`Download files from branch **docker/core**`"]
     obj_step24["`New Image: **alpine-base:latest**`"]
 
