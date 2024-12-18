@@ -163,6 +163,23 @@ jobs:
                   fetch-depth: 0
 
             # #
+            #   Release › Tags › Check Permissions
+            # #
+
+            - name: 'Check Permissions'
+              run: |
+                  find ./ -name 'run' -exec chmod 755 {} \;
+                  WRONG_PERM=$(find ./  -path "./.git" -prune -o \( -name "run" -o -name "finish" -o -name "check" \) -not -perm -u=x,g=x,o=x -print)
+                  if [ -n "${WRONG_PERM}" ]; then
+                      for i in ${WRONG_PERM}; do
+                      echo "::error file=${i},line=1,title=Missing Executable Bit::This file needs to be set as executable!"
+                      done
+                      exit 1
+                  else
+                      echo "**** Executable permissions are OK ****"
+                  fi
+
+            # #
             #   Release › Tags › Create Tag
             #
             #   only called in dispatch mode
@@ -212,6 +229,23 @@ jobs:
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
+
+            # #
+            #   Release › Dockerhub › Check Permissions
+            # #
+
+            - name: 'Check Permissions'
+              run: |
+                  find ./ -name 'run' -exec chmod 755 {} \;
+                  WRONG_PERM=$(find ./  -path "./.git" -prune -o \( -name "run" -o -name "finish" -o -name "check" \) -not -perm -u=x,g=x,o=x -print)
+                  if [ -n "${WRONG_PERM}" ]; then
+                      for i in ${WRONG_PERM}; do
+                      echo "::error file=${i},line=1,title=Missing Executable Bit::This file needs to be set as executable!"
+                      done
+                      exit 1
+                  else
+                      echo "**** Executable permissions are OK ****"
+                  fi
 
             # #
             #   Release › Dockerhub › QEMU › Arm64
@@ -335,6 +369,23 @@ jobs:
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
+
+            # #
+            #   Release › Dockerhub › Check Permissions
+            # #
+
+            - name: 'Check Permissions'
+              run: |
+                  find ./ -name 'run' -exec chmod 755 {} \;
+                  WRONG_PERM=$(find ./  -path "./.git" -prune -o \( -name "run" -o -name "finish" -o -name "check" \) -not -perm -u=x,g=x,o=x -print)
+                  if [ -n "${WRONG_PERM}" ]; then
+                      for i in ${WRONG_PERM}; do
+                      echo "::error file=${i},line=1,title=Missing Executable Bit::This file needs to be set as executable!"
+                      done
+                      exit 1
+                  else
+                      echo "**** Executable permissions are OK ****"
+                  fi
 
             # #
             #   Release › Dockerhub › QEMU › Amd64
