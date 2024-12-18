@@ -145,9 +145,6 @@
             "aws-sdk@2.1603.0": {
                 "events": "^3.3.0"
             }
-        },
-        "webpack-inject-plugin": {
-            "loader-utils": "^1.4.2"
         }
     },
     "scripts": {
