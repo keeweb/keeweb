@@ -2,7 +2,7 @@
     @app            keeweb
     @author         Aetherinox
     @repo           https://github.com/keeweb/keeweb
-                    https://github.com/keeweb/docker-alpine-base
+                    https://github.com/keeweb/alpine-base
                     https://hub.docker.com/repository/docker/keeweb/keeweb
                     https://hub.docker.com/repository/docker/keeweb/alpine-base
 

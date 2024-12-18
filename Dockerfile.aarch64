@@ -5,7 +5,7 @@
 #   @usage          keeweb docker image
 #   @file           Dockerfile
 #   @repo           https://github.com/keeweb/keeweb
-#                   https://github.com/keeweb/docker-alpine-base
+#                   https://github.com/keeweb/alpine-base
 #                   https://hub.docker.com/repository/docker/keeweb/keeweb
 #                   https://hub.docker.com/repository/docker/keeweb/alpine-base
 # #
@@ -40,7 +40,7 @@ LABEL build_version="Keeweb v${VERSION} build-date: ${BUILD_DATE}"
 # #
 
 ENV TZ="Etc/UTC"
-ENV URL_REPO_BASE="https://github.com/keeweb/docker-alpine-base/pkgs/container/alpine-base"
+ENV URL_REPO_BASE="https://github.com/keeweb/alpine-base/pkgs/container/alpine-base"
 ENV URL_REPO_APP="https://github.com/keeweb/keeweb/pkgs/container/keeweb"
 ENV FILE_NAME="index.html"
 ENV PORT_HTTP=80
