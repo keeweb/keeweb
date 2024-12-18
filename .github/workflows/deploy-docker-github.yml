@@ -1,12 +1,15 @@
 # #
 #   @type               github workflow
-#   @desc               deploys docker container to github
 #   @author             Aetherinox
 #   @url                https://github.com/Aetherinox
+#   @usage              deploys docker container to github
+#   @secrets            secrets.ADMINSERV_GPG_KEY_ASC                   gpg private key (armored) | BEGIN PGP PRIVATE KEY BLOCK
+#                       secrets.ADMINSERV_GPG_PASSPHRASE                gpg private key passphrase
+#                       secrets.IMAGE_GHCR_TOKEN                        github personal access token (classic) with package:write permission
 # #
 
-name: "⚙️ Deploy › Github"
-run-name: "⚙️ Deploy › Github"
+name: "📦 Deploy › Docker › Github"
+run-name: "📦 Deploy › Docker › Github"
 
 # #
 #   Triggers
@@ -80,17 +83,6 @@ on:
 
             PRINT_ONLY:
                 description:  "📑 Print Debugs Only"
-                required:     true
-                default:      false
-                type:         boolean
-
-            # #
-            #   ENABLE:       released version will be marked as beta and receive beta tag for docker
-            #   DISABLE:      release version will be marked as stable / normal release
-            # #
-
-            BETA_RELEASE:
-                description:  "🧪 Beta (Pre-release)"
                 required:     true
                 default:      false
                 type:         boolean
@@ -252,17 +244,8 @@ jobs:
                   images: |
                       ghcr.io/${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
                   tags: |
-
-                      #  latest no
                       type=raw,value=latest,enable=false
-
-                      #  dispatch       add x1.x.x-arm64
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == false }},priority=300,prefix=,suffix=-arm64,value=${{ env.IMAGE_VERSION }}
-
-                      #  dispatch       add arm64-development
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == true }},priority=300,prefix=,suffix=-development,value=arm64
-
-                      #  tag            add tag-arm64
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' }},priority=300,prefix=,suffix=-arm64,value=${{ env.IMAGE_VERSION }}
                       type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push' }},priority=600,prefix=,suffix=-arm64,event=tag
                   flavor: |
                       latest=false
@@ -376,22 +359,11 @@ jobs:
                   images: |
                       ghcr.io/${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
                   tags: |
-                      #  latest yes
-                      type=raw,value=latest,enable=${{ !inputs.BETA_RELEASE }}
-
-                      #  dispatch       add x1.x.x-amd64
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == false }},priority=300,prefix=,suffix=-amd64,value=${{ env.IMAGE_VERSION }}
-
-                      #  dispatch       add amd64-development
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == true }},priority=300,prefix=,suffix=-development,value=amd64
-
-                      #  tag            add tag-arm64
+                      type=raw,value=latest,enable=${{ endsWith(github.ref, 'main') }}
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' }},priority=300,prefix=,suffix=-amd64,value=${{ env.IMAGE_VERSION }}
                       type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push'}},priority=600,prefix=,suffix=-amd64,event=tag
-
-                      #  add development tag
-                      type=raw,enable=${{ inputs.BETA_RELEASE }},priority=400,prefix=,suffix=,value=development
                   flavor: |
-                      latest=${{ !inputs.BETA_RELEASE }}
+                      latest=true
 
             # #
             #   Release › Github › Debug › Amd64

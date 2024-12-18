@@ -1,12 +1,15 @@
 # #
 #   @type               github workflow
-#   @desc               deploys docker container to Dockerhub
 #   @author             Aetherinox
 #   @url                https://github.com/Aetherinox
+#   @usage              deploys docker container to Dockerhub
+#   @secrets            secrets.ADMINSERV_GPG_KEY_ASC                   gpg private key (armored) | BEGIN PGP PRIVATE KEY BLOCK
+#                       secrets.ADMINSERV_GPG_PASSPHRASE                gpg private key passphrase
+#                       secrets.IMAGE_DOCKERHUB_TOKEN                   hub.docker.com access token
 # #
 
-name: "⚙️ Deploy › Dockerhub"
-run-name: "⚙️ Deploy › Dockerhub"
+name: "📦 Deploy › Docker › Dockerhub"
+run-name: "📦 Deploy › Docker › Dockerhub"
 
 # #
 #   Triggers

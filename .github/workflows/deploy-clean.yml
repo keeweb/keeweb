@@ -1,8 +1,12 @@
 # #
 #   @type               github workflow
-#   @desc               cleans up the list of deployments in the environment history
 #   @author             Aetherinox
 #   @url                https://github.com/Aetherinox
+#   @usage              clears all history in your deployments.
+#                       edit the 'environment:' to determine which deployment to keep clean
+#                           - can be ran manually
+#
+#   @secrets            secrets.SELF_TOKEN_CL                   Github Access Token (Classic)
 # #
 
 name: "⚙️ Deploy › Clean"
@@ -20,9 +24,7 @@ on:
 # #
 
 env:
-    BOT_NAME_1:           AdminServ
-    BOT_NAME_2:           AdminServX
-    BOT_NAME_3:           EuropaServ
+    BOT_NAME_1:           EuropaServ
     BOT_NAME_DEPENDABOT:  dependabot[bot]
     LABELS_JSON: |
       [
