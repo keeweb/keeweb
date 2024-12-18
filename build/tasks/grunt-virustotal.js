@@ -5,7 +5,8 @@ module.exports = function (grunt) {
 
         const path = require('path');
         const fs = require('fs');
-        const got = require('got');
+        const got = (...args) => import('got').then(({ default: got }) => got(...args));
+
         const FormData = require('form-data');
 
         Promise.all(
@@ -42,11 +43,17 @@ module.exports = function (grunt) {
             const form = new FormData();
             form.append('file', fileData, fileName);
 
-            const fileUploadResp = await got('https://www.virustotal.com/api/v3/files', {
+            const dataResp = await got('https://virustotal.com/api/v3/files', {
                 method: 'POST',
                 headers,
                 body: form
-            }).json();
+            });
+
+            const fileUploadResp = dataResp.body && JSON.parse(dataResp.body);
+
+            if (!fileUploadResp) {
+                throw new Error(`Failed to fetch report from VirusTotal`);
+            }
 
             if (fileUploadResp.error) {
                 const errStr = JSON.stringify(fileUploadResp.error);
