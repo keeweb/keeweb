@@ -10,10 +10,10 @@
 #                       If editing this workflow, all you need to edit are the INPUT values and the global
 #                       ENV variables. No need to go any deeper.
 #
-#   @secrets            - secrets.CF_TOKEN                    Cloudflare Account Token
-#                       - secrets.CF_ACCOUNT_ID               Cloudflare Account ID, on Cloudflare account home page
-#                       - secrets.CF_ZONE_SITE_MAIN           Cloudflare Zone ID, on Cloudflare account home page
-#                       - secrets.SELF_TOKEN_CL               Github Token (Classic)
+#   @secrets            secrets.CF_TOKEN                    Cloudflare Account Token
+#                       secrets.CF_ACCOUNT_ID               Cloudflare Account ID, on Cloudflare account home page
+#                       secrets.CF_ZONE_SITE_MAIN           Cloudflare Zone ID, on Cloudflare account home page
+#                       secrets.SELF_TOKEN_CL               Github Token (Classic)
 # #
 
 run-name: '☁️ CF › Deploy › app.keeweb.info'

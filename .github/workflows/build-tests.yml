@@ -1,9 +1,11 @@
 # #
 #   @type           github workflow
-#   @desc           run linter and build tests on repository
 #   @author         Aetherinox
 #   @project        KeeWeb
 #   @repo           https://github.com/keeweb/keeweb
+#   @usage          run linter and build tests on repository
+#
+#   @secrets        secrets.CODECOV_TOKEN               CodeCov API Token (https://docs.codecov.com/reference/overview)
 # #
 
 name: '🔨 Build › Tests'
