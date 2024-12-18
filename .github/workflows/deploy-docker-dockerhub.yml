@@ -92,8 +92,8 @@ on:
             #   DISABLE:      release version will be marked as stable / normal release
             # #
 
-            BETA_RELEASE:
-                description:  "🧪 Beta (Pre-release)"
+            DEV_RELEASE:
+                description:  "🧪 Development Release"
                 required:     true
                 default:      false
                 type:         boolean
@@ -163,6 +163,23 @@ jobs:
                   fetch-depth: 0
 
             # #
+            #   Release › Tags › Check Permissions
+            # #
+
+            - name: 'Check Permissions'
+              run: |
+                  find ./ -name 'run' -exec chmod 755 {} \;
+                  WRONG_PERM=$(find ./  -path "./.git" -prune -o \( -name "run" -o -name "finish" -o -name "check" \) -not -perm -u=x,g=x,o=x -print)
+                  if [ -n "${WRONG_PERM}" ]; then
+                      for i in ${WRONG_PERM}; do
+                      echo "::error file=${i},line=1,title=Missing Executable Bit::This file needs to be set as executable!"
+                      done
+                      exit 1
+                  else
+                      echo "**** Executable permissions are OK ****"
+                  fi
+
+            # #
             #   Release › Tags › Create Tag
             #
             #   only called in dispatch mode
@@ -214,6 +231,23 @@ jobs:
                   fetch-depth: 0
 
             # #
+            #   Release › Dockerhub › Check Permissions
+            # #
+
+            - name: 'Check Permissions'
+              run: |
+                  find ./ -name 'run' -exec chmod 755 {} \;
+                  WRONG_PERM=$(find ./  -path "./.git" -prune -o \( -name "run" -o -name "finish" -o -name "check" \) -not -perm -u=x,g=x,o=x -print)
+                  if [ -n "${WRONG_PERM}" ]; then
+                      for i in ${WRONG_PERM}; do
+                      echo "::error file=${i},line=1,title=Missing Executable Bit::This file needs to be set as executable!"
+                      done
+                      exit 1
+                  else
+                      echo "**** Executable permissions are OK ****"
+                  fi
+
+            # #
             #   Release › Dockerhub › QEMU › Arm64
             # #
 
@@ -259,10 +293,10 @@ jobs:
                       type=raw,value=latest,enable=false
 
                       #  dispatch       add x1.x.x-arm64
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == false }},priority=300,prefix=,suffix=-arm64,value=${{ env.IMAGE_VERSION }}
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == false }},priority=300,prefix=,suffix=-arm64,value=${{ env.IMAGE_VERSION }}
 
                       #  dispatch       add arm64-development
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == true }},priority=300,prefix=,suffix=-development,value=arm64
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == true }},priority=300,prefix=,suffix=-development,value=arm64
 
                       #  tag            add tag-arm64
                       type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push' }},priority=600,prefix=,suffix=-arm64,event=tag
@@ -337,6 +371,23 @@ jobs:
                   fetch-depth: 0
 
             # #
+            #   Release › Dockerhub › Check Permissions
+            # #
+
+            - name: 'Check Permissions'
+              run: |
+                  find ./ -name 'run' -exec chmod 755 {} \;
+                  WRONG_PERM=$(find ./  -path "./.git" -prune -o \( -name "run" -o -name "finish" -o -name "check" \) -not -perm -u=x,g=x,o=x -print)
+                  if [ -n "${WRONG_PERM}" ]; then
+                      for i in ${WRONG_PERM}; do
+                      echo "::error file=${i},line=1,title=Missing Executable Bit::This file needs to be set as executable!"
+                      done
+                      exit 1
+                  else
+                      echo "**** Executable permissions are OK ****"
+                  fi
+
+            # #
             #   Release › Dockerhub › QEMU › Amd64
             # #
 
@@ -378,21 +429,21 @@ jobs:
                       ${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
                   tags: |
                       #  latest yes
-                      type=raw,value=latest,enable=${{ !inputs.BETA_RELEASE }}
+                      type=raw,value=latest,enable=${{ !inputs.DEV_RELEASE }}
 
                       #  dispatch       add x1.x.x-amd64
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == false }},priority=300,prefix=,suffix=-amd64,value=${{ env.IMAGE_VERSION }}
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == false }},priority=300,prefix=,suffix=-amd64,value=${{ env.IMAGE_VERSION }}
 
                       #  dispatch       add amd64-development
-                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.BETA_RELEASE == true }},priority=300,prefix=,suffix=-development,value=amd64
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == true }},priority=300,prefix=,suffix=-development,value=amd64
 
                       #  tag            add tag-arm64
                       type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push'}},priority=600,prefix=,suffix=-amd64,event=tag
 
                       #  add development tag
-                      type=raw,enable=${{ inputs.BETA_RELEASE }},priority=400,prefix=,suffix=,value=development
+                      type=raw,enable=${{ inputs.DEV_RELEASE }},priority=400,prefix=,suffix=,value=development
                   flavor: |
-                      latest=${{ !inputs.BETA_RELEASE }}
+                      latest=${{ !inputs.DEV_RELEASE }}
 
             # #
             #   Release › Dockerhub › Debug › Amd64
