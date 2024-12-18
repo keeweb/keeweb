@@ -138,11 +138,15 @@ docker build --build-arg VERSION=3.20 --build-arg BUILD_DATE=20241216 -t alpine-
 docker build --build-arg VERSION=3.20 --build-arg BUILD_DATE=20241216 -t alpine-base:3.20-arm64 -f Dockerfile.aarch64 .
 ```
 
+<br />
+
+The flow of the process is outlined below:
+
 ```mermaid
+%%{init: { 'themeVariables': { 'fontSize': '10px' }}}%%
 flowchart TB
 
 subgraph GRAPH_KEEWEB ["Build keeweb:latest"]
-
     direction TB
     obj_step10["`&gt; git clone -b docker/keeweb github.com/keeweb/keeweb.git`"]
     obj_step11["`**Dockerfile
