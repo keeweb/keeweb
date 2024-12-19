@@ -56,8 +56,11 @@ The `docker/keeweb` branch contains the Keeweb password manager within a docker 
   - [Environment Variables](#environment-variables)
   - [Volumes](#volumes)
 - [Build](#build)
+  - [amd64](#amd64)
+  - [arm64 / aarch64](#arm64--aarch64)
   - [Troubleshooting](#troubleshooting)
     - [Permission Denied](#permission-denied)
+  - [Custom Scripts / Plugins](#custom-scripts--plugins)
 - [Shell / Bash](#shell--bash)
 - [SSL Certificates](#ssl-certificates)
 - [Logs](#logs)
@@ -384,11 +387,10 @@ By mounting the volume above, you should now have access to the following folder
 
 | Folder | Description |
 | --- | --- |
-| `📁 keys` | <sub>Responsible for storing your ssl certificate `cert.crt` + key `cert.key`</sub> |
+| `📁 keys` | <sub>SSL certificate `cert.crt` + key `cert.key`</sub> |
 | `📁 log` | <sub>All nginx and php logs</sub> |
-| `📁 nginx` | <sub>Contains `nginx.conf`, `resolver.conf`, `ssl.conf`, `site-confs`</sub> |
-| `📁 php` | <sub>Contains `php-local.ini`, `www2.conf`</sub> |
-| `📁 www` | <sub>Folder which stores the Keeweb files and images</sub> |
+| `📁 nginx` | <sub>`nginx.conf`, `resolver.conf`, `ssl.conf`, `site-confs`</sub> |
+| `📁 www` | <sub>Folder which stores the Keeweb files, images, and plugins</sub> |
 
 <br />
 
@@ -397,10 +399,45 @@ By mounting the volume above, you should now have access to the following folder
 <br />
 
 ## Build
-To build this image, utilize the following commands for both architectures. For the argument `VERSION`; specify the current release of alpine linux that is to be packaged within the docker image.
 
-```shell ignore
-docker build --build-arg VERSION=1.19.0 --build-arg BUILD_DATE=12.15.24 -t keeweb:latest -t keeweb:1.19.0 -t keeweb:1.19.0-amd64 -f Dockerfile .
+To built the Keeweb docker container, there are a few things to take into consideration. **Firstly**, we use a customized alpine image as our base. This custom alpine base image is available in our **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** branch.
+
+The `alpine-base` image above is called within the **[Dockerfile](https://github.com/keeweb/keeweb/blob/docker/keeweb/Dockerfile)** and **[Dockerfile.aarch64](https://github.com/keeweb/keeweb/blob/docker/keeweb/Dockerfile.aarch64)** in this `docker/keeweb` branch.
+
+```shell
+# Dockerfile
+FROM ghcr.io/keeweb/alpine-base:3.20-amd64
+
+# Dockerfile.aarch64
+FROM ghcr.io/keeweb/alpine-base:3.20-arm64
+```
+
+More information on how to build your own `alpine-base` image, review the **README.md** in our [docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base) branch.
+
+The **second** thing to remember before building your Keeweb docker image is that you must ensure the file permissions are set correctly. Any file with the name `run` MUST have **0755** / **+x** permissions which can be done with the following command:
+
+```shell
+find ./ -name 'run' -exec chmod +x {} \;
+```
+
+<br />
+
+Once you have accomplished the requirements above, utilize the following commands for both architectures. For the argument `VERSION`; specify the current release of Keeweb which will be packaged within the docker image.
+
+<br />
+
+### amd64
+
+```shell
+docker build --build-arg VERSION=1.19.0 --build-arg BUILD_DATE=20241218 -t keeweb:latest -t keeweb:1.19.0 -t keeweb:1.19.0-amd64 -f Dockerfile .
+```
+
+<br />
+
+### arm64 / aarch64
+
+```shell
+docker build --build-arg VERSION=1.19.0 --build-arg BUILD_DATE=20241218 -t keeweb:1.19.0-arm64 -f Dockerfile.aarch64 .
 ```
 
 <br />
@@ -414,6 +451,8 @@ These are issues you may experience when building and deploying your own custom 
 
 ```console
 Failed to open apk database: Permission denied
+s6-rc: warning: unable to start service init-adduser: command exited 127
+/etc/s6-overlay/s6-rc.d/init-adduser/run: line 34: kwwn: command not found
 unable to exec /etc/s6-overlay/s6-rc.d/init-envfile/run: Permission denied
 unable to exec /etc/s6-overlay/s6-rc.d/init-envfile/run: Permission denied
 ```
@@ -438,9 +477,25 @@ sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-version-checks/run
 sudo chmod +x /root/etc/s6-overlay/s6-rc.d/svc-cron/run
 sudo chmod +x /root/etc/s6-overlay/s6-rc.d/svc-nginx/run
 sudo chmod +x /root/etc/s6-overlay/s6-rc.d/svc-php-fpm/run
-sudo chmod +x /run.sh
-sudo chmod +x /download.sh
 ```
+
+<br />
+
+You can also shorten this task down by using the following:
+```shell
+find ./ -name 'run' -exec chmod +x {} \;
+```
+
+<br />
+
+### Custom Scripts / Plugins
+Our Keeweb docker image contains a special script which automatically installs all of the available Keeweb thtmes and a few plugins directly into your container. That custom script is located at:
+
+- https://github.com/keeweb/keeweb/blob/docker/keeweb/root/custom-cont-init.d/plugins
+
+<br />
+
+Any additional scripts you create and want ran when the container is started, must be placed in the root `custom-cont-init.d/` folder.
 
 <br />
 
@@ -589,8 +644,8 @@ This image spits out detailed information about its current progress. You can ei
   [contribs-all-uri]: https://github.com/all-contributors/all-contributors
 
 <!-- BADGE > GITHUB > BUILD > NPM -->
-  [github-build-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/deploy-docker.yml?logo=github&logoColor=FFFFFF&label=Build&color=%23278b30
-  [github-build-uri]: https://github.com/keeweb/keeweb/actions/workflows/deploy-docker.yml
+  [github-build-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/deploy-docker-github.yml?logo=github&logoColor=FFFFFF&label=Build&color=%23278b30
+  [github-build-uri]: https://github.com/keeweb/keeweb/actions/workflows/deploy-docker-github.yml
 
 <!-- BADGE > GITHUB > BUILD > Pypi -->
   [github-build-pypi-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/release-pypi.yml?logo=github&logoColor=FFFFFF&label=Build&color=%23278b30
