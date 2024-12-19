@@ -136,7 +136,7 @@ services:
     keeweb:
         container_name: keeweb
         image: ghcr.io/keeweb/keeweb:latest          # Github image
-      # image: keeweb/keeweb:latest                         # Dockerhub image
+      # image: keeweb/keeweb:latest                  # Dockerhub image
         restart: unless-stopped
         volumes:
             - ./keeweb:/config
@@ -561,11 +561,14 @@ This image spits out detailed information about its current progress. You can ei
 <br />
 
 ```shell
+ Migrations   : Started
+ Migrations   : 01-nginx-site-confs-default › Skipped
+ Migrations   : Complete
 ──────────────────────────────────────────────────────────────────────────────────────────
                               Keeweb Password Manager                             
 ──────────────────────────────────────────────────────────────────────────────────────────
-
   Thanks for choosing Keeweb. Get started with some of the links below:
+
         Official Repo           https://github.com/keeweb/keeweb
         Official Site           https://keeweb.info/
         Beta Demo               https://beta.keeweb.info/
@@ -576,15 +579,16 @@ This image spits out detailed information about its current progress. You can ei
   please consider using Traefik and Authentik to protect this container from
   outside access.
 
-        User ID ........... 1000
-        Group ID .......... 1000
-        Port HTTP ......... 80
-        Port HTTPS ........ 443
-
+        User:Group              1000:1000
+        (Ports) HTTP/HTTPS      80/443
 ──────────────────────────────────────────────────────────────────────────────────────────
 
  SSL          : Using existing keys found in /config/keys
- Loader       : No custom files found, skipping...
+ Loader       : Custom files found, loading them ...
+ Loader       : Executing ...
+ Loader       : Checking keeweb-plugins
+ Loader       : keeweb-plugins already installed in /config/www/plugins; skipping
+ Loader       : plugins: Exited 0
  Core         : Completed loading container
 ```
 
