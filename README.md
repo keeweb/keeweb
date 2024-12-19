@@ -92,12 +92,20 @@ Review some of our most important links below to learn more about KeeWeb and who
 
 <br />
 
-Apps: [Web](https://app.keeweb.info/), [Desktop](https://github.com/keeweb/keeweb/releases/latest)  
-Timeline: [Release Notes](release-notes.md), [TODO](https://github.com/keeweb/keeweb/wiki/TODO)  
-On one page: [Features](https://keeweb.info/#features), [FAQ](https://github.com/keeweb/keeweb/wiki/FAQ)  
-Website: [keeweb.info](https://keeweb.info)  
-Twitter: [kee_web](https://twitter.com/kee_web)  
-Donate: [OpenCollective](https://opencollective.com/keeweb#support), [GitHub](https://github.com/sponsors/antelle)
+| Topic | Links | Description |
+| --- | --- | --- |
+| **Apps** | [Web](https://app.keeweb.info/), [Desktop](https://github.com/keeweb/keeweb/releases/latest) | Try out our application |
+| **Demos** | [Web](https://app.keeweb.info/), [Beta](https://beta.keeweb.info ) | Test our stable and beta releases of Keeweb |
+| **Services** | [Favicon Grabber](https://services.keeweb.info/favicon) | Services integrated within Keeweb |
+| **Branches** | [docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base), [docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb) | Important branches related to our project |
+| **Timeline** | [Release Notes](release-notes.md), [TODO](https://github.com/keeweb/keeweb/wiki/TODO) | See what we're planning |
+| **On one page** | [Features](https://keeweb.info/#features), [FAQ](https://github.com/keeweb/keeweb/wiki/FAQ) | Information about Keeweb development |
+| **Website** | [keeweb.info](https://keeweb.info) | Visit our official website |
+| **Social** | [kee_web](https://twitter.com/kee_web) | Check us out on our social media |
+| **Donate** | [OpenCollective](https://opencollective.com/keeweb#support), [GitHub](https://github.com/sponsors/antelle) | Help keep us going |
+
+
+
 
 <br />
 
@@ -208,23 +216,23 @@ services:
           - traefik.enable=true
 
           #   Router > http
-          - traefik.http.routers.dozzle-http.rule=Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
-          - traefik.http.routers.dozzle-http.service=keeweb
-          - traefik.http.routers.dozzle-http.entrypoints=http
-          - traefik.http.routers.dozzle-http.middlewares=https-redirect@file
+          - traefik.http.routers.keeweb-http.rule=Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
+          - traefik.http.routers.keeweb-http.service=keeweb
+          - traefik.http.routers.keeweb-http.entrypoints=http
+          - traefik.http.routers.keeweb-http.middlewares=https-redirect@file
 
           #   Router > https
-          - traefik.http.routers.dozzle-https.rule=Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
-          - traefik.http.routers.dozzle-https.service=keeweb
-          - traefik.http.routers.dozzle-https.entrypoints=https
-          - traefik.http.routers.dozzle-https.tls=true
-          - traefik.http.routers.dozzle-https.tls.certresolver=cloudflare
-          - traefik.http.routers.dozzle-https.tls.domains[0].main=domain.lan
-          - traefik.http.routers.dozzle-https.tls.domains[0].sans=*.domain.lan
+          - traefik.http.routers.keeweb-https.rule=Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
+          - traefik.http.routers.keeweb-https.service=keeweb
+          - traefik.http.routers.keeweb-https.entrypoints=https
+          - traefik.http.routers.keeweb-https.tls=true
+          - traefik.http.routers.keeweb-https.tls.certresolver=cloudflare
+          - traefik.http.routers.keeweb-https.tls.domains[0].main=domain.lan
+          - traefik.http.routers.keeweb-https.tls.domains[0].sans=*.domain.lan
 
           #   Load Balancer
-          - traefik.http.services.dozzle.loadbalancer.server.port=443
-          - traefik.http.services.dozzle.loadbalancer.server.scheme=https
+          - traefik.http.services.keeweb.loadbalancer.server.port=443
+          - traefik.http.services.keeweb.loadbalancer.server.scheme=https
 ```
 
 <br />
