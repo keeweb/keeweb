@@ -105,10 +105,25 @@ Prior to building the ****[docker/alpine-base](https://github.com/keeweb/keeweb/
 
 ### LF over CRLF
 
-You cannot utilize Windows' `Carriage Return Line Feed`. All files must be converted to Unix' `Line Feed`.  This can be done with **[Visual Studio Code](https://code.visualstudio.com/)**. OR; you can run the Linux terminal command `dos2unix` to convert these files:
+You cannot utilize Windows' `Carriage Return Line Feed`. All files must be converted to Unix' `Line Feed`.  This can be done with **[Visual Studio Code](https://code.visualstudio.com/)**. OR; you can run the Linux terminal command `dos2unix` to convert these files.
+
+For the branches **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** and **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)**, you can use the following recursive commands:
+
+<br />
+
+> [!CAUTION]
+> Be careful using the command to change **ALL** files. You should **NOT** change the files in your `.git` folder, otherwise you will corrupt your git indexes.
+>
+> If you accidentally run dos2unix on your `.git` folder, do NOT push anything to git. Pull a new copy from the repo.
+
+<br />
 
 ```shell
-find ./ -type f -name 'run' | xargs dos2unix -f
+# Change ALL files
+find ./ -type f | grep -Ev '.git|*.jpg|*.jpeg|*.png' | xargs dos2unix --
+
+# Change run / binaries
+find ./ -type f -name 'run' | xargs dos2unix --
 ```
 
 <br />
