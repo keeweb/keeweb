@@ -25,7 +25,7 @@ This branch `docker/core` contains a set of scripts which are utilized when buil
 
 - [About](#about)
 - [Before Building](#before-building)
-  - [CRLF over LF](#crlf-over-lf)
+  - [LF over CRLF](#lf-over-crlf)
   - [Set +x / 0755 Permissions](#set-x--0755-permissions)
 - [Build `docker/alpine-base` Image](#build-dockeralpine-base-image)
   - [amd64](#amd64)
@@ -109,7 +109,7 @@ Prior to building the ****[docker/alpine-base](https://github.com/keeweb/keeweb/
 
 <br />
 
-### CRLF over LF
+### LF over CRLF
 
 You cannot utilize Windows' `Carriage Return Line Feed`. All files must be converted to Unix' `Line Feed`.  This can be done with **[Visual Studio Code](https://code.visualstudio.com/)**. OR; you can run the Linux terminal command `dos2unix` to convert these files.
 
