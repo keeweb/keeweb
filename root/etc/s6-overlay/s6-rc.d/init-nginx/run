@@ -34,21 +34,11 @@ fi
 sed -i -E "s#^(\s*)include /config/nginx/site-confs/\*;#\1include /config/nginx/site-confs/\*.conf;#" /config/nginx/nginx.conf
 
 # #
-#   copy index.html if no index file exists
+#   copy index.html, 404.html over to working directory www/*
 # #
 
-INDEX_EXISTS=false
-for file in /config/www/index.*; do
-    if [[ -e "${file}" ]]; then
-        INDEX_EXISTS=true
-        break
-    fi
-done
-
-if [[ ${INDEX_EXISTS} == false ]]; then
-    cp /defaults/www/index.html /config/www/index.html
-    cp /defaults/www/404.html /config/www/404.html
-fi
+cp /defaults/www/index.html /config/www/index.html
+cp /defaults/www/404.html /config/www/404.html
 
 # #
 #   Folder > /config/www/theme
