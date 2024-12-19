@@ -4,7 +4,7 @@
 for cron_user in keeweb root; do
     if [[ -z ${AETHERX_READ_ONLY_FS} ]] && [[ -z ${AETHERX_NON_ROOT_USER} ]]; then
         if [[ -f "/etc/crontabs/${cron_user}" ]]; then
-            kwwn "${cron_user}":"${cron_user}" "/etc/crontabs/${cron_user}"
+            kwown "${cron_user}":"${cron_user}" "/etc/crontabs/${cron_user}"
             crontab -u "${cron_user}" "/etc/crontabs/${cron_user}"
         fi
     fi
@@ -38,7 +38,8 @@ for cron_user in keeweb root; do
         #   set perms and import user crontabs
         # #
 
-        kwwn "${cron_user}":"${cron_user}" "/config/crontabs/${cron_user}"
+        kwown "${cron_user}":"${cron_user}" "/config/crontabs/${cron_user}"
         crontab -u "${cron_user}" "/config/crontabs/${cron_user}"
     fi
 done
+

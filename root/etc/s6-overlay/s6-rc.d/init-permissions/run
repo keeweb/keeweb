@@ -2,17 +2,17 @@
 # shellcheck shell=bash
 
 # permissions
-kwwn -R keeweb:keeweb \
+kwown -R keeweb:keeweb \
     /var/lib/nginx \
     /var/tmp/nginx
 
-kwwn -R keeweb:keeweb \
+kwown -R keeweb:keeweb \
     /config/keys \
     /config/log \
     /config/nginx \
     /config/php
 
-kwwn keeweb:keeweb \
+kwown keeweb:keeweb \
     /config/www
 
 chmod -R g+w \
