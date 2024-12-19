@@ -42,6 +42,9 @@ This branch `docker/base-alpine` contains the base docker alpine image which is 
   - [docker-compose.yml](#docker-composeyml)
 - [Extra Notes](#extra-notes)
   - [Custom Scripts](#custom-scripts)
+  - [SSL Certificates](#ssl-certificates)
+  - [Access Shell / Bash](#access-shell--bash)
+  - [Logs](#logs)
 
 
 
@@ -146,6 +149,28 @@ If you are building the **[docker/alpine-base](https://github.com/keeweb/keeweb/
 
 ```shell
 find ./ -name 'run' -exec chmod +x {} \;
+```
+
+<br />
+
+If you want to set the permissions manually, run the following:
+
+```shell
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-adduser/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-crontab-config/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-custom-files/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-envfile/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-folders/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-keygen/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-migrations/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-nginx/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-permissions/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-php/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-samples/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/init-version-checks/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/svc-cron/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/svc-nginx/run
+sudo chmod +x /root/etc/s6-overlay/s6-rc.d/svc-php-fpm/run
 ```
 
 <br />
@@ -455,6 +480,90 @@ services:
 <br />
 
 The **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image already contains a custom script called `/root/custom-cont-init.d/plugins`. Do **NOT** edit this script. It is what automatically downloads the official Keeweb plugins and adds them to the container.
+
+### SSL Certificates
+
+This docker image automatically generates an SSL certificate when the nginx server is brought online. 
+
+<br />
+
+<p align="center"><img style="width: 85%;text-align: center;border: 1px solid #353535;" src="docs/img/002.png"></p>
+
+<br />
+
+You may opt to either use the generated self-signed certificate, or you can add your own. If you decide to use your own self-signed certificate, ensure you have mounted the `/config` volume in your `docker-compose.yml`:
+
+```yml
+services:
+    keeweb:
+        container_name: keeweb
+        image: ghcr.io/keeweb/keeweb:latest          # Github image
+      # image: keeweb/keeweb:latest                  # Dockerhub image
+        restart: unless-stopped
+        volumes:
+            - ./keeweb:/config
+```
+
+<br />
+
+Then navigate to the newly mounted folder and add your `📄 cert.crt` and `🔑 cert.key` files to the `📁 /keeweb/keys/*` folder.
+
+<br />
+
+> [!NOTE]
+> If you are generating your own certificate and key, we recommend a minimum of:
+> - RSA: `2048 bits`
+> - ECC: `256 bits`
+> - ECDSA: `P-384 or P-521`
+
+<br />
+
+### Access Shell / Bash
+You can access the docker container's shell by running:
+
+```shell
+docker exec -it keeweb ash
+```
+
+<br />
+
+### Logs
+
+This image spits out detailed information about its current progress. You can either use `docker logs` or a 3rd party app such as [Portainer](https://portainer.io/) to view the logs.
+
+<br />
+
+```shell
+ Migrations   : Started
+ Migrations   : 01-nginx-site-confs-default › Skipped
+ Migrations   : Complete
+──────────────────────────────────────────────────────────────────────────────────────────
+                              Keeweb Password Manager                             
+──────────────────────────────────────────────────────────────────────────────────────────
+  Thanks for choosing Keeweb. Get started with some of the links below:
+
+        Official Repo           https://github.com/keeweb/keeweb
+        Official Site           https://keeweb.info/
+        Beta Demo               https://beta.keeweb.info/
+        Web App                 https://app.keeweb.info/
+        Favicon Service         https://services.keeweb.info/favicon
+
+  If you are making this copy of Keeweb available on a public-facing domain,
+  please consider using Traefik and Authentik to protect this container from
+  outside access.
+
+        User:Group              1000:1000
+        (Ports) HTTP/HTTPS      80/443
+──────────────────────────────────────────────────────────────────────────────────────────
+
+ SSL          : Using existing keys found in /config/keys
+ Loader       : Custom files found, loading them ...
+ Loader       : Executing ...
+ Loader       : Checking keeweb-plugins
+ Loader       : keeweb-plugins already installed in /config/www/plugins; skipping
+ Loader       : plugins: Exited 0
+ Core         : Completed loading container
+```
 
 <br />
 
