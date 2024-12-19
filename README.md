@@ -51,6 +51,7 @@ The `docker/keeweb` branch contains the Keeweb password manager within a docker 
       - [certificatesResolvers](#certificatesresolvers)
       - [entryPoints (Normal)](#entrypoints-normal)
       - [entryPoints (Cloudflare)](#entrypoints-cloudflare)
+    - [Authentik Integration](#authentik-integration)
 - [Env Variables \& Volumes](#env-variables--volumes)
   - [Environment Variables](#environment-variables)
   - [Volumes](#volumes)
@@ -338,6 +339,100 @@ In the example below, we will add `forwardedHeaders` -> `trustedIPs` and add all
 <br />
 
 Save the files and then give Traefik and your Keeweb containers a restart.
+
+<br />
+
+---
+
+<br />
+
+#### Authentik Integration
+
+If you are adding [Authentik](https://goauthentik.io/) as middleware in the steps above; the last thing you must do is log in to your Authentik admin panel and add a new **Provider** so that we can access Keeweb via your domain.
+
+<br />
+
+Sign into the Authentik admin panel, go to the left-side navigation, select **Applications** -> **Providers**. Then at the top of the new page, click **Create**.
+
+<br />
+
+<p align="center"><img style="width: 40%;text-align: center;" src="docs/img/authentik/01.png"></p>
+
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/02.png"></p>
+
+<br />
+
+For the **provider**, select `Proxy Provider`.
+
+<br />
+
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/03.png"></p>
+
+<br />
+
+Add the following provider values:
+- **Name**: `Keeweb ForwardAuth`
+- **Authentication Flow**: `default-source-authentication (Welcome to authentik!)`
+- **Authorization Flow**: `default-provider-authorization-implicit-consent (Authorize Application)`
+
+<br />
+
+Select **Forward Auth (single application)**:
+- **External Host**: `https://keeweb.domain.com`
+
+<br />
+
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/04.gif"></p>
+
+<br />
+
+Once finished, click **Create**. Then on the left-side menu, select **Applications** -> **Applications**. Then at the top of the new page, click **Create**.
+
+<br />
+
+<p align="center"><img style="width: 40%;text-align: center;" src="docs/img/authentik/05.png"></p>
+
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/02.png"></p>
+
+<br />
+
+Add the following parameters:
+- **Name**: `Keeweb (Password Manager)`
+- **Slug**: `keeweb`
+- **Group**: `Security`
+- **Provider**: `Keeweb ForwardAuth`
+- **Backchannel Providers**: `None`
+- **Policy Engine Mode**: `any`
+
+<br />
+
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/06.png"></p>
+
+<br />
+
+Save, and then on the left-side menu, select **Applications** -> **Outposts**:
+
+<br />
+
+<p align="center"><img style="width: 40%;text-align: center;" src="docs/img/authentik/07.png"></p>
+
+<br />
+
+Find your **Outpost** and edit it.
+
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/08.png"></p>
+
+<br />
+
+Move `Keeweb (Password Manager)` to the right side **Selected Applications** box.
+
+<br />
+
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/09.png"></p>
+
+<br />
+
+You should be able to access `keeweb.domain.com` and be prompted now to authenticate with Authentik.
 
 <br />
 
