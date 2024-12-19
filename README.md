@@ -41,6 +41,7 @@ This branch `docker/core` contains a set of scripts which are utilized when buil
 - [Extra Notes](#extra-notes)
   - [Custom Scripts](#custom-scripts)
   - [SSL Certificates](#ssl-certificates)
+  - [Access Shell / Bash](#access-shell--bash)
   - [Logs](#logs)
 
 
@@ -515,6 +516,15 @@ Then navigate to the newly mounted folder and add your `📄 cert.crt` and `🔑
 > - RSA: `2048 bits`
 > - ECC: `256 bits`
 > - ECDSA: `P-384 or P-521`
+
+<br />
+
+### Access Shell / Bash
+You can access the docker container's shell by running:
+
+```shell
+docker exec -it keeweb ash
+```
 
 <br />
 
