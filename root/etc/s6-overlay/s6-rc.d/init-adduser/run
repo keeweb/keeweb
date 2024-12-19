@@ -16,15 +16,13 @@ else
 fi
 
 if [[ -z ${KW_NON_ROOT_USER} ]]; then
-echo "
-        User:Group              $(id -u keeweb):$(id -g keeweb)"
+echo ""
+echo "        User:Group              $(id -u keeweb):$(id -g keeweb)"
 else
-echo "
-        User:Group              $(stat /run -c %u):$(stat /run -c %g)"
+echo "        User:Group              $(stat /run -c %u):$(stat /run -c %g)"
 fi
-echo "
-        (Ports) HTTP/HTTPS      $(echo $PORT_HTTP)/$(echo $PORT_HTTPS)"
-
+echo "        (Ports) HTTP/HTTPS      $(echo $PORT_HTTP)/$(echo $PORT_HTTPS)"
+echo ""
 echo '──────────────────────────────────────────────────────────────────────────────────────────'
 
 if [[ -z ${KW_READ_ONLY_FS} ]] && [[ -z ${KW_NON_ROOT_USER} ]]; then
