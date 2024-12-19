@@ -45,13 +45,15 @@ The `docker/keeweb` branch contains the Keeweb password manager within a docker 
 - [Install](#install)
   - [Docker Run](#docker-run)
   - [Docker Compose](#docker-compose)
-  - [Traefik](#traefik)
-    - [Dynamic.yml](#dynamicyml)
-    - [Static.yml](#staticyml)
-      - [certificatesResolvers](#certificatesresolvers)
-      - [entryPoints (Normal)](#entrypoints-normal)
-      - [entryPoints (Cloudflare)](#entrypoints-cloudflare)
-    - [Authentik Integration](#authentik-integration)
+  - [Traefik Integration](#traefik-integration)
+      - [Labels](#labels)
+      - [Dynamic.yml](#dynamicyml)
+      - [Static.yml](#staticyml)
+        - [Providers](#providers)
+        - [certificatesResolvers](#certificatesresolvers)
+        - [entryPoints (Normal)](#entrypoints-normal)
+        - [entryPoints (Cloudflare)](#entrypoints-cloudflare)
+  - [Authentik Integration](#authentik-integration)
 - [Env Variables \& Volumes](#env-variables--volumes)
   - [Environment Variables](#environment-variables)
   - [Volumes](#volumes)
@@ -145,20 +147,86 @@ services:
 
 <br />
 
-### Traefik
-You can put this container behind Traefik if you want to use a reverse proxy and let Traefik handle the SSL certificate.
-
+### Traefik Integration
 <br />
 
 > [!NOTE]
 > These steps are **optional**. 
 > 
 > If you do not use Traefik, you can skip this section of steps. This is only for users who wish to put this container behind Traefik.
+>
+> If you do not wish to use Traefik, remember that if you make your Keeweb container public facing, you will need to utilize a service such as **[certbot/lets encrypt](https://phoenixnap.com/kb/letsencrypt-docker)** to generate SSL certificates.
 
 <br />
 
-#### Dynamic.yml
-Open the Traefik dynamic file which is usually named `dynamic.yml`. We need to add a new `middleware`, `router`, and `service` to our Traefik dynamic file so that it knows about our new Keeweb container and where it is.
+Our first step is to tell Traefik about our Keeweb container. We highly recommend you utilize a Traefik **[dynamic file](#dynamicyml)**, instead of **[labels](#labels)**. Using a dynamic file allows for automatic refreshing without the need to restart Traefik when a change is made.
+
+If you decide to use **[labels](#labels)** instead of a **[dynamic file](#dynamicyml)**, any changes you want to make to your labels will require a restart of Traefik.
+
+<br />
+
+We will be setting up the following:
+
+- A `middleware` to re-direct http to https
+- A `route` to access Keeweb via http (optional)
+- A `route` to access Keeweb via https (secure)
+- A `service` to tell Traefik how to access your Keeweb container
+- A `resolver` so that Traefik can generate and apply a wildcard SSL certificate
+
+<br />
+
+##### Labels
+
+To add Keeweb to Traefik, you will need to open your `docker-compose.yml` and apply the following labels to your Keeweb container. Ensure you change `domain.lan` to your actual domain name.
+
+```yml
+services:
+    keeweb:
+        container_name: keeweb
+        image: ghcr.io/keeweb/keeweb:latest       # Github image
+      # image: keeweb/keeweb:latest               # Dockerhub image
+        restart: unless-stopped
+        volumes:
+            - ./keeweb:/config
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Etc/UTC
+        labels:
+
+          #   General
+          - traefik.enable=true
+
+          #   Router > http
+          - traefik.http.routers.keeweb-http.rule=Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
+          - traefik.http.routers.keeweb-http.service=keeweb
+          - traefik.http.routers.keeweb-http.entrypoints=http
+          - traefik.http.routers.keeweb-http.middlewares=https-redirect@file
+
+          #   Router > https
+          - traefik.http.routers.keeweb-https.rule=Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
+          - traefik.http.routers.keeweb-https.service=keeweb
+          - traefik.http.routers.keeweb-https.entrypoints=https
+          - traefik.http.routers.keeweb-https.tls=true
+          - traefik.http.routers.keeweb-https.tls.certresolver=cloudflare
+          - traefik.http.routers.keeweb-https.tls.domains[0].main=domain.lan
+          - traefik.http.routers.keeweb-https.tls.domains[0].sans=*.domain.lan
+
+          #   Load Balancer
+          - traefik.http.services.keeweb.loadbalancer.server.port=443
+          - traefik.http.services.keeweb.loadbalancer.server.scheme=https
+```
+
+<br />
+
+After you've added the labels above, skip the [dynamic.yml](#dynamicyml) section and go straight to the **[static.yml](#staticyml)** section.
+
+<br />
+<br />
+
+##### Dynamic.yml
+
+If you decide to not use **[labels](#labels)** and want to use a dynamic file, you will first need to create your dynamic file. the Traefik dynamic file is usually named `dynamic.yml`. We need to add a new `middleware`, `router`, and `service` to our Traefik dynamic file so that it knows about our new Keeweb container and where it is.
 
 ```yml
 http:
@@ -171,7 +239,7 @@ http:
     routers:
         keeweb-http:
             service: keeweb
-            rule: Host(`domain.localhost`) || Host(`keeweb.domain.com`)
+            rule: Host(`keeweb.localhost`) || Host(`keeweb.domain.com`)
             entryPoints:
                 - http
             middlewares:
@@ -179,7 +247,7 @@ http:
 
         keeweb-https:
             service: keeweb
-            rule: Host(`domain.localhost`) || Host(`keeweb.domain.com`)
+            rule: Host(`keeweb.localhost`) || Host(`keeweb.domain.com`)
             entryPoints:
                 - https
             tls:
@@ -198,14 +266,81 @@ http:
 
 <br />
 
-#### Static.yml
-These entries will go in your Traefik `static.yml` file. Any changes made to this file requires that you reset Traefik afterward.
+##### Static.yml
+These entries will go in your Traefik `static.yml` file. Any changes made to this file requires that you restart Traefik afterward.
 
 <br />
 
-##### certificatesResolvers
+###### Providers
 
-Open your Traefik `static.yml` file and add your `certResolver` from above. We are going to use Cloudflare in this exmaple, you can use whatever from the list at:
+> [!NOTE]
+> This step is only for users who opted to use the **[dynamic file](#dynamicyml)** method.
+>
+> Users who opted to use [labels](#labels) can skip to the section **[certificatesResolvers](#certificatesresolvers)**
+
+<br />
+
+Ensure you add the following new section to your `static.yml`:
+
+<br />
+
+```yml
+providers:
+    docker:
+        endpoint: "unix:///var/run/docker.sock"
+        exposedByDefault: false
+        network: traefik
+        watch: true
+    file:
+        filename: "/etc/traefik/dynamic.yml"
+        watch: true
+```
+
+<br />
+
+The code above is what enables the use of a **[dynamic file](#dynamicyml)** instead of labels. Change `/etc/traefik/dynamic.yml` if you are placing your dynamic file in a different location. This path is relative to inside the container, not your host machine mounted volume path. Traefik keeps most files in the `/etc/traefik/` folder.
+
+<br />
+
+After you add the above, open your Traefik's `docker-compose.yml` file and mount a new volume so that Traefik knows where your new dynamic file is:
+
+```yml
+    traefik:
+        container_name: traefik
+        image: traefik:latest
+        restart: unless-stopped
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - /etc/localtime:/etc/localtime:ro
+            - ./config/traefik.yml:/etc/traefik/traefik.yml:ro
+            - ./config/dynamic.yml:/etc/traefik/dynamic.yml:ro
+```
+
+<br />
+
+You must ensure you add a new volume like shown above:
+
+- `/config/dynamic.yml:/etc/traefik/dynamic.yml:ro`
+
+<br />
+
+On your host machine, make sure you place the `dynamic.yml` file in a sub-folder called **config**, which should be inside the same folder where your Traefik's `docker-compose.yml` file is. If you want to change this location, ensure you change the mounted volume path above.
+
+<br />
+
+After you have completed this, proceed to the section **[certificatesResolvers](#certificatesresolvers)**.
+
+<br />
+
+###### certificatesResolvers
+
+> [!NOTE]
+> This step is required no matter which option you picked above, both for **[dynamic file](#dynamicyml)** setups, as well as people using **[labels](#labels)**.
+
+<br />
+
+Open your Traefik `static.yml` file. We need to define the `certResolver` that we added above either in your dynamic file, or label. To define the `certResolver`, we will be adding a new section labeled `certificatesResolvers`. We are going to use Cloudflare in this example, you can use whatever from the list at:
+
 - https://doc.traefik.io/traefik/https/acme/#providers
 
 <br />
@@ -229,11 +364,12 @@ certificatesResolvers:
 
 <br />
 
-Once you pick the DNS / SSL provider you want to use from the code above, you need to see if that provider has any special environment variables that must be set. The [Providers Page](https://doc.traefik.io/traefik/https/acme/#providers) lists all providers and also what env variables need set for each one.
+Once you pick the DNS / SSL provider you want to use from the code above, you need to see if that provider has any special environment variables that must be set. The **[Providers Page](https://doc.traefik.io/traefik/https/acme/#providers)** lists all providers and also what env variables need set for each one.
 
 <br />
 
-In our example, since we are using Cloudflare for `dnsChallenge` -> `provider`, we must set:
+In our example, since we are using **Cloudflare** for `dnsChallenge` -> `provider`, we must set the following environment variables:
+
 - `CF_API_EMAIL`
 - `CF_API_KEY`
 
@@ -248,11 +384,13 @@ CF_API_KEY=Your-Cloudflare-API-Key
 
 <br />
 
-Save the `.env` file and exit.
+Save the `.env` file and exit. For these environment variables to be detected by Traefik, you must give your Traefik container a restart. Until you restart Traefik, it will not be able to generate your new SSL certificates. 
+
+You can wait and restart in a moment after you finish editing the `static.yml` file, as there are more items to add below.
 
 <br />
 
-##### entryPoints (Normal)
+###### entryPoints (Normal)
 Finally, inside the Traefik `static.yml`, we need to make sure we have our `entryPoints` configured. Add the following to the Traefik `static.yml` file only if you **DON'T** have entry points set yet:
 
 ```yml
@@ -280,7 +418,7 @@ entryPoints:
 
 <br />
 
-##### entryPoints (Cloudflare)
+###### entryPoints (Cloudflare)
 If your website is behind Cloudflare's proxy service, you need to modify your `entryPoints` above so that you can automatically allow Cloudflare's IP addresses through. This means your entry points will look a bit different.
 
 <br />
@@ -346,7 +484,7 @@ Save the files and then give Traefik and your Keeweb containers a restart.
 
 <br />
 
-#### Authentik Integration
+### Authentik Integration
 
 If you are adding [Authentik](https://goauthentik.io/) as middleware in the steps above; the last thing you must do is log in to your Authentik admin panel and add a new **Provider** so that we can access Keeweb via your domain.
 
