@@ -25,7 +25,6 @@ This branch `docker/core` contains a set of scripts which are utilized when buil
 
 - [About](#about)
 - [Before Building](#before-building)
-  - [LF over CRLF](#lf-over-crlf)
   - [Set +x / 0755 Permissions](#set-x--0755-permissions)
 - [Build `docker/alpine-base` Image](#build-dockeralpine-base-image)
   - [amd64](#amd64)
@@ -106,9 +105,30 @@ Prior to building the ****[docker/alpine-base](https://github.com/keeweb/keeweb/
 
 <br />
 
-### LF over CRLF
+You cannot utilize Windows' `Carriage Return Line Feed`. All files must be converted to Unix' `Line Feed`.  This can be done with **[Visual Studio Code](https://code.visualstudio.com/)**. OR; you can run the Linux terminal command `dos2unix` to convert these files.
 
-You cannot utilize Windows' `Carriage Return Line Feed`. All files must be converted to Unix' `Line Feed`.  This can be done with **[Visual Studio Code](https://code.visualstudio.com/)**. OR; you can run the Linux terminal command `dos2unix` to convert these files:
+For the branches **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** and **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)**, you can use the following recursive commands:
+
+<br />
+
+> [!CAUTION]
+> Be careful using the command to change **ALL** files. You should **NOT** change the files in your `.git` folder, otherwise you will corrupt your git indexes.
+>
+> If you accidentally run dos2unix on your `.git` folder, do NOT push anything to git. Pull a new copy from the repo.
+
+<br />
+
+```shell
+# Change ALL files
+find ./ -type f | grep -Ev '.git|*.jpg|*.jpeg|*.png' | xargs dos2unix --
+
+# Change run / binaries
+find ./ -type f -name 'run' | xargs dos2unix --
+```
+
+<br />
+
+For the branch **[docker/core](https://github.com/keeweb/keeweb/tree/docker/core)**, you can use the following commands:
 
 ```shell
 dos2unix docker-images.v3
@@ -133,10 +153,10 @@ find ./ -name 'run' -exec chmod +x {} \;
 For the branch **[docker/core](https://github.com/keeweb/keeweb/tree/docker/core)**, there are a few files to change. The ending version number may change, but the commands to change the permissions are as follows:
 
 ```shell
-sudo chmod 755 docker-images.v3
-sudo chmod 755 kwown.v1
-sudo chmod 755 package-install.v1
-sudo chmod 755 with-contenv.v1
+sudo chmod +x docker-images.v3
+sudo chmod +x kwown.v1
+sudo chmod +x package-install.v1
+sudo chmod +x with-contenv.v1
 ```
 
 <br />
