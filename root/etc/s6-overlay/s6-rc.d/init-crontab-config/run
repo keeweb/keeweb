@@ -2,7 +2,7 @@
 # shellcheck shell=bash
 
 for cron_user in keeweb root; do
-    if [[ -z ${AETHERX_READ_ONLY_FS} ]] && [[ -z ${AETHERX_NON_ROOT_USER} ]]; then
+    if [[ -z ${KW_READ_ONLY_FS} ]] && [[ -z ${KW_NON_ROOT_USER} ]]; then
         if [[ -f "/etc/crontabs/${cron_user}" ]]; then
             kwown "${cron_user}":"${cron_user}" "/etc/crontabs/${cron_user}"
             crontab -u "${cron_user}" "/etc/crontabs/${cron_user}"
