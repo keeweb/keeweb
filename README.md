@@ -67,7 +67,7 @@ To build a docker image for Keeweb, you need two different docker images:
 <br />
 
 > [!WARNING]
-> You should NOT need to modify any of the files within this branch `docker/core` unless you absolutely know what you are doing.
+> You should NOT need to modify any of the files within this branch `docker/alpine-base` unless you absolutely know what you are doing.
 
 <br />
 
