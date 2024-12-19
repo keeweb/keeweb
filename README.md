@@ -711,7 +711,7 @@ By mounting the volume above, you should now have access to the following folder
 | `📁 keys`   | <sub>Responsible for storing your ssl certificate `cert.crt` + key `cert.key`</sub> |
 | `📁 log`    | <sub>All nginx / container logs</sub> |
 | `📁 nginx`  | <sub>Contains `nginx.conf`, `resolver.conf`, `ssl.conf`, `site-confs`</sub> |
-| `📁 www`    | <sub>Folder which stores the Keeweb files and images</sub> |
+| `📁 www`    | <sub>Folder which stores the Keeweb files, images, and plugins</sub> |
 
 <br />
 
