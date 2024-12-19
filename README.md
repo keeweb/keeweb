@@ -49,6 +49,8 @@ KeeWeb is a browser and desktop password manager which is capable of opening up 
         - [entryPoints (Normal)](#entrypoints-normal)
         - [entryPoints (Cloudflare)](#entrypoints-cloudflare)
     - [Authentik Integration](#authentik-integration)
+      - [Labels](#labels-1)
+      - [Dynamic.yml](#dynamicyml-1)
   - [Env \& Volumes](#env--volumes)
     - [Env Variables](#env-variables)
     - [Volumes](#volumes)
@@ -257,7 +259,7 @@ http:
     routers:
         keeweb-http:
             service: keeweb
-            rule: Host(`keeweb.localhost`) || Host(`keeweb.domain.com`)
+            rule: Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
             entryPoints:
                 - http
             middlewares:
@@ -265,15 +267,15 @@ http:
 
         keeweb-https:
             service: keeweb
-            rule: Host(`keeweb.localhost`) || Host(`keeweb.domain.com`)
+            rule: Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
             entryPoints:
                 - https
             tls:
                 certResolver: cloudflare
                 domains:
-                    - main: "domain.com"
+                    - main: "domain.lan"
                       sans:
-                          - "*.domain.com"
+                          - "*.domain.lan"
 
     services:
         keeweb:
@@ -429,9 +431,9 @@ entryPoints:
                 options: default
                 certResolver: cloudflare
                 domains:
-                    - main: domain.com
+                    - main: domain.lan
                       sans:
-                          - '*.domain.com'
+                          - '*.domain.lan'
 ```
 
 <br />
@@ -487,9 +489,9 @@ In the example below, we will add `forwardedHeaders` -> `trustedIPs` and add all
                 options: default
                 certResolver: cloudflare
                 domains:
-                    - main: domain.com
+                    - main: domain.lan
                       sans:
-                          - '*.domain.com'
+                          - '*.domain.lan'
 ```
 
 <br />
@@ -502,7 +504,7 @@ Save the files and then give Traefik and your Keeweb containers a restart.
 
 #### Authentik Integration
 
-If you are adding [Authentik](https://goauthentik.io/) as middleware in the steps above; the last thing you must do is log in to your Authentik admin panel and add a new **Provider** so that we can access Keeweb via your domain.
+This section will not explain how to install and set up [Authentik](https://goauthentik.io/). We are only going to cover adding Keeweb integration to Authentik.
 
 <br />
 
@@ -532,7 +534,7 @@ Add the following provider values:
 <br />
 
 Select **Forward Auth (single application)**:
-- **External Host**: `https://keeweb.domain.com`
+- **External Host**: `https://keeweb.domain.lan`
 
 <br />
 
@@ -586,7 +588,83 @@ Move `Keeweb (Password Manager)` to the right side **Selected Applications** box
 
 <br />
 
-You should be able to access `keeweb.domain.com` and be prompted now to authenticate with Authentik.
+If you followed our [Traefik](#traefik-integration) guide above, you were shown how to add your Keeweb container to Traefik using either the **[dynamic file](#dynamicyml)** or **[labels](#labels)**. Depending on which option you picked, follow that section's guide below.
+
+- For **label** users, go to the section [Labels](#labels-1) below.
+- For **dynamic file** users, go to the section [Dynamic File](#dynamicyml-1) below.
+
+<br />
+
+##### Labels
+
+Open your Keeweb's `docker-compose.yml` and modify your labels to include Authentik as a **middleware** by adding `authentik@file` to the label `traefik.http.routers.keeweb-https.middlewares`. You should have something similar to the example below:
+
+```yml
+services:
+    keeweb:
+        container_name: keeweb
+        image: ghcr.io/keeweb/keeweb:latest       # Github image
+      # image: keeweb/keeweb:latest               # Dockerhub image
+        restart: unless-stopped
+        volumes:
+            - ./keeweb:/config
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Etc/UTC
+        labels:
+
+          #   General
+          - traefik.enable=true
+
+          #   Router > http
+          - traefik.http.routers.keeweb-http.rule=Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
+          - traefik.http.routers.keeweb-http.service=keeweb
+          - traefik.http.routers.keeweb-http.entrypoints=http
+          - traefik.http.routers.keeweb-http.middlewares=https-redirect@file
+
+          #   Router > https
+          - traefik.http.routers.keeweb-https.rule=Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
+          - traefik.http.routers.keeweb-https.service=keeweb
+          - traefik.http.routers.keeweb-https.entrypoints=https
+          - traefik.http.routers.keeweb-https.middlewares=authentik@file
+          - traefik.http.routers.keeweb-https.tls=true
+          - traefik.http.routers.keeweb-https.tls.certresolver=cloudflare
+          - traefik.http.routers.keeweb-https.tls.domains[0].main=domain.lan
+          - traefik.http.routers.keeweb-https.tls.domains[0].sans=*.domain.lan
+
+          #   Load Balancer
+          - traefik.http.services.keeweb.loadbalancer.server.port=443
+          - traefik.http.services.keeweb.loadbalancer.server.scheme=https
+```
+
+<br />
+
+##### Dynamic.yml
+
+If you opted to use the [dynamic file](#dynamicyml), open your Traefik's `dynamic.yml` file and apply the `authentik@file` middleware to look something like the following:
+
+<br />
+
+```yml
+        keeweb-https:
+            service: keeweb
+            rule: Host(`keeweb.localhost`) || Host(`keeweb.domain.lan`)
+            entryPoints:
+                - https
+            middlewares:
+                - authentik@file
+            tls:
+                certResolver: cloudflare
+                domains:
+                    - main: "domain.lan"
+                      sans:
+                          - "*.domain.lan"
+```
+
+<br />
+
+After you've done everything above, give your **Traefik** and **Authentik** containers a restart. Once they come back up; you should be able to access `keeweb.domain.lan` and be prompted now to authenticate with Authentik. Once you authenticate, you should be re-directed to your Keeweb home screen which asks you to load a vault file.
 
 <br />
 
