@@ -1,0 +1,263 @@
+# #
+#   @type               github workflow
+#   @author             Aetherinox
+#   @url                https://github.com/Aetherinox
+#   @usage              originally, Keeweb's docker files were hosted in the main branch within the folder /package/docker/*
+#                       with the new setup, the Keeweb docker files are stored in a separate branch from main called `docker/keeweb`.
+#                       this workflow copies the required docker files from the new branch docker/keeweb, and brings them over to the main branch
+#                       and places them within the original subfolder `package/docker/*`
+#   @secrets            secrets.ADMINSERV_GPG_KEY_ASC                   gpg private key (armored) | BEGIN PGP PRIVATE KEY BLOCK
+#                       secrets.ADMINSERV_GPG_PASSPHRASE                gpg private key passphrase
+#                       secrets.IMAGE_GHCR_TOKEN                        github personal access token (classic) with package:write permission
+# #
+
+name: "🔄 Sync › Docker › Github"
+run-name: "🔄 Sync › Docker › Github"
+
+# #
+#   Triggers
+# #
+
+on:
+
+    # #
+    #   Trigger › Workflow Dispatch
+    #
+    #   If any values are not provided, will use fallback env variable
+    # #
+
+    workflow_dispatch:
+        inputs:
+
+            # #
+            #   Repo › Source
+            #
+            #   Where the files to be copied are
+            # #
+
+            REPO_SRC:
+              description:  "📂 Repo › Source"
+              required:     true
+              default:      'docker/keeweb'
+              type:         string
+
+            # #
+            #   Repo › Destination
+            #
+            #   Where the files are to be copied to
+            # #
+
+            REPO_DEST:
+              description:  "📂 Repo › Destination"
+              required:     true
+              default:      'main'
+              type:         string
+
+            # #
+            #   Destination Path
+            #
+            #   where the files will be placed
+            # #
+
+            DEST_PATH:
+                description:  "📂 Destination Path"
+                required:     true
+                default:      'package/docker'
+                type:         string
+
+            # #
+            #   true:     runs all actions, even ones not scheduled
+            #   false:    only scheduled tasks will run
+            # #
+
+            PRINT_ONLY:
+                description:  "📑 Print Debugs Only"
+                required:     true
+                default:      false
+                type:         boolean
+
+    # #
+    #   Trigger › Push
+    # #
+
+    push:
+        branches:
+            - docker/keeweb
+
+# #
+#   Environment Vars
+# #
+
+env:
+    REPO_SRC:             ${{ github.event.inputs.REPO_SRC || 'docker/keeweb' }}
+    REPO_DEST:            ${{ github.event.inputs.DEST_PATH || 'main' }}
+    DEST_PATH:            ${{ github.event.inputs.DEST_PATH || 'package/docker' }}
+    BOT_NAME_1:           EuropaServ
+    BOT_NAME_DEPENDABOT:  dependabot[bot]
+    
+# #
+#   Jobs
+#
+#   The way pushed docker containers on Github work, the most recent image built goes at the top.
+#   We will use the order below which builds the :latest image last so that it appears at the very
+#   top of the packages page.
+# #
+
+jobs:
+
+    # #
+    #   Job › Create Tag
+    # #
+
+    job-docker-release-tags-create:
+        name: >-
+            📦 Release › Sync
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            packages: write
+            attestations: write
+            id-token: write
+        steps:
+
+            # #
+            #   Sync › Start
+            # #
+
+            - name: "✅ Start"
+              id: task_sync_start
+              run: |
+                  echo "Starting branch sync"
+
+            # #
+            #   Sync › Checkout
+            # #
+
+            - name: "☑️ Checkout"
+              id: task_sync_checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            # #
+            #   Sync › Install Dependencies
+            # #
+
+            - name: "📦 Install Dependencies"
+              id: task_sync_dependencies
+              run:
+                  sudo apt-get install -qq dos2unix
+
+            # #
+            #   Sync › Copy Dockerfiles to Main branch
+            #
+            #   this action copies all the required docker files from the docker/keeweb branch, over to 
+            #   the main branch within the subfolder `package/docker/*`
+            # #
+
+            - name: '⬇️ Pull Docker Files'
+              id: task_sync_files_pull
+              run: |
+                  git config --global pager.diff false
+                  git config --global advice.detachedHead false
+                  git checkout origin/${{ env.REPO_DEST }}
+                  git --work-tree=${{ env.DEST_PATH }} checkout origin/${{ env.REPO_SRC }} -- root Dockerfile*
+
+            # #
+            #   Sync › Run permission management
+            # #
+
+            - name: '#️⃣ Manage Permissions'
+              id: task_sync_fix_permissions
+              run: |
+                  find ${{ env.DEST_PATH }} -name 'run' -exec chmod 755 {} \;
+                  WRONG_PERM=$(find ${{ env.DEST_PATH }}  -path "./.git" -prune -o \( -name "run" -o -name "finish" -o -name "check" \) -not -perm -u=x,g=x,o=x -print)
+                  if [ -n "${WRONG_PERM}" ]; then
+                      for i in ${WRONG_PERM}; do
+                      echo "::error file=${i},line=1,title=Missing Executable Bit::This file needs to be set as executable!"
+                      done
+                      exit 1
+                  else
+                      echo "**** Executable permissions are OK ****"
+                  fi
+
+            # #
+            #   Sync › Run dos2unix
+            # #
+
+            - name: '🔐 Apply dos2unix'
+              id: task_sync_fix_dos2unix
+              run: |
+                  find ${{ env.DEST_PATH }} -type f | grep -Ev '.git|.github|*.jpg|*.jpeg|*.png' | xargs dos2unix --
+
+            # #
+            #   Sync › Show Differences
+            # 
+            #   this is just a debugging step, it shows all the files pending commit that will be committed
+            # #
+
+            - name: '📑 View Differences'
+              id: task_sync_debug_diff
+              run: |
+                  git diff --name-only HEAD
+
+            # #
+            #   Sync › Precommit
+            #
+            #   define the date/time and the commit message
+            # #
+
+            - name: '📦 Commit › Pre-commit'
+              id: task_sync_commit_pre
+              run: |
+                  now=$(date -u '+%m/%d/%Y %H:%M')
+                  commit_label="Docker Sync" >> $GITHUB_ENV
+                  commit_message="\`️️🔄 $commit_label 🔄\` \`$now UTC\`" >> $GITHUB_ENV
+                  echo "COMMIT_MESSAGE=$(echo $commit_message)" >> $GITHUB_ENV
+                  echo "NOW=$(echo $now)" >> $GITHUB_ENV
+
+            # #
+            #   Sync › GPG Key
+            #
+            #   this step is required so that you can sign commits in the last step
+            #       stefanzweifel/git-auto-commit-action@v5
+            # #
+
+            - name: '📦 Commit › GPG Key'
+              id: task_sync_commit_gpg
+              uses: crazy-max/ghaction-import-gpg@v6
+              with:
+                  gpg_private_key: ${{ secrets.ADMINSERV_GPG_KEY_ASC }}
+                  passphrase: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
+                  git_user_signingkey: true
+                  git_commit_gpgsign: true
+
+            # #
+            #   Sync › Debug
+            # #
+
+            - name: '🪪 Debug › Print'
+              id: task_sync_debug_print
+              run: |
+                  echo "github.actor.......... ${{ github.actor }}"
+                  echo "github.ref ........... ${{ github.ref }}"
+                  echo "github.event_name .... ${{ github.event_name }}"
+                  echo "inputs.PRINT_ONLY .... ${{ env.PRINT_ONLY }}"
+
+            # #
+            #   Sync › Commit
+            # 
+            #   commits the pending changes to the main branch
+            # #
+
+            - name: '🔄 Sync › Commit'
+              id: task_sync_commit
+              uses: stefanzweifel/git-auto-commit-action@v5
+              if: ( github.event_name == 'workflow_dispatch' && inputs.PRINT_ONLY == false ) || ( github.event_name == 'push' )
+              with:
+                  commit_message: ${{ env.COMMIT_MESSAGE }}
+                  commit_author: "${{ steps.task_sync_commit_gpg.outputs.name }} <${{ steps.task_sync_commit_gpg.outputs.email }}>"
+                  commit_user_name: ${{ steps.task_sync_commit_gpg.outputs.name }}
+                  commit_user_email: ${{ steps.task_sync_commit_gpg.outputs.email }}
+                  branch: main
+                  add_options: '-u'
