@@ -411,10 +411,6 @@ This docker image automatically generates an SSL certificate when the nginx serv
 
 <br />
 
-<p align="center"><img style="width: 85%;text-align: center;border: 1px solid #353535;" src="docs/img/002.png"></p>
-
-<br />
-
 You may opt to either use the generated self-signed certificate, or you can add your own. If you decide to use your own self-signed certificate, ensure you have mounted the `/config` volume in your `docker-compose.yml`:
 
 ```yml
