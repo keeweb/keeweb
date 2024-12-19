@@ -108,6 +108,14 @@ Prior to building the ****[docker/alpine-base](https://github.com/keeweb/keeweb/
 You cannot utilize Windows' `Carriage Return Line Feed`. All files must be converted to Unix' `Line Feed`.  This can be done with **[Visual Studio Code](https://code.visualstudio.com/)**. OR; you can run the Linux terminal command `dos2unix` to convert these files:
 
 ```shell
+find ./ -type f -name 'run' | xargs dos2unix -f
+```
+
+<br />
+
+For the branch **[docker/core](https://github.com/keeweb/keeweb/tree/docker/core)**, you can use the following commands:
+
+```shell
 dos2unix docker-images.v3
 dos2unix kwown.v1
 dos2unix package-install.v1
@@ -130,10 +138,10 @@ find ./ -name 'run' -exec chmod +x {} \;
 For the branch **[docker/core](https://github.com/keeweb/keeweb/tree/docker/core)**, there are a few files to change. The ending version number may change, but the commands to change the permissions are as follows:
 
 ```shell
-sudo chmod 755 docker-images.v3
-sudo chmod 755 kwown.v1
-sudo chmod 755 package-install.v1
-sudo chmod 755 with-contenv.v1
+sudo chmod +x docker-images.v3
+sudo chmod +x kwown.v1
+sudo chmod +x package-install.v1
+sudo chmod +x with-contenv.v1
 ```
 
 <br />
