@@ -41,7 +41,7 @@ http
 
     # Name servers used to resolve names of upstream servers into addresses.
     # It's also needed when using tcpsocket and udpsocket in Lua modules.
-    #resolver 1.1.1.1 1.0.0.1 2606:4700:4700::1111 2606:4700:4700::1001;
+    # resolver 1.1.1.1 1.0.0.1 2606:4700:4700::1111 2606:4700:4700::1001;
     include /config/nginx/resolver.conf;
 
     # Don't tell nginx version to the clients. Default is 'on'.
@@ -65,7 +65,7 @@ http
     # included in server blocks where listen 443 is defined
 
     # Enable gzipping of responses.
-    #gzip on;
+    # gzip on;
 
     # Set the Vary HTTP header as defined in the RFC 2616. Default is 'off'.
     gzip_vary on;
