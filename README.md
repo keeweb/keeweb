@@ -28,7 +28,7 @@ This branch `docker/base-alpine` contains the base docker alpine image which is 
 - [About](#about)
 - [Before Building](#before-building)
   - [LF over CRLF](#lf-over-crlf)
-  - [Set +x / 0755 Permissions](#set-x--0755-permissions)
+  - [Set `+x / 0755` Permissions](#set-x--0755-permissions)
 - [Build `docker/alpine-base` Image](#build-dockeralpine-base-image)
   - [amd64](#amd64)
   - [arm64 / aarch64](#arm64--aarch64)
@@ -62,10 +62,10 @@ This branch `docker/alpine-base` does **NOT** contain Keeweb. Those files are av
 <br />
 
 To build a docker image for Keeweb, you need two different docker images:
-- Step 1: Build **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image **(this branch)**
+- **Step 1**: Build **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image **(this branch)**
   - When being build, the alpine-base `Dockerfile` will grab and install the files from the branch **[docker/core](https://github.com/keeweb/keeweb/tree/docker/core)**
-- Step 2: Build **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image
-- Step 3: Release the docker image built from **Step 2** to Github's **Ghcr.io** or **hub.docker.com**
+- **Step 2**: Build **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image
+- **Step 3**: Release the docker image built from **Step 2** to Github's **Ghcr.io** or **hub.docker.com**
 
 <br />
 
@@ -142,7 +142,7 @@ dos2unix with-contenv.v1
 
 <br />
 
-### Set +x / 0755 Permissions
+### Set `+x / 0755` Permissions
 The files contained within this repo **MUST** have `chmod 755` /  `+x` executable permissions. If you are using the **[Keeweb Github Workflow](https://github.com/keeweb/keeweb/blob/master/.github/workflows/deploy-docker-github.yml)**, this is done automatically. If you are builting the images manually; you need to do this. Ensure those files have the correct permissions prior to building the Alpine base docker image.
 
 If you are building the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** or **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** images, you must ensure the files in those branches have the proper permissions. All of the executable files are named `run`:
