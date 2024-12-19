@@ -481,6 +481,9 @@ services:
 
 The **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image already contains a custom script called `/root/custom-cont-init.d/plugins`. Do **NOT** edit this script. It is what automatically downloads the official Keeweb plugins and adds them to the container.
 
+<br />
+<br />
+
 ### SSL Certificates
 
 This docker image automatically generates an SSL certificate when the nginx server is brought online. 
@@ -513,6 +516,7 @@ Then navigate to the newly mounted folder and add your `📄 cert.crt` and `🔑
 > - ECDSA: `P-384 or P-521`
 
 <br />
+<br />
 
 ### Access Shell / Bash
 You can access the docker container's shell by running:
@@ -521,6 +525,7 @@ You can access the docker container's shell by running:
 docker exec -it keeweb ash
 ```
 
+<br />
 <br />
 
 ### Logs
