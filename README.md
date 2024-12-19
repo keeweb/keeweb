@@ -1,10 +1,10 @@
 <div align="center">
 <h6>Scripts utilized with our Alpine Base docker image</h6>
-<h1>📄 Alpine - Core Scripts 📄</h1>
+<h1>📄 Alpine Base - Core Scripts 📄</h1>
 
 <br />
 
-This branch `docker/core` contains a set of scripts which are utilized when building the [Keeweb Alpine Core Image](https://github.com/keeweb/keeweb/tree/docker/alpine-base).
+This branch `docker/core` contains a set of scripts which are utilized when building the **[Keeweb Alpine Base Image](https://github.com/keeweb/keeweb/tree/docker/alpine-base)**.
 
 </p>
 
@@ -26,9 +26,20 @@ This branch `docker/core` contains a set of scripts which are utilized when buil
 - [About](#about)
 - [Before Building](#before-building)
   - [LF over CRLF](#lf-over-crlf)
-  - [Set +x Executable](#set-x-executable)
-- [Build Base Image](#build-base-image)
-- [Usage with Keeweb Docker Image](#usage-with-keeweb-docker-image)
+  - [Set +x / 0755 Permissions](#set-x--0755-permissions)
+- [Build `docker/alpine-base` Image](#build-dockeralpine-base-image)
+  - [amd64](#amd64)
+  - [arm64 / aarch64](#arm64--aarch64)
+- [Build `docker/keeweb` Image](#build-dockerkeeweb-image)
+  - [amd64](#amd64-1)
+  - [arm64 / aarch64](#arm64--aarch64-1)
+  - [hub.docker.com / ghcr.io / local](#hubdockercom--ghcrio--local)
+  - [Image Tags](#image-tags)
+- [Using `docker/keeweb` Image](#using-dockerkeeweb-image)
+  - [docker run](#docker-run)
+  - [docker-compose.yml](#docker-composeyml)
+- [Extra Notes](#extra-notes)
+  - [Custom Scripts](#custom-scripts)
 
 
 
@@ -39,13 +50,13 @@ This branch `docker/core` contains a set of scripts which are utilized when buil
 <br />
 
 ## About
-The scripts contained within this branch `docker/core` are called upon from the [Keeweb Base Alpine](https://github.com/keeweb/keeweb/tree/docker/alpine-base) image.  The Base Alpine image does **NOT** contain Keeweb, it only contains the base Alpine operating system, a minimal amount of packages, and Nginx. It is used as the foundation for which the Keeweb docker image will be built from.
+The scripts contained within this branch `docker/core` are called upon from the **[Keeweb Alpine Base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image.  The Alpine base image does **NOT** contain Keeweb, it only contains the alpine operating system, a minimal amount of packages, and Nginx. It is used as the foundation for which the **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** docker image will be built.
 
 <br />
 
-This means that in order to build a docker image which contains Keeweb, you need two different docker images:
+To build a docker image for Keeweb, you need two different docker images:
 - Step 1: Build **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image
-  - When being build, the alpine-base Dockerfile will grab and install the files from this branch `docker/core`
+  - When being build, the alpine-base `Dockerfile` will grab and install the files from this branch `docker/core`
 - Step 2: Build **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image
 - Step 3: Release the docker image built from **Step 2** to Github's **Ghcr.io** or **hub.docker.com**
 
@@ -56,23 +67,14 @@ This means that in order to build a docker image which contains Keeweb, you need
 
 <br />
 
-This branch contains builds for the following architectures:
-
-| Architecture | Dockerfile |
-| --- | --- |
-| **amd64** | `Dockerfile` |
-| **arm64** | `Dockerfile.aarch64` |
-
-<br />
-
-The files in this branch are referered in the following files:
+This branch contains no `Dockerfile` files. It only contains files that will be called upon by the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image when it is built by the following files:
 
 - [docker/alpine-base/Dockerfile](https://github.com/keeweb/keeweb/blob/docker/alpine-base/Dockerfile)
 - [docker/alpine-base/Dockerfile.aarch64](https://github.com/keeweb/keeweb/blob/docker/alpine-base/Dockerfile.aarch64)
 
 <br />
 
-When you build the base alpine image, the following files will be automatically included:
+When you build the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image, the files in this branch `docker/core` will be fetched by **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** `Dockerfile` and packaged with the alpine-base image via the following code:
 
 ```bash
 ADD --chmod=755 "https://raw.githubusercontent.com/keeweb/keeweb/docker/core/docker-images.${MODS_VERSION}" "/docker-images"
@@ -82,7 +84,9 @@ ADD --chmod=755 "https://raw.githubusercontent.com/keeweb/keeweb/docker/core/kwo
 
 <br />
 
-`kwown` is vital and must be included in the base image you build. It is what controls the **USER:GROUP** permissions that will be handled within your docker image. For this reason, there are a few requirements you can read about below in the section [Before Building](#before-building)
+`kwown` is vital and must be included in the base image you build. It is what controls the **USER : GROUP** permissions that will be handled within your docker image. 
+
+For this reason, there are a few requirements you can read about below in the section **[Before Building](#before-building)**.
 
 <br />
 
@@ -92,15 +96,19 @@ ADD --chmod=755 "https://raw.githubusercontent.com/keeweb/keeweb/docker/core/kwo
 
 ## Before Building
 
-Prior to building the docker image, you must ensure that the following conditions are met. If the below tasks are not performed, your docker container will throw the following errors when started:
+Prior to building the ****[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)**** and **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** docker images, you **must** ensure the following conditions are met. If the below tasks are not performed, your docker container will throw the following errors when started:
 
+- `Failed to open apk database: Permission denied`
+- `s6-rc: warning: unable to start service init-adduser: command exited 127`
+- `unable to exec /etc/s6-overlay/s6-rc.d/init-envfile/run: Permission denied`
+- `/etc/s6-overlay/s6-rc.d/init-adduser/run: line 34: kwown: command not found`
 - `/etc/s6-overlay/s6-rc.d/init-adduser/run: /usr/bin/kwown: cannot execute: required file not found`
 
 <br />
 
 ### LF over CRLF
 
-You cannot utilize Windows' `Carriage Return Line Feed`. All files must be converted over to Unix' `Line Feed`.  This can be done in applications such as Visual Studio Code. Or you can run Linux terminal commands to convert these files:
+You cannot utilize Windows' `Carriage Return Line Feed`. All files must be converted to Unix' `Line Feed`.  This can be done with **[Visual Studio Code](https://code.visualstudio.com/)**. OR; you can run the Linux terminal command `dos2unix` to convert these files:
 
 ```shell
 dos2unix docker-images.v3
@@ -111,8 +119,25 @@ dos2unix with-contenv.v1
 
 <br />
 
-### Set +x Executable
-The files contained within this repo **MUST** have `chmod 755`, also known as `+x` executable permissions. This is done automatically by the [Keeweb Base Alpine](https://github.com/keeweb/keeweb/tree/docker/alpine-base) `Dockerfile`, however, if you need to do this manually for some reason; ensure those files have the correct permissions prior to building the base Alpine docker image.
+### Set +x / 0755 Permissions
+The files contained within this repo **MUST** have `chmod 755` /  `+x` executable permissions. If you are using the **[Keeweb Github Workflow](https://github.com/keeweb/keeweb/blob/master/.github/workflows/deploy-docker-github.yml)**, this is done automatically. If you are builting the images manually; you need to do this. Ensure those files have the correct permissions prior to building the Alpine base docker image.
+
+If you are building the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** or **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** images, you must ensure the files in those branches have the proper permissions. All of the executable files are named `run`:
+
+```shell
+find ./ -name 'run' -exec chmod +x {} \;
+```
+
+<br />
+
+For the branch **[docker/core](https://github.com/keeweb/keeweb/tree/docker/core)**, there are a few files to change. The ending version number may change, but the commands to change the permissions are as follows:
+
+```shell
+sudo chmod 755 docker-images.v3
+sudo chmod 755 kwown.v1
+sudo chmod 755 package-install.v1
+sudo chmod 755 with-contenv.v1
+```
 
 <br />
 
@@ -120,9 +145,9 @@ The files contained within this repo **MUST** have `chmod 755`, also known as `+
 
 <br />
 
-## Build Base Image
+## Build `docker/alpine-base` Image
 
-The scripts contained within this `docker/core` branch do not need anything else special to them. In order to use these scripts, simply clone the [Keeweb Base Alpine](https://github.com/keeweb/keeweb/tree/docker/alpine-base) `Dockerfile` repo:
+The scripts contained within this `docker/core` branch do not need anything done to them. In order to use these scripts, clone the **[Keeweb Alpine Base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** branch `docker/alpine-base`:
 
 ```shell
 git clone -b docker/alpine-base https://github.com/keeweb/keeweb.git .
@@ -130,11 +155,21 @@ git clone -b docker/alpine-base https://github.com/keeweb/keeweb.git .
 
 <br />
 
-Once the repo is cloned, the calls to include the scripts in this `docker/core` branch are within the `Dockerfile` and `Dockerfile.aarch64`. So simply build your base alpine image:
+Once cloned, the calls to include the scripts in this `docker/core` branch are within the `Dockerfile` and `Dockerfile.aarch64`. All you need to do is simply build your alpine-base image:
+
+### amd64
 
 ```shell ignore
+# Build keeweb alpine-base amd64
 docker build --build-arg VERSION=3.20 --build-arg BUILD_DATE=20241216 -t alpine-base:latest -t alpine-base:3.20-amd64 -f Dockerfile .
+```
 
+<br />
+
+### arm64 / aarch64
+
+```shell
+# Build keeweb alpine-base arm64
 docker build --build-arg VERSION=3.20 --build-arg BUILD_DATE=20241216 -t alpine-base:3.20-arm64 -f Dockerfile.aarch64 .
 ```
 
@@ -206,41 +241,200 @@ Once the base alpine image is built, you can now build the actual docker version
 
 <br />
 
-## Usage with Keeweb Docker Image
+## Build `docker/keeweb` Image
 
-After the base alpine image is built, you can now use this docker image as a base for the official Keeweb docker image. Navigate to the branch `docker/keeweb` and open:
+After the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image is built, you can now use that docker image as a base to build the **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image. Navigate to the branch `docker/keeweb` and open the files:
 
 - `Dockerfile`
 - `Dockerfile.aarch64`
 
 <br />
 
-Next, specify this base image from this branch which will be used as the foundation of the Keeweb docker image:
+Next, specify the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image which will be used as the foundation of the **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image:
 
 ```dockerfile
 FROM ghcr.io/keeweb/alpine-base:3.20-amd64
 ```
 
-After you have completed configuring the Keeweb dockerfile, you can now build the official version of Keeweb. Ensure you build an image for both `amd64` and `aarch64`.
+After you have completed configuring the **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** `Dockerfile`, you can now build the official version of Keeweb. Remember to build an image for both `amd64` and `aarch64`.
 
 <br />
 
 For the argument `VERSION`; specify the current release of Keeweb which will be contained within the docker image. It should be in the format of `YYYYMMDD`:
 
-```shell
-docker build --build-arg VERSION=1.19.0 --build-arg BUILD_DATE=20241216 -t keeweb:latest -t keeweb:1.19.0 -t keeweb:1.19.0-amd64 -f Dockerfile .
+<br />
 
+### amd64
+
+```shell
+# Build docker/keeweb amd64
+docker build --build-arg VERSION=1.19.0 --build-arg BUILD_DATE=20241216 -t keeweb:latest -t keeweb:1.19.0 -t keeweb:1.19.0-amd64 -f Dockerfile .
+```
+
+<br />
+
+### arm64 / aarch64
+
+```shell
+# Build docker/keeweb arm64
 docker build --build-arg VERSION=1.19.0 --build-arg BUILD_DATE=20241216 -t keeweb:1.19.0-arm64 -f Dockerfile.aarch64 .
 ```
 
 <br />
 
-When building your images With the commands provided above, ensure you create two sets of tags:
+### hub.docker.com / ghcr.io / local
+After you have your **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image built, you can either upload the image to a public repository such as:
+
+- hub.docker.com (Docker Hub)
+- ghcr.io (Github)
+
+After it is uploaded, you can use the `docker run` command, or create a `docker-compose.yml`, and call the docker image to be used. 
+
+This is discussed in the section **[Using docker/keeweb Image](#using-dockerkeeweb-image)** below.
+
+<br />
+
+### Image Tags
+When building your images with the commands provided above, ensure you create two sets of tags:
 
 | Architecture | Dockerfile | Tags |
 | --- | --- | --- |
 | `amd64` | `Dockerfile` | `keeweb:latest` <br /> `keeweb:1.19.0` <br /> `keeweb:1.19.0-amd64` |
-| `arm64` | `Dockerfile` | `keeweb:1.19.0-arm64` |
+| `arm64` | `Dockerfile.aarch64` | `keeweb:1.19.0-arm64` |
+
+<br />
+
+the `amd64` arch gets a few extra tags because it should be the default image people clone. 
+
+<br />
+
+---
+
+<br />
+
+## Using `docker/keeweb` Image
+
+To use the new **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image, you can either call it with the `docker run` command, or create a new `docker-compose.yml` and specify the image:
+
+<br />
+
+### docker run
+
+If you want to use the keeweb docker image in the `docker run` command, execute the following:
+
+```shell
+docker run -d --restart=unless-stopped -p 443:443 --name keeweb -v ${PWD}/keeweb:/config ghcr.io/keeweb/keeweb:latest
+```
+
+<br />
+
+### docker-compose.yml
+
+If you'd much rather use a `docker-compose.yml` file and call the keeweb image that way, create a new folder somewhere:
+
+```shell
+mkdir -p /home/docker/keeweb
+```
+
+Then create a new `docker-compose.yml` file and add the following:
+
+```shell
+sudo nano /home/docker/keeweb/docker-compose.yml
+```
+
+```yml
+services:
+    keeweb:
+        container_name: keeweb
+        image: ghcr.io/keeweb/keeweb:latest          # Github image
+      # image: keeweb/keeweb:latest                  # Dockerhub image
+        restart: unless-stopped
+        volumes:
+            - ./keeweb:/config
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Etc/UTC
+```
+
+<br />
+
+Once the `docker-compose.yml` is set up, you can now start your keeweb container:
+
+```shell
+cd /home/docker/keeweb/
+docker compose up -d
+```
+
+<br />
+
+Keeweb should now be running as a container. You can access it by opening your browser and going to:
+
+```shell
+http://container-ip
+https://container-ip
+```
+
+<br />
+
+---
+
+<br />
+
+## Extra Notes
+
+The following are other things to take into consideration when creating the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** and **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** images:
+
+<br />
+
+### Custom Scripts
+
+The `docker/alpine-base` and `docker/keeweb` images support the ability of adding custom scripts that will be ran when the container is started. To create / add a new custom script to the container, you need to create a new folder in the container source files `/root` folder
+
+```shell
+mkdir -p /root/custom-cont-init.d/
+```
+
+<br />
+
+Within this new folder, add your custom script:
+
+```shell
+nano /root/custom-cont-init.d/my_customs_script
+```
+
+<br />
+
+```bash
+#!/bin/bash
+
+echo "**** INSTALLING BASH ****"
+apk add --no-cache bash
+```
+
+<br />
+
+When you create the docker image, this new script will automatically be loaded. You can also do this via the `docker-compose.yml` file by mounting a new volume:
+
+```yml
+services:
+    keeweb:
+        volumes:
+            - ./keeweb:/config
+            - ./custom-scripts:/custom-cont-init.d:ro
+```
+
+<br />
+
+> [!NOTE]
+> if using compose, we recommend mounting them **read-only** (`:ro`) so that container processes cannot write to the location.
+
+> [!WARNING]
+> The folder `/root/custom-cont-init.d` **MUST** be owned by `root`. If this is not the case, this folder will be renamed and a new empty folder will be created. This is to prevent remote code execution by putting scripts in the aforesaid folder.
+
+<br />
+
+The **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image already contains a custom script called `/root/custom-cont-init.d/plugins`. Do **NOT** edit this script. It is what automatically downloads the official Keeweb plugins and adds them to the container.
 
 <br />
 
