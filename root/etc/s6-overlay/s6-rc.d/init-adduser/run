@@ -17,16 +17,13 @@ fi
 
 if [[ -z ${KW_NON_ROOT_USER} ]]; then
 echo "
-        User ID                 $(id -u keeweb)
-        Group ID                $(id -g keeweb)"
+        User:Group              $(id -u keeweb):$(id -g keeweb)"
 else
 echo "
-        User ID                 $(stat /run -c %u)
-        Group ID                $(stat /run -c %g)"
+        User:Group              $(stat /run -c %u):$(stat /run -c %g)"
 fi
 echo "
-        Port HTTP               $(echo $PORT_HTTP)
-        Port HTTPS              $(echo $PORT_HTTPS)"
+        (Ports) HTTP/HTTPS      $(echo $PORT_HTTP)/$(echo $PORT_HTTPS)"
 
 echo '──────────────────────────────────────────────────────────────────────────────────────────'
 
