@@ -1,51 +1,107 @@
-# KeeWeb official docker container
-# https://keeweb.info
-# (C) Antelle 2019, MIT license https://github.com/keeweb/keeweb
-# Based on nginx-ssl-secure https://github.com/MarvAmBass/docker-nginx-ssl-secure/
+# syntax=docker/dockerfile:1
 
-# Building locally:
-# docker build -t keeweb .
-# docker run --name keeweb -d -p 443:443 -p 80:80 -e 'DH_SIZE=512' -v $EXT_DIR:/etc/nginx/external/ keeweb
+# #
+#   @project        keeweb
+#   @usage          keeweb docker image
+#   @file           Dockerfile
+#   @repo           https://github.com/keeweb/keeweb
+#                   https://github.com/keeweb/alpine-base
+#                   https://hub.docker.com/repository/docker/keeweb/keeweb
+#                   https://hub.docker.com/repository/docker/keeweb/alpine-base
+# #
 
-# Using pre-built image from dockerhub:
-# If you have SSL certs, put your dh.pem, cert.pem, key.pem to /etc/nginx/external/ and run with:
-# docker run --name keeweb -d -p 443:443 -p 80:80 -v $EXT_DIR:/etc/nginx/external/ antelle/keeweb
-# Or, to generate self-signed cert, run:
-# docker run --name keeweb -d -p 443:443 -p 80:80 -e 'DH_SIZE=512' antelle/keeweb
+FROM ghcr.io/keeweb/alpine-base:3.20-amd64
 
-FROM nginx:stable
-LABEL maintainer="antelle.net@gmail.com"
+# #
+#   Set Args
+# #
 
-# install
-RUN apt-get -y update && apt-get -y install openssl curl unzip && rm -rf /var/lib/apt/lists/*
+ARG BUILD_DATE
+ARG VERSION
+ARG NGINX_VERSION
 
-# setup nginx
-RUN rm -rf /etc/nginx/conf.d/*; \
-    mkdir -p /etc/nginx/external
+# #
+#   Set Labels
+# #
 
-RUN sed -i 's/access_log.*/access_log \/dev\/stdout;/g' /etc/nginx/nginx.conf; \
-    sed -i 's/error_log.*/error_log \/dev\/stdout info;/g' /etc/nginx/nginx.conf; \
-    sed -i 's/^pid/daemon off;\npid/g' /etc/nginx/nginx.conf
+LABEL maintainer="Aetherinox"
+LABEL org.opencontainers.image.authors="Aetherinox, Antelle"
+LABEL org.opencontainers.image.vendor="Keeweb"
+LABEL org.opencontainers.image.title="Keeweb Password Manager"
+LABEL org.opencontainers.image.description="Keeweb password manager"
+LABEL org.opencontainers.image.source="https://github.com/keeweb/keeweb"
+LABEL org.opencontainers.image.documentation="https://github.com/keeweb/keeweb"
+LABEL org.opencontainers.image.url="https://github.com/keeweb/keeweb/pkgs/container/keeweb"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL build_version="Keeweb v${VERSION} build-date: ${BUILD_DATE}"
 
-COPY keeweb.conf /etc/nginx/conf.d/keeweb.conf
+# #
+#   Set Env Var
+# #
 
-COPY entrypoint.sh /opt/entrypoint.sh
-RUN chmod a+x /opt/entrypoint.sh
+ENV TZ="Etc/UTC"
+ENV URL_REPO_BASE="https://github.com/keeweb/alpine-base/pkgs/container/alpine-base"
+ENV URL_REPO_APP="https://github.com/keeweb/keeweb/pkgs/container/keeweb"
+ENV FILE_NAME="index.html"
+ENV PORT_HTTP=80
+ENV PORT_HTTPS=443
 
-# add keeweb files
-COPY dist keeweb
+# #
+#   Install
+# #
 
-# clone keeweb plugins
-RUN curl -Ss -L -O https://github.com/keeweb/keeweb-plugins/archive/master.zip; \
-    unzip master.zip; \
-    rm master.zip; \
-    mv keeweb-plugins-master/docs keeweb/plugins; \
-    rm -rf keeweb-plugins-master;
+RUN \
+  if [ -z ${NGINX_VERSION+x} ]; then \
+      NGINX_VERSION=$(curl -sL "http://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/APKINDEX.tar.gz" | tar -xz -C /tmp \
+      && awk '/^P:nginx$/,/V:/' /tmp/APKINDEX | sed -n 2p | sed 's/^V://'); \
+  fi && \
+  apk add --no-cache \
+      wget \
+      logrotate \
+      openssl \
+      apache2-utils \
+      nginx==${NGINX_VERSION} \
+      nginx-mod-http-fancyindex==${NGINX_VERSION} && \
+  echo "**** Install Build Packages ****" && \
+  echo "**** Configure Nginx ****" && \
+  echo 'fastcgi_param  HTTP_PROXY         ""; # https://httpoxy.org/' >> \
+      /etc/nginx/fastcgi_params && \
+  echo 'fastcgi_param  PATH_INFO          $fastcgi_path_info; # http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_split_path_info' >> \
+      /etc/nginx/fastcgi_params && \
+  echo 'fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name; # https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/#connecting-nginx-to-php-fpm' >> \
+      /etc/nginx/fastcgi_params && \
+  echo 'fastcgi_param  SERVER_NAME        $host; # Send HTTP_HOST as SERVER_NAME. If HTTP_HOST is blank, send the value of server_name from nginx (default is `_`)' >> \
+      /etc/nginx/fastcgi_params && \
+  rm -f /etc/nginx/http.d/default.conf && \
+  rm -f /etc/nginx/conf.d/stream.conf && \
+  rm -f /config/www/index.html && \
+  echo "**** Setup Logrotate ****" && \
+  sed -i "s#/var/log/messages {}.*# #g" \
+      /etc/logrotate.conf && \
+  sed -i 's#/usr/sbin/logrotate /etc/logrotate.conf#/usr/sbin/logrotate /etc/logrotate.conf -s /config/log/logrotate.status#g' \
+      /etc/periodic/daily/logrotate
 
-RUN apt-get -y remove curl unzip
+# #
+#   Set work directory
+# #
 
-ENTRYPOINT ["/opt/entrypoint.sh"]
-CMD ["nginx"]
+WORKDIR /config/www
 
-EXPOSE 443
-EXPOSE 80
+# #
+#   Add local files
+# #
+
+COPY root/ /
+
+# #
+#   Ports and volumes
+# #
+
+EXPOSE ${PORT_HTTP} ${PORT_HTTPS}
+
+# #
+#   In case user sets up the cron for a longer duration, do a first run
+#   and then keep the container running. Hacky, but whatever.
+# #
+
+# CMD ["sh", "-c", "/run.sh ; /task.sh ; tail -f /dev/null"]

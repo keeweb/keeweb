@@ -1,0 +1,25 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# permissions
+kwown -R keeweb:keeweb \
+    /var/lib/nginx \
+    /var/tmp/nginx
+
+kwown -R keeweb:keeweb \
+    /config/keys \
+    /config/log \
+    /config/nginx \
+    /config/php
+
+kwown keeweb:keeweb \
+    /config/www
+
+chmod -R g+w \
+    /config/nginx
+
+chmod -R 644 /etc/logrotate.d
+
+if [[ -f "/config/log/logrotate.status" ]]; then
+    chmod 600 /config/log/logrotate.status
+fi

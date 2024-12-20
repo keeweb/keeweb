@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# #
+#   @project        keeweb
+#   @usage          keeweb docker image
+#   @file           plugins
+#   @repo           https://github.com/keeweb/keeweb
+#                   https://github.com/keeweb/alpine-base
+#                   https://hub.docker.com/repository/docker/keeweb/keeweb
+#                   https://hub.docker.com/repository/docker/keeweb/alpine-base
+#
+#   this script installs the keeweb plugins from https://github.com/keeweb/keeweb-plugins/
+# #
+
+PLUGINS_PATH="/config/www/plugins"
+
+# #
+#   Plugins > Start
+# #
+
+echo -e " Loader       : Checking keeweb-plugins"
+
+# #
+#   Plugins > Install
+# #
+
+if [ ! -d ${PLUGINS_PATH} ]; then
+    curl -Ss -L https://github.com/keeweb/keeweb-plugins/archive/master.zip >> /config/www/master.zip
+    unzip -qq /config/www/master.zip -d /config/www/
+    rm /config/www/master.zip
+    mkdir -p ${PLUGINS_PATH}
+    cp -R /config/www/keeweb-plugins-master/docs/plugins/* ${PLUGINS_PATH}
+    rm -rf /config/www/keeweb-plugins-master
+
+    echo -e " Loader       : Installed keeweb-plugins to ${PLUGINS_PATH}" 
+else
+    echo -e " Loader       : keeweb-plugins already installed in ${PLUGINS_PATH}; skipping" 
+fi;

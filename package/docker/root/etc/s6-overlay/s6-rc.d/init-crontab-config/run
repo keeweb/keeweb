@@ -1,0 +1,45 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+for cron_user in keeweb root; do
+    if [[ -z ${KW_READ_ONLY_FS} ]] && [[ -z ${KW_NON_ROOT_USER} ]]; then
+        if [[ -f "/etc/crontabs/${cron_user}" ]]; then
+            kwown "${cron_user}":"${cron_user}" "/etc/crontabs/${cron_user}"
+            crontab -u "${cron_user}" "/etc/crontabs/${cron_user}"
+        fi
+    fi
+
+    if [[ -f "/defaults/crontabs/${cron_user}" ]]; then
+        mkdir -p /config/crontabs
+
+        # #
+        #   if crontabs do not exist in config
+        # #
+
+        if [[ ! -f "/config/crontabs/${cron_user}" ]]; then
+
+            # #
+            #   copy crontab from system
+            # #
+        
+            if crontab -l -u "${cron_user}" >/dev/null 2>&1; then
+                crontab -l -u "${cron_user}" >"/config/crontabs/${cron_user}"
+            fi
+
+            # #
+            #   if crontabs still do not exist in config (were not copied from system)
+            #   copy crontab from image defaults (using -n, do not overwrite an existing file)
+            # #
+
+            cp -n "/defaults/crontabs/${cron_user}" /config/crontabs/
+        fi
+
+        # #
+        #   set perms and import user crontabs
+        # #
+
+        kwown "${cron_user}":"${cron_user}" "/config/crontabs/${cron_user}"
+        crontab -u "${cron_user}" "/config/crontabs/${cron_user}"
+    fi
+done
+

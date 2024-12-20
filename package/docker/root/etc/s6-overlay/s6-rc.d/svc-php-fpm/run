@@ -1,0 +1,6 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+if [[ -f /usr/sbin/php-fpm83 ]]; then
+    exec /usr/sbin/php-fpm83 -F
+fi
