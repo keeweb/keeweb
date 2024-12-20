@@ -37,25 +37,25 @@ on:
         inputs:
 
             # #
-            #   Repo › Source
+            #   Branch › Source
             #
             #   Where the files to be copied are
             # #
 
-            REPO_SRC:
-              description:  "📂 Repo › Source"
+            BRANCH_SRC:
+              description:  '📂 Repo › Source'
               required:     true
               default:      'docker/keeweb'
               type:         string
 
             # #
-            #   Destination Path
+            #   Folder › Destination
             #
             #   where the files will be placed
             # #
 
-            DEST_PATH:
-                description:  "📂 Destination Folder"
+            FOLDER_DEST:
+                description:  '📂 Folder › Destination'
                 required:     true
                 default:      'package/docker'
                 type:         string
@@ -66,7 +66,7 @@ on:
             # #
 
             DRY_RUN:
-                description:  "📑 Dry Run Only"
+                description:  '📑 Dry Run Only'
                 required:     true
                 default:      false
                 type:         boolean
@@ -81,13 +81,20 @@ on:
 
 # #
 #   Environment Vars
+#
+#   BRANCH_SRC            the source branch where you want to copy files from
+#   BRANCH_DEST           the destination branch where the files will be copied to
+#   FOLDER_DEST           the destination folder where the files will be placed within BRANCH_DEST
+#   BRANCH_MAIN           even though this value is set below; it is a fallback.
+#                         when the workflow is started, it will attempt to fetch
+#                         the real default branch name.
 # #
 
 env:
-    REPO_MAIN:            'main'
-    REPO_SRC:             ${{ github.event.inputs.REPO_SRC || 'docker/keeweb' }}
-    REPO_DEST:            ${{ github.ref_name || 'main' }}
-    DEST_PATH:            ${{ github.event.inputs.DEST_PATH || 'package/docker' }}
+    BRANCH_SRC:           ${{ github.event.inputs.BRANCH_SRC || 'docker/keeweb' }}
+    BRANCH_DEST:          ${{ github.ref_name || 'main' }}
+    FOLDER_DEST:          ${{ github.event.inputs.FOLDER_DEST || 'package/docker' }}
+    BRANCH_MAIN:          'main'
 
     BOT_NAME_1:           EuropaServ
     BOT_NAME_DEPENDABOT:  dependabot[bot]
@@ -146,16 +153,27 @@ jobs:
                   sudo apt-get install -qq dos2unix
 
             # #
+            #   Sync › Get Default Branch Name
+            #
+            #   attempts to get the name of the default branch so that we don't have to manually changes
+            # #
+
+            - name: "🔍 Find Default Branch Name"
+              id: task_sync_branch_default_get
+              run:
+                  echo "BRANCH_MAIN=${{ github.event.repository.default_branch }}" >> $GITHUB_ENV
+
+            # #
             #   Sync › Debug
             # #
 
             - name: '⚠️ Env Variable › Check'
               id: task_sync_vars_check
               run: |
-                  if [[ "${{ env.REPO_SRC }}" == "${{ env.REPO_DEST || env.REPO_MAIN }}" ]]; then
-                      echo "⚠️⚠️⚠️ Source and destination branches are the same, changing destination branch to main ⚠️⚠️⚠️"
-                      branch_Default="${{ env.REPO_MAIN }}"
-                      echo "REPO_DEST=$(echo $branch_Default)" >> $GITHUB_ENV
+                  if [[ "${{ env.BRANCH_SRC }}" == "${{ env.BRANCH_DEST }}" ]]; then
+                      branch_default="${{ env.BRANCH_MAIN }}"
+                      echo "⚠️⚠️⚠️ Source and destination branches are the same, changing destination branch to $branch_default ⚠️⚠️⚠️"
+                      echo "BRANCH_DEST=$(echo $branch_default)" >> $GITHUB_ENV
                   fi
 
             # #
@@ -165,7 +183,7 @@ jobs:
             - name: '⚠️ Env Variable › Confirm'
               id: task_sync_vars_confirm
               run: |
-                  echo "REPO_DEST is now ${{ env.REPO_DEST }}"
+                  echo "BRANCH_DEST is now ${{ env.BRANCH_DEST }}"
 
             # #
             #   Sync › Checkpoint › 1
@@ -179,15 +197,15 @@ jobs:
                   echo "github.ref_name ...... ${{ github.ref_name }}"
                   echo "github.event_name .... ${{ github.event_name }}"
                   echo "inputs.DRY_RUN ....... ${{ inputs.DRY_RUN }}"
-                  echo "env.REPO_SRC.......... ${{ env.REPO_SRC }}"
-                  echo "env.REPO_DEST......... ${{ env.REPO_DEST || env.REPO_MAIN  }}"
-                  echo "env.DEST_PATH......... ${{ env.DEST_PATH }}"
+                  echo "env.BRANCH_SRC........ ${{ env.BRANCH_SRC }}"
+                  echo "env.BRANCH_DEST....... ${{ env.BRANCH_DEST || env.BRANCH_MAIN  }}"
+                  echo "env.FOLDER_DEST....... ${{ env.FOLDER_DEST }}"
 
-                  echo " ⚠️⚠️⚠️⚠️ This workflow will copy files [ 📄 root Dockerfile* ] from branch 🏠 ${{ env.REPO_SRC }} to 🔄 ${{ env.REPO_DEST || env.REPO_MAIN }} to folder 📂 ${{ env.DEST_PATH }} ⚠️⚠️⚠️"
+                  echo " ⚠️⚠️⚠️⚠️ This workflow will copy files [ 📄 root Dockerfile* ] from branch 🏠 ${{ env.BRANCH_SRC }} to 🔄 ${{ env.BRANCH_DEST || env.BRANCH_MAIN }} to folder 📂 ${{ env.FOLDER_DEST }} ⚠️⚠️⚠️"
                   echo "    › Copy files ............. 📄 root Dockerfile*"
-                  echo "    › From branch ............ 🏠 ${{ env.REPO_SRC }}"
-                  echo "    › To branch .............. 🔄 ${{ env.REPO_DEST || env.REPO_MAIN }}"
-                  echo "    › In folder .............. 📂 ${{ env.DEST_PATH }}"
+                  echo "    › From branch ............ 🏠 ${{ env.BRANCH_SRC }}"
+                  echo "    › To branch .............. 🔄 ${{ env.BRANCH_DEST || env.BRANCH_MAIN }}"
+                  echo "    › In folder .............. 📂 ${{ env.FOLDER_DEST }}"
 
             # #
             #   Sync › Copy Dockerfiles to Main branch
@@ -212,12 +230,12 @@ jobs:
             - name: '⬇️ Pull Docker Files'
               id: task_sync_files_pull
               run: |
-                  rm -rf ${{ env.DEST_PATH }}/*
+                  rm -rf ${{ env.FOLDER_DEST }}/*
                   git config --global pager.diff false
                   git config --global advice.detachedHead false
-                  git checkout origin/${{ env.REPO_DEST || env.REPO_MAIN }}                                                      #  ${{ github.ref_name || 'main' }}
-                  git --work-tree=${{ env.DEST_PATH }} checkout origin/${{ env.REPO_SRC }} -- root Dockerfile*  #  ${{ inputs.REPO_SRC || 'docker/keeweb' }}
-                  git add ${{ env.DEST_PATH }}
+                  git checkout origin/${{ env.BRANCH_DEST || env.BRANCH_MAIN }}                                       #  ${{ github.ref_name || 'main' }}
+                  git --work-tree=${{ env.FOLDER_DEST }} checkout origin/${{ env.BRANCH_SRC }} -- root Dockerfile*    #  'docker/keeweb'
+                  git add ${{ env.FOLDER_DEST }}
 
             # #
             #   Sync › Run permission management
@@ -226,8 +244,8 @@ jobs:
             - name: '#️⃣ Manage Permissions'
               id: task_sync_fix_permissions
               run: |
-                  find ${{ env.DEST_PATH }} -name 'run' -exec chmod 755 {} \;
-                  WRONG_PERM=$(find ${{ env.DEST_PATH }}  -path "./.git" -prune -o \( -name "run" -o -name "finish" -o -name "check" \) -not -perm -u=x,g=x,o=x -print)
+                  find ${{ env.FOLDER_DEST }} -name 'run' -exec chmod 755 {} \;
+                  WRONG_PERM=$(find ${{ env.FOLDER_DEST }}  -path "./.git" -prune -o \( -name "run" -o -name "finish" -o -name "check" \) -not -perm -u=x,g=x,o=x -print)
                   if [ -n "${WRONG_PERM}" ]; then
                       for i in ${WRONG_PERM}; do
                       echo "::error file=${i},line=1,title=Missing Executable Bit::This file needs to be set as executable!"
@@ -244,7 +262,7 @@ jobs:
             - name: '🔐 Apply dos2unix'
               id: task_sync_fix_dos2unix
               run: |
-                  find ${{ env.DEST_PATH }} -type f | grep -Ev '.git|.github|*.jpg|*.jpeg|*.png' | xargs dos2unix --
+                  find ${{ env.FOLDER_DEST }} -type f | grep -Ev '.git|.github|*.jpg|*.jpeg|*.png' | xargs dos2unix --
 
             # #
             #   Sync › Show Differences
@@ -305,11 +323,11 @@ jobs:
                   echo "github.event_name .... ${{ github.event_name }}"
                   echo "inputs.DRY_RUN ....... ${{ inputs.DRY_RUN }}"
 
-                  echo " ⚠️⚠️⚠️⚠️ This workflow will copy files [ 📄 root Dockerfile* ] from branch 🏠 ${{ env.REPO_SRC }} to 🔄 ${{ env.REPO_DEST || env.REPO_MAIN }} to folder 📂 ${{ env.DEST_PATH }} ⚠️⚠️⚠️"
+                  echo " ⚠️⚠️⚠️⚠️ This workflow will copy files [ 📄 root Dockerfile* ] from branch 🏠 ${{ env.BRANCH_SRC }} to 🔄 ${{ env.BRANCH_DEST || env.BRANCH_MAIN }} to folder 📂 ${{ env.FOLDER_DEST }} ⚠️⚠️⚠️"
                   echo "    › Copy files ............. 📄 root Dockerfile*"
-                  echo "    › From branch ............ 🏠 ${{ env.REPO_SRC }}"
-                  echo "    › To branch .............. 🔄 ${{ env.REPO_DEST || env.REPO_MAIN }}"
-                  echo "    › In folder .............. 📂 ${{ env.DEST_PATH }}"
+                  echo "    › From branch ............ 🏠 ${{ env.BRANCH_SRC }}"
+                  echo "    › To branch .............. 🔄 ${{ env.BRANCH_DEST || env.BRANCH_MAIN }}"
+                  echo "    › In folder .............. 📂 ${{ env.FOLDER_DEST }}"
 
             # #
             #   Sync › Commit
@@ -326,5 +344,5 @@ jobs:
                   commit_author: "${{ steps.task_sync_commit_gpg.outputs.name }} <${{ steps.task_sync_commit_gpg.outputs.email }}>"
                   commit_user_name: ${{ steps.task_sync_commit_gpg.outputs.name }}
                   commit_user_email: ${{ steps.task_sync_commit_gpg.outputs.email }}
-                  branch: ${{ env.REPO_DEST || env.REPO_MAIN }}
+                  branch: ${{ env.BRANCH_DEST || env.BRANCH_MAIN }}
                   add_options: '-u'
