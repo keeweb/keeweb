@@ -1,0 +1,83 @@
+# #
+#   @project        keeweb
+#   @usage          Nginx site-configs default configuration file
+#   @file           /root/defaults/nginx/site-confs/default.conf
+#   @repo           https://github.com/keeweb/keeweb
+#                   https://github.com/keeweb/alpine-base
+#                   https://hub.docker.com/repository/docker/keeweb/keeweb
+#                   https://hub.docker.com/repository/docker/keeweb/alpine-base
+# #
+
+server
+{
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+
+    server_name _;
+
+    include /config/nginx/ssl.conf;
+
+    set $root /app/www/public;
+    if (!-d /app/www/public)
+    {
+        set $root /config/www;
+    }
+
+    root $root;
+    index index.html index.htm index.php;
+
+    location /
+    {
+        # enable for basic auth
+        #auth_basic                 "Restricted";
+        #auth_basic_user_file       /config/nginx/.htpasswd;
+
+        # index > fancy
+        fancyindex                  on;
+        fancyindex_header           "/theme/header.html";
+        fancyindex_footer           "/theme/footer.html";
+        fancyindex_ignore           "theme";
+        fancyindex_time_format      "%m-%d-%Y %T";
+        fancyindex_name_length      255;
+        fancyindex_show_dotfiles    off;
+        fancyindex_hide_symlinks    on;
+        fancyindex_default_sort     name;
+
+        # index > auto
+    	autoindex_exact_size        off;
+    	autoindex_format            html;
+    	autoindex_localtime         on;
+
+        gzip on;
+        gzip_vary on;
+        gzip_types text/css text/javascript text/xml application/atom+xml application/rss+xml text/markdown text/mathml text/plain text/vnd.sun.j2me.app-descriptor text/vnd.wap.wml text/x-component application/json application/xhtml+xml application/xspf+xml font/woff font/woff2 image/avif image/bmp image/png image/svg+xml image/tiff image/vnd.wap.wbmp image/webp image/x-icon image/x-jng audio/midi audio/mpeg audio/ogg audio/x-m4a audio/x-realaudio;
+        gzip_proxied any;
+        gzip_comp_level 1;
+        gzip_http_version 1.0;
+        gunzip on;
+        gzip_static on;
+
+        try_files $uri $uri/ /index.html /index.htm /index.php$is_args$args;
+    }
+
+    location ~ ^(.+\.php)(.*)$
+    {
+        # enable the next two lines for http auth
+        #auth_basic "Restricted";
+        #auth_basic_user_file /config/nginx/.htpasswd;
+
+        fastcgi_split_path_info ^(.+\.php)(.*)$;
+        if (!-f $document_root$fastcgi_script_name) { return 404; }
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        include /etc/nginx/fastcgi_params;
+    }
+
+    # deny access to .htaccess/.htpasswd files
+    location ~ /\.ht
+    {
+        deny all;
+    }
+}

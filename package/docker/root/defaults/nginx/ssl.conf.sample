@@ -1,0 +1,68 @@
+
+# #
+#   @project        keeweb
+#   @usage          Nginx site-configs default configuration file
+#   @file           /root/defaults/nginx/ssl.conf.sample
+#   @repo           https://github.com/keeweb/keeweb
+#                   https://github.com/keeweb/alpine-base
+#                   https://hub.docker.com/repository/docker/keeweb/keeweb
+#                   https://hub.docker.com/repository/docker/keeweb/alpine-base
+# #
+
+# #
+#   generated 2023-06-25, Mozilla Guideline v5.7, nginx 1.24.0, OpenSSL 3.1.1, intermediate configuration
+#   https://ssl-config.mozilla.org/#server=nginx&version=1.24.0&config=intermediate&openssl=3.1.1&guideline=5.7
+# #
+
+ssl_certificate             /config/keys/cert.crt;
+ssl_certificate_key         /config/keys/cert.key;
+ssl_session_timeout         1d;
+ssl_session_cache           shared:MozSSL:10m; # about 40000 sessions
+ssl_session_tickets         off;
+
+# #
+#   curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam
+# #
+
+ssl_dhparam                 /config/nginx/dhparams.pem;
+
+# #
+#   intermediate configuration
+# #
+
+ssl_protocols               TLSv1.2 TLSv1.3;
+ssl_ciphers                 ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256;
+ssl_prefer_server_ciphers   on;
+
+# #
+#   OCSP stapling
+# #
+
+# ssl_stapling              on;
+# ssl_stapling_verify       on;
+
+# #
+#   verify chain of trust of OCSP response using Root CA and Intermediate certs
+# #
+
+# ssl_trusted_certificate   /config/keys/cert.crt;
+
+# #
+#   HSTS (ngx_http_headers_module is required) (63072000 seconds)
+# #
+
+add_header X-Content-Type-Options nosniff;
+add_header Strict-Transport-Security "max-age=31536000; includeSubdomains" always;
+
+# #
+#   Optional additional headers
+# #
+
+# add_header                Cache-Control "no-transform" always;
+# add_header                Content-Security-Policy "upgrade-insecure-requests; frame-ancestors 'self'" always;
+# add_header                Permissions-Policy "interest-cohort=()" always;
+# add_header                Referrer-Policy "same-origin" always;
+# add_header                X-Content-Type-Options "nosniff" always;
+# add_header                X-Frame-Options "SAMEORIGIN" always;
+# add_header                X-UA-Compatible "IE=Edge" always;
+# add_header                X-XSS-Protection "1; mode=block" always;
