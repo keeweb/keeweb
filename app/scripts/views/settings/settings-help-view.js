@@ -35,6 +35,8 @@ class SettingsHelpView extends View {
                 encodeURIComponent('# please describe your issue here\n\n' + appInfo),
             desktopLink: Links.Desktop,
             webAppLink: Links.WebApp,
+            packageGithubLink: Links.PackagesGithub,
+            packageDockerhubLink: Links.PackagesDockerhub,
             appInfo
         });
     }
