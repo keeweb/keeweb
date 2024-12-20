@@ -231,6 +231,7 @@ jobs:
               id: task_sync_files_pull
               run: |
                   rm -rf ${{ env.FOLDER_DEST }}/*
+                  mkdir -p ${{ env.FOLDER_DEST }}
                   git config --global pager.diff false
                   git config --global advice.detachedHead false
                   git checkout origin/${{ env.BRANCH_DEST || env.BRANCH_MAIN }}                                       #  ${{ github.ref_name || 'main' }}
