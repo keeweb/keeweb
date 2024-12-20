@@ -173,6 +173,14 @@
             color: dotted var(--text-color);
             border-bottom: 1px dotted var(--selected-item-color);
         }
+
+        .fa {
+            color: var(--text-color);
+
+            &:hover {
+                color: var(--selected-item-color);
+            }
+        }
     }
 
     .shortcut {
