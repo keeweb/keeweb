@@ -4,7 +4,7 @@
 
 <br />
 
-The `docker/keeweb` branch contains the Keeweb password manager within a docker image, which allows you to host it within **[Docker](https://docker.com)**, instead of a bare-metal or local install.
+The `🔀 docker/keeweb` branch contains the Keeweb password manager within a docker image, which allows you to host it within **[Docker](https://docker.com)**, instead of a bare-metal or local install.
 
 </p>
 
@@ -40,8 +40,7 @@ The `docker/keeweb` branch contains the Keeweb password manager within a docker 
 <br />
 
 - [About](#about)
-- [Image Options](#image-options)
-  - [Image Sources](#image-sources)
+- [Images](#images)
 - [Install](#install)
   - [Docker Run](#docker-run)
   - [Docker Compose](#docker-compose)
@@ -66,16 +65,20 @@ The `docker/keeweb` branch contains the Keeweb password manager within a docker 
   - [Before Building](#before-building)
     - [LF over CRLF](#lf-over-crlf)
     - [Set `+x / 0755` Permissions](#set-x--0755-permissions)
-  - [Build `docker/alpine-base` Image](#build-dockeralpine-base-image)
+  - [Build ` docker/alpine-base` Image](#build--dockeralpine-base-image)
     - [amd64](#amd64)
     - [arm64 / aarch64](#arm64--aarch64)
   - [Build `docker/keeweb` Image](#build-dockerkeeweb-image)
     - [amd64](#amd64-1)
     - [arm64 / aarch64](#arm64--aarch64-1)
-    - [hub.docker.com / ghcr.io / local](#hubdockercom--ghcrio--local)
+    - [Upload: hub.docker.com / ghcr.io / local](#upload-hubdockercom--ghcrio--local)
     - [Image Tags](#image-tags)
   - [Extra Notes](#extra-notes)
     - [Custom Scripts](#custom-scripts)
+    - [Associated Workflows](#associated-workflows)
+      - [deploy-docker-github-sync.yml](#deploy-docker-github-syncyml)
+      - [deploy-docker-github.yml](#deploy-docker-githubyml)
+      - [deploy-docker-dockerhub.yml](#deploy-docker-dockerhubyml)
 
 <br />
 
@@ -92,20 +95,15 @@ This repository contains Keeweb Password Manager, distributed within a docker im
 
 <br />
 
-## Image Options
-Use any of the following images in your `docker-compose.yml` or `run` command:
-
-<br />
-
-### Image Sources
-You may pick from the following vendors and architecture:
+## Images
+Use any of the following images in your `📄 docker-compose.yml` or `run` command:
 
 <br />
 
 | Service | Version | Image Link |
 | --- | --- | --- |
-| `Docker Hub` | [![Docker Version][dockerhub-version-ftb-img]][dockerhub-version-ftb-uri] | `keeweb/keeweb:latest` <br /> `keeweb/keeweb:1.19.0` <br /> `keeweb/keeweb:1.19.0-amd64` <br /> `keeweb/keeweb:1.19.0-arm64` <br /> `keeweb/keeweb:development` <br /> `keeweb/keeweb:development-amd64` <br /> `keeweb/keeweb:development-arm64` |
-| `Github` | [![Github Version][github-version-ftb-img]][github-version-ftb-uri] | `ghcr.io/keeweb/keeweb:latest` <br /> `ghcr.io/keeweb/keeweb:1.19.0` <br /> `ghcr.io/keeweb/keeweb:1.19.0-amd64` <br /> `ghcr.io/keeweb/keeweb:1.19.0-arm64` <br /> `ghcr.io/keeweb/keeweb:development` <br /> `ghcr.io/keeweb/keeweb:development-amd64` <br /> `ghcr.io/keeweb/keeweb:development-arm64` |
+| `Docker Hub` | [![Docker Version][dockerhub-version-ftb-img]][dockerhub-version-ftb-uri] | `🔖 keeweb/keeweb:latest` <br /> `🔖 keeweb/keeweb:1.19.0` <br /> `🔖 keeweb/keeweb:1.19.0-amd64` <br /> `🔖 keeweb/keeweb:1.19.0-arm64` <br /> `🔖 keeweb/keeweb:development` <br /> `🔖 keeweb/keeweb:development-amd64` <br /> `🔖 keeweb/keeweb:development-arm64` |
+| `Github` | [![Github Version][github-version-ftb-img]][github-version-ftb-uri] | `🔖 ghcr.io/keeweb/keeweb:latest` <br /> `🔖 ghcr.io/keeweb/keeweb:1.19.0` <br /> `🔖 ghcr.io/keeweb/keeweb:1.19.0-amd64` <br /> `🔖 ghcr.io/keeweb/keeweb:1.19.0-arm64` <br /> `🔖 ghcr.io/keeweb/keeweb:development` <br /> `🔖 ghcr.io/keeweb/keeweb:development-amd64` <br /> `🔖 ghcr.io/keeweb/keeweb:development-arm64` |
 
 <br />
 
@@ -128,7 +126,7 @@ docker run -d --restart=unless-stopped -p 443:443 --name keeweb -v ${PWD}/keeweb
 <br />
 
 ### Docker Compose
-Create a new `docker-compose.yml` with the following:
+Create a new `📄 docker-compose.yml` with the following:
 
 ```yml
 services:
@@ -179,7 +177,7 @@ We will be setting up the following:
 
 ##### Labels
 
-To add Keeweb to Traefik, you will need to open your `docker-compose.yml` and apply the following labels to your Keeweb container. Ensure you change `domain.lan` to your actual domain name.
+To add Keeweb to Traefik, you will need to open your `📄 docker-compose.yml` and apply the following labels to your Keeweb container. Ensure you change `domain.lan` to your actual domain name.
 
 ```yml
 services:
@@ -304,7 +302,7 @@ The code above is what enables the use of a **[dynamic file](#dynamicyml)** inst
 
 <br />
 
-After you add the above, open your Traefik's `docker-compose.yml` file and mount a new volume so that Traefik knows where your new dynamic file is:
+After you add the above, open your Traefik's `📄 docker-compose.yml` file and mount a new volume so that Traefik knows where your new dynamic file is:
 
 ```yml
     traefik:
@@ -326,7 +324,7 @@ You must ensure you add a new volume like shown above:
 
 <br />
 
-On your host machine, make sure you place the `dynamic.yml` file in a sub-folder called **config**, which should be inside the same folder where your Traefik's `docker-compose.yml` file is. If you want to change this location, ensure you change the mounted volume path above.
+On your host machine, make sure you place the `dynamic.yml` file in a sub-folder called **config**, which should be inside the same folder where your Traefik's `📄 docker-compose.yml` file is. If you want to change this location, ensure you change the mounted volume path above.
 
 <br />
 
@@ -377,7 +375,7 @@ In our example, since we are using **Cloudflare** for `dnsChallenge` -> `provide
 
 <br />
 
-Create a `.env` environment file in the same folder where your Traefik `docker-compose.yml` file is located, and add the following:
+Create a `.env` environment file in the same folder where your Traefik `📄 docker-compose.yml` file is located, and add the following:
 
 ```yml
 CF_API_EMAIL=yourcloudflare@email.com
@@ -496,9 +494,11 @@ Sign into the Authentik admin panel, go to the left-side navigation, select **Ap
 
 <br />
 
-<p align="center"><img style="width: 40%;text-align: center;" src="docs/img/authentik/01.png"></p>
+<p align="center"><img style="width: 40%;text-align: center;" src="docs/img/authentik/01.png"><br><small><sup><b>Authentik:</b> Select <code>Applications</code> › <code>Providers</code></sup></small></p>
 
-<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/02.png"></p>
+<br />
+
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/02.png"><br><small><sup><b>Authentik:</b> Select <code>Create</code></small></p>
 
 <br />
 
@@ -506,7 +506,7 @@ For the **provider**, select `Proxy Provider`.
 
 <br />
 
-<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/03.png"></p>
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/03.png"><br><small><sup><b>Authentik:</b> Select desired provider type, or select <b><code>Proxy Provider</code></b></sup></small></p>
 
 <br />
 
@@ -522,7 +522,7 @@ Select **Forward Auth (single application)**:
 
 <br />
 
-<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/04.gif"></p>
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/04.gif"><br><small><sup><b>Authentik:</b> Create new <b><code>Provider</code></b></sup></small></p>
 
 <br />
 
@@ -530,9 +530,11 @@ Once finished, click **Create**. Then on the left-side menu, select **Applicatio
 
 <br />
 
-<p align="center"><img style="width: 40%;text-align: center;" src="docs/img/authentik/05.png"></p>
+<p align="center"><img style="width: 40%;text-align: center;" src="docs/img/authentik/05.png"><br><small><sup><b>Authentik:</b> Select <code>Applications</code> › <code>Applications</code></sup></small></p>
 
-<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/02.png"></p>
+<br />
+
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/02.png"><br><small><sup><b>Authentik:</b> Select <code>Create</code></small></p>
 
 <br />
 
@@ -546,7 +548,7 @@ Add the following parameters:
 
 <br />
 
-<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/06.png"></p>
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/06.png"><br><small><sup><b>Authentik:</b> Create Application</sup></small></p>
 
 <br />
 
@@ -554,13 +556,13 @@ Save, and then on the left-side menu, select **Applications** -> **Outposts**:
 
 <br />
 
-<p align="center"><img style="width: 40%;text-align: center;" src="docs/img/authentik/07.png"></p>
+<p align="center"><img style="width: 40%;text-align: center;" src="docs/img/authentik/07.png"><br><small><sup><b>Authentik:</b> Select <code>Applications</code> › <code>Outposts</code></sup></small></p>
 
 <br />
 
 Find your **Outpost** and edit it.
 
-<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/08.png"></p>
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/08.png"><br><small><sup><b>Authentik:</b> Edit outpost</sup></small></p>
 
 <br />
 
@@ -568,20 +570,20 @@ Move `Keeweb (Password Manager)` to the right side **Selected Applications** box
 
 <br />
 
-<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/09.png"></p>
+<p align="center"><img style="width: 80%;text-align: center;" src="docs/img/authentik/09.png"><br><small><sup><b>Authentik:</b> Assign application to outpost</sup></small></p>
 
 <br />
 
-If you followed our [Traefik](#traefik-integration) guide above, you were shown how to add your Keeweb container to Traefik using either the **[dynamic file](#dynamicyml)** or **[labels](#labels)**. Depending on which option you picked, follow that section's guide below.
+If you followed our [Traefik](#traefik-integration) guide above, you were shown how to add your Keeweb container to Traefik using either the **[📄 dynamic file](#dynamicyml)** or **[labels](#labels)**. Depending on which option you picked, follow that section's guide below.
 
 - For **label** users, go to the section [Labels](#labels-1) below.
-- For **dynamic file** users, go to the section [Dynamic File](#dynamicyml-1) below.
+- For **dynamic file** users, go to the section [📄 dynamic file](#dynamicyml-1) below.
 
 <br />
 
 #### Labels
 
-Open your Keeweb's `docker-compose.yml` and modify your labels to include Authentik as a **middleware** by adding `authentik@file` to the label `traefik.http.routers.keeweb-https.middlewares`. You should have something similar to the example below:
+Open your Keeweb's `📄 docker-compose.yml` and modify your labels to include Authentik as a **middleware** by adding `authentik@file` to the label `traefik.http.routers.keeweb-https.middlewares`. You should have something similar to the example below:
 
 ```yml
 services:
@@ -626,7 +628,7 @@ services:
 
 #### Dynamic.yml
 
-If you opted to use the [dynamic file](#dynamicyml), open your Traefik's `dynamic.yml` file and apply the `authentik@file` middleware to look something like the following:
+If you opted to use the **[📄 dynamic file](#dynamicyml)**, open your Traefik's `📄 dynamic.yml` file and apply the `authentik@file` middleware to look something like the following:
 
 <br />
 
@@ -722,7 +724,7 @@ This docker image automatically generates an SSL certificate when the nginx serv
 
 <br />
 
-You may opt to either use the generated self-signed certificate, or you can add your own. If you decide to use your own self-signed certificate, ensure you have mounted the `/config` volume in your `docker-compose.yml`:
+You may opt to either use the generated self-signed certificate, or you can add your own. If you decide to use your own self-signed certificate, ensure you have mounted the `/config` volume in your `📄 docker-compose.yml`:
 
 ```yml
 services:
@@ -801,28 +803,28 @@ To build your own Keeweb docker image, there are numerous things to remember. Ou
 
 | Branch | Description |
 | --- | --- |
-| **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** | The base alpine image, which installs alpine, nginx, minimal packages, and SSL |
-| **[docker/core](https://github.com/keeweb/keeweb/tree/docker/core)** | These scripts are loaded by the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** `Dockerfile` | 
-| **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** | This branch, which stores the Keeweb docker image files | 
+| **[🔀 docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** | The base alpine image, which installs alpine, nginx, minimal packages, and SSL |
+| **[🔀 docker/core](https://github.com/keeweb/keeweb/tree/docker/core)** | These scripts are loaded by the **[🔀 docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** `📄 Dockerfile` | 
+| **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** | This branch, which stores the Keeweb docker image files | 
 
 <br />
 
 To build a docker image for Keeweb, you need two different docker images:
-- **Step 1**: Build **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image
-  - When being build, the alpine-base `Dockerfile` will grab and install the files from this branch `docker/core`
-- **Step 2**: Build **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image
+- **Step 1**: Build **[🔀 docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image
+  - When being build, the alpine-base `📄 Dockerfile` will grab and install the files from this branch `🔀 docker/core`
+- **Step 2**: Build **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image
 - **Step 3**: Release the docker image built from **Step 2** to Github's **Ghcr.io** or **hub.docker.com**
 
 <br />
 
 > [!WARNING]
-> You should NOT need to modify any of the files within this branch `docker/keeweb` unless you absolutely know what you are doing.
+> You should NOT need to modify any of the files within this branch `🔀 docker/keeweb` unless you absolutely know what you are doing.
 
 <br />
 
 ### Before Building
 
-Prior to building the ****[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)**** and **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** docker images, you **must** ensure the following conditions are met. If the below tasks are not performed, your docker container will throw the following errors when started:
+Prior to building the **[🔀 docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** and **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** docker images, you **must** ensure the following conditions are met. If the below tasks are not performed, your docker container will throw the following errors when started:
 
 - `Failed to open apk database: Permission denied`
 - `s6-rc: warning: unable to start service init-adduser: command exited 127`
@@ -836,7 +838,7 @@ Prior to building the ****[docker/alpine-base](https://github.com/keeweb/keeweb/
 
 You cannot utilize Windows' `Carriage Return Line Feed`. All files must be converted to Unix' `Line Feed`.  This can be done with **[Visual Studio Code](https://code.visualstudio.com/)**. OR; you can run the Linux terminal command `dos2unix` to convert these files.
 
-For the branches **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** and **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)**, you can use the following recursive commands:
+For the branches **[🔀 docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** and **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)**, you can use the following recursive commands:
 
 <br />
 
@@ -857,7 +859,7 @@ find ./ -type f -name 'run' | xargs dos2unix --
 
 <br />
 
-For the branch **[docker/core](https://github.com/keeweb/keeweb/tree/docker/core)**, you can use the following commands:
+For the branch **[🔀 docker/core](https://github.com/keeweb/keeweb/tree/docker/core)**, you can use the following commands:
 
 ```shell
 dos2unix docker-images.v3
@@ -871,7 +873,7 @@ dos2unix with-contenv.v1
 #### Set `+x / 0755` Permissions
 The files contained within this repo **MUST** have `chmod 755` /  `+x` executable permissions. If you are using the **[Keeweb Github Workflow](https://github.com/keeweb/keeweb/blob/master/.github/workflows/deploy-docker-github.yml)**, this is done automatically. If you are builting the images manually; you need to do this. Ensure those files have the correct permissions prior to building the Alpine base docker image.
 
-If you are building the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** or **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** images, you must ensure the files in those branches have the proper permissions. All of the executable files are named `run`:
+If you are building the **[🔀 docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** or **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** images, you must ensure the files in those branches have the proper permissions. All of the executable files are named `run`:
 
 ```shell
 find ./ -name 'run' -exec chmod +x {} \;
@@ -901,7 +903,7 @@ sudo chmod +x /root/etc/s6-overlay/s6-rc.d/svc-php-fpm/run
 
 <br />
 
-For the branch **[docker/core](https://github.com/keeweb/keeweb/tree/docker/core)**, there are a few files to change. The ending version number may change, but the commands to change the permissions are as follows:
+For the branch **[🔀 docker/core](https://github.com/keeweb/keeweb/tree/docker/core)**, there are a few files to change. The ending version number may change, but the commands to change the permissions are as follows:
 
 ```shell
 sudo chmod +x docker-images.v3
@@ -912,9 +914,9 @@ sudo chmod +x with-contenv.v1
 
 <br />
 
-### Build `docker/alpine-base` Image
+### Build ` docker/alpine-base` Image
 
-The scripts contained within this `docker/core` branch do not need anything done to them. In order to use these scripts, clone the **[Keeweb Alpine Base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** branch `docker/alpine-base`:
+The scripts contained within this `🔀 docker/core` branch do not need anything done to them. In order to use these scripts, clone the **[Keeweb Alpine Base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** branch `🔀 docker/alpine-base`:
 
 ```shell
 git clone -b docker/alpine-base https://github.com/keeweb/keeweb.git .
@@ -922,12 +924,12 @@ git clone -b docker/alpine-base https://github.com/keeweb/keeweb.git .
 
 <br />
 
-Once cloned, the calls to include the scripts in this `docker/core` branch are within the `Dockerfile` and `Dockerfile.aarch64`. All you need to do is simply build your alpine-base image:
+Once cloned, the calls to include the scripts in this `🔀 docker/core` branch are within the `📄 Dockerfile` and `📄 Dockerfile.aarch64`. All you need to do is simply build your alpine-base image:
 
 #### amd64
 
 ```shell ignore
-# Build keeweb alpine-base amd64
+# Build keeweb alpine-base amd64 🖥️
 docker build --build-arg VERSION=3.20 --build-arg BUILD_DATE=20241216 -t alpine-base:latest -t alpine-base:3.20-amd64 -f Dockerfile .
 ```
 
@@ -936,7 +938,7 @@ docker build --build-arg VERSION=3.20 --build-arg BUILD_DATE=20241216 -t alpine-
 #### arm64 / aarch64
 
 ```shell
-# Build keeweb alpine-base arm64
+# Build keeweb alpine-base arm64 🖥️
 docker build --build-arg VERSION=3.20 --build-arg BUILD_DATE=20241216 -t alpine-base:3.20-arm64 -f Dockerfile.aarch64 .
 ```
 
@@ -998,7 +1000,7 @@ GRAPH_ALPINE --> obj_step20 --> obj_step21 --> obj_step22 --> obj_step23 --> obj
 
 <br />
 
-Once the base alpine image is built, you can now build the actual docker version of Keeweb. The files for this docker image are stored in the branch `docker/keeweb`:
+Once the base alpine image is built, you can now build the actual docker version of Keeweb. The files for this docker image are stored in the branch `🔀 docker/keeweb`:
 
 - https://github.com/keeweb/keeweb/tree/docker/keeweb
 
@@ -1006,24 +1008,24 @@ Once the base alpine image is built, you can now build the actual docker version
 
 ### Build `docker/keeweb` Image
 
-After the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image is built, you can now use that docker image as a base to build the **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image. Navigate to the branch `docker/keeweb` and open the files:
+After the **[🔀 docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image is built, you can now use that docker image as a base to build the **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image. Navigate to the branch `🔀 docker/keeweb` and open the files:
 
-- `Dockerfile`
-- `Dockerfile.aarch64`
+- `📄 Dockerfile`
+- `📄 Dockerfile.aarch64`
 
 <br />
 
-Next, specify the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image which will be used as the foundation of the **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image:
+Next, specify the **[🔀 docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** image which will be used as the foundation of the **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image:
 
 ```shell
-# Dockerfile
+# 📄 Dockerfile
 FROM ghcr.io/keeweb/alpine-base:3.20-amd64
 
-# Dockerfile.aarch64
+# 📄 Dockerfile.aarch64
 FROM ghcr.io/keeweb/alpine-base:3.20-arm64
 ```
 
-After you have completed configuring the **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** `Dockerfile`, you can now build the official version of Keeweb. Remember to build an image for both `amd64` and `aarch64`.
+After you have completed configuring the **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** `📄 Dockerfile`, you can now build the official version of Keeweb. Remember to build an image for both `amd64` and `aarch64`.
 
 <br />
 
@@ -1049,13 +1051,13 @@ docker build --build-arg VERSION=1.19.0 --build-arg BUILD_DATE=20241216 -t keewe
 
 <br />
 
-#### hub.docker.com / ghcr.io / local
-After you have your **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image built, you can either upload the image to a public repository such as:
+#### Upload: hub.docker.com / ghcr.io / local
+After you have your **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image built, you can either upload the image to a public repository such as:
 
 - hub.docker.com (Docker Hub)
 - ghcr.io (Github)
 
-After it is uploaded, you can use the `docker run` command, or create a `docker-compose.yml`, and call the docker image to be used. 
+After it is uploaded, you can use the `docker run` command, or create a `📄 docker-compose.yml`, and call the docker image to be used. 
 
 This is discussed in the section **[Using docker/keeweb Image](#using-dockerkeeweb-image)** below.
 
@@ -1066,22 +1068,24 @@ When building your images with the commands provided above, ensure you create tw
 
 | Architecture | Dockerfile | Tags |
 | --- | --- | --- |
-| `amd64` | `Dockerfile` | `keeweb:latest` <br /> `keeweb:1.19.0` <br /> `keeweb:1.19.0-amd64` |
-| `arm64` | `Dockerfile.aarch64` | `keeweb:1.19.0-arm64` |
+| `🖥️ amd64` | `📄 Dockerfile` | `🔖 keeweb:latest` <br /> `🔖 keeweb:1.19.0` <br /> `🔖 keeweb:1.19.0-amd64` |
+| `🖥️ arm64` | `📄 Dockerfile.aarch64` | `🔖 keeweb:1.19.0-arm64` |
 
 <br />
 
-the `amd64` arch gets a few extra tags because it should be the default image people clone. 
+the `🖥️ amd64` arch gets a few extra tags because it should be the default image people download. 
+
+<br />
 
 ### Extra Notes
 
-The following are other things to take into consideration when creating the **[docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** and **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** images:
+The following are other things to take into consideration when creating the **[🔀 docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base)** and **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** images:
 
 <br />
 
 #### Custom Scripts
 
-The `docker/alpine-base` and `docker/keeweb` images support the ability of adding custom scripts that will be ran when the container is started. To create / add a new custom script to the container, you need to create a new folder in the container source files `/root` folder
+The `🔀 docker/alpine-base` and `🔀 docker/keeweb` images support the ability of adding custom scripts that will be ran when the container is started. To create / add a new custom script to the container, you need to create a new folder in the container source files `/root` folder
 
 ```shell
 mkdir -p /root/custom-cont-init.d/
@@ -1106,7 +1110,7 @@ apk add --no-cache bash
 
 <br />
 
-When you create the docker image, this new script will automatically be loaded. You can also do this via the `docker-compose.yml` file by mounting a new volume:
+When you create the docker image, this new script will automatically be loaded. You can also do this via the `📄 docker-compose.yml` file by mounting a new volume:
 
 ```yml
 services:
@@ -1122,11 +1126,199 @@ services:
 > if using compose, we recommend mounting them **read-only** (`:ro`) so that container processes cannot write to the location.
 
 > [!WARNING]
-> The folder `/root/custom-cont-init.d` **MUST** be owned by `root`. If this is not the case, this folder will be renamed and a new empty folder will be created. This is to prevent remote code execution by putting scripts in the aforesaid folder.
+> The folder `📂 /root/custom-cont-init.d` **MUST** be owned by `root`. If this is not the case, this folder will be renamed and a new empty folder will be created. This is to prevent remote code execution by putting scripts in the aforesaid folder.
 
 <br />
 
-The **[docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image already contains a custom script called `/root/custom-cont-init.d/plugins`. Do **NOT** edit this script. It is what automatically downloads the official Keeweb plugins and adds them to the container.
+The **[🔀 docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb)** image already contains a custom script called `📄 /root/custom-cont-init.d/plugins`. Do **NOT** edit this script. It is what automatically downloads the official Keeweb plugins and adds them to the container.
+
+<br />
+
+#### Associated Workflows
+The following workflows are associated to the Keeweb docker image and management of the files:
+
+<br />
+
+##### [deploy-docker-github-sync.yml](https://github.com/keeweb/keeweb/blob/master/.github/workflows/deploy-docker-github-sync.yml)
+
+Prior to **v1.19.0**, the docker image source files for Keeweb were stored in the **`🔀 main / master`** branch within the folder **`📁 package/docker`**. Upon release of v1.19.0, the primary storage location of these source files were migrated to their own independent branch **`🔀 docker/keeweb`**.
+
+We utilize the Github workflow **[deploy-docker-github-sync.yml](https://github.com/keeweb/keeweb/blob/master/.github/workflows/deploy-docker-github-sync.yml)** to copy the source files from the **`🔀 docker/keeweb`** branch over to the **`🔀 main`** / **`master`** branch.
+
+<br />
+
+<p align="center"><img style="width: 80%;text-align: center;" src="/docs/img/docker/workflows/deploy-docker-github-sync.yml/01.png"><br><small><sup><b><code>deploy-docker-github-sync.yml</code></b> manual workflow trigger</sup></small></p>
+
+<br />
+
+Once the workflow is triggered, it will copy the following from the branch **`🔀 docker/keeweb`**
+
+- `📁 root`
+- `📄 Dockerfile`
+- `📄 Dockerfile.aarch64`
+
+<br />
+
+This workflow triggers under a few different conditions:
+
+- ###### ☝️ Manual Activation
+  When the workflow is activated manually _(via the trigger **workflow_dispatch**)_, you can select which branch to copy the docker files to.
+  
+  <br />
+
+  <p align="center"><img style="width: 60%;text-align: center;" src="/docs/img/docker/workflows/deploy-docker-github-sync.yml/02.png"><br><small><sup><b><code>deploy-docker-github-sync.yml</code></b> destination branch to<br>copy docker files to</sup></small></p>
+
+  <br />
+
+  In the screenshot above, if you select the branch **`🔀 develop/1.19.0`**, the docker files from the branch **`🔀 docker/keeweb`** will be copied to the branch **`🔀 develop/1.19.0`** within the folder **`📂 package/docker`**.
+
+  <br />
+
+  Manual activation gives you the ability to adjust a few settings
+
+  | Setting | Description |
+  | --- | --- |
+  | **`Use workflow from`** | Destination branch where the docker files will be copied to |
+  | **`🔀 Branch › Source`** | Source branch which contains the docker files |
+  | **`📂 Folder › Destination`** | Destination folder where the docker files will be copied to |
+  | **`🐛 Dry Run (Debug)`** | Dry run test; does not actually commit changes for files |
+
+  <br />
+
+- ###### ⬆️ Push
+  The workflow **[deploy-docker-github-sync.yml](https://github.com/keeweb/keeweb/blob/master/.github/workflows/deploy-docker-github-sync.yml)** will be triggered each time a push is made to the branch **`🔀 docker/keeweb`**. The docker files within the branch **`🔀 docker/keeweb`** will be copied over to the repositories' default branch which is either **`🔀 master`** or **`🔀 main`**.
+
+<br />
+
+##### [deploy-docker-github.yml](https://github.com/keeweb/keeweb/actions/workflows/deploy-docker-github.yml)
+
+The workflow **[deploy-docker-github.yml](https://github.com/keeweb/keeweb/actions/workflows/deploy-docker-github.yml)** is responsible for each new release of the Keeweb docker image available to the public.
+
+Upon the workflow being triggered, the branch **`🔀 docker/keeweb`** will be accessed, and the files that make up the docker image will be compiled into new public releases for each offered architecture.
+
+- 🖥️ **amd64**: `📄 Dockerfile`
+- 🖥️ **arm64**: `📄 Dockerfile.aarch64`
+
+<br />
+
+Once the new docker images are built, they will be pushed to Github's **[ghcr.io](https://ghcr.io)** repository service, and available at:
+
+- https://github.com/orgs/keeweb/packages
+
+<br />
+
+<p align="center"><img style="width: 80%;text-align: center;" src="/docs/img/docker/workflows/deploy-docker-github.yml/01.png"><br><small><sup><b><code>deploy-docker-github.yml</code></b> manual triggering</sup></small></p>
+
+<br />
+
+This workflow triggers under a few different conditions:
+
+- ###### ☝️ Manual Activation
+  When the workflow is activated manually _(via the trigger **workflow_dispatch**)_, you are given a few settings you can adjust.
+  
+  <br />
+
+  <p align="center"><img style="width: 60%;text-align: center;" src="/docs/img/docker/workflows/deploy-docker-github.yml/02.png"><br><small><sup><b><code>deploy-docker-github.yml</code></b> manual trigger options</sup></small></p>
+
+  <br />
+
+  Manual activation gives you the ability to adjust a few settings
+
+  | Setting | Description |
+  | --- | --- |
+  | **`Use workflow from`** | Branch where action is activated. Keep this on `🔀 master` / `main` |
+  | **`📦 Image Name`** | Name of the image to display on **[packages](https://github.com/orgs/keeweb/packages)** page |
+  | **`🪪 Image Author`** | Author of image |
+  | **`🏷️ Image Version`** | Version of the docker image to be released |
+  | **`🪪 ghcr.io Username `** | Username associated to the Github ghcr.io service |
+  | **`🐛 Dry Run (Debug)`** | Simulates a run and outputs debug info, does not actually push an image |
+  | **`🧪 Development Release`** | Adds the **`🔖 -development`** tag to each docker image <br><br> If not checked, a release will get the `🔖 -latest` tag |
+
+  <br />
+
+- ###### 🔖 Tag Push
+  The workflow **[deploy-docker-github.yml](https://github.com/keeweb/keeweb/actions/workflows/deploy-docker-github.yml)** will be triggered each time a new tag is created. Upon tag creation, the workflow will create a set of new docker images for each offered architecture.
+  
+  <br />
+
+  The tag assigned to the docker image will be the tag created on the repo's **[releases](https://github.com/keeweb/keeweb/releases/new)** page.
+
+  <br />
+
+  <p align="center"><img style="width: 60%;text-align: center;" src="/docs/img/docker/workflows/deploy-docker-github.yml/03.png"><br><small><sup>Triggering workflow by creating new tag</sup></small></p>
+
+  <br />
+
+> [!NOTE]
+> This trigger is not widely used. Creating a release tag for each docker release would mean that these would mix in with the list of Keeweb releases.
+>
+> <p align="center"><img style="width: 35%;text-align: center;" src="/docs/img/docker/workflows/deploy-docker-github.yml/04.png"><br><small><sup>Existing release tags</sup></small></p>
+
+<br />
+
+##### [deploy-docker-dockerhub.yml](https://github.com/keeweb/keeweb/actions/workflows/deploy-docker-dockerhub.yml)
+
+The workflow **[deploy-docker-dockerhub.yml](https://github.com/keeweb/keeweb/actions/workflows/deploy-docker-dockerhub.yml)** is responsible for each new release of the Keeweb docker image available to the public.
+
+Upon the workflow being triggered, the branch **`🔀 docker/keeweb`** will be accessed, and the files that make up the docker image will be compiled into new public releases for each offered architecture.
+
+- 🖥️ **amd64**: `📄 Dockerfile`
+- 🖥️ **arm64**: `📄 Dockerfile.aarch64`
+
+<br />
+
+Once the new docker images are built, they will be pushed to [Dockerhub](https://hub.docker.com/)**, and available at:
+
+- https://hub.docker.com/r/antelle/keeweb
+
+<br />
+
+<p align="center"><img style="width: 80%;text-align: center;" src="/docs/img/docker/workflows/deploy-docker-dockerhub.yml/01.png"><br><small><sup><b><code>deploy-docker-dockerhub.yml</code></b> manual triggering</sup></small></p>
+
+<br />
+
+This workflow triggers under a few different conditions:
+
+- ###### ☝️ Manual Activation
+  When the workflow is activated manually _(via the trigger **workflow_dispatch**)_, you are given a few settings you can adjust.
+  
+  <br />
+
+  <p align="center"><img style="width: 60%;text-align: center;" src="/docs/img/docker/workflows/deploy-docker-dockerhub.yml/02.png"><br><small><sup><b><code>deploy-docker-dockerhub.yml</code></b> manual trigger options</sup></small></p>
+
+  <br />
+
+  Manual activation gives you the ability to adjust a few settings
+
+  | Setting | Description |
+  | --- | --- |
+  | **`Use workflow from`** | Branch where action is activated. Keep this on `🔀 master` / `main` |
+  | **`📦 Image Name`** | Name of the image to display on **[packages](https://github.com/orgs/keeweb/packages)** page |
+  | **`🪪 Image Author`** | Author of image |
+  | **`🏷️ Image Version`** | Version of the docker image to be released |
+  | **`🪪 Dockerhub Username `** | Username associated to Dockerhub |
+  | **`🐛 Dry Run (Debug)`** | Simulates a run and outputs debug info, does not actually push an image |
+  | **`🧪 Development Release`** | Adds the **`🔖 -development`** tag to each docker image <br><br> If not checked, a release will get the `🔖 -latest` tag |
+
+  <br />
+
+- ###### 🔖 Tag Push
+  The workflow **[deploy-docker-dockerhub.yml](https://github.com/keeweb/keeweb/actions/workflows/deploy-docker-dockerhub.yml)** will be triggered each time a new tag is created. Upon tag creation, the workflow will create a set of new docker images for each offered architecture.
+  
+  <br />
+
+  The tag assigned to the docker image will be the tag created on the repo's **[releases](https://github.com/keeweb/keeweb/releases/new)** page.
+
+  <br />
+
+  <p align="center"><img style="width: 60%;text-align: center;" src="/docs/img/docker/workflows/deploy-docker-dockerhub.yml/03.png"><br><small><sup>Triggering workflow by creating new tag</sup></small></p>
+
+  <br />
+
+> [!NOTE]
+> This trigger is not widely used. Creating a release tag for each docker release would mean that these would mix in with the list of Keeweb releases.
+>
+> <p align="center"><img style="width: 35%;text-align: center;" src="/docs/img/docker/workflows/deploy-docker-dockerhub.yml/04.png"><br><small><sup>Existing release tags</sup></small></p>
 
 <br />
 

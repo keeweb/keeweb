@@ -43,7 +43,7 @@ on:
             # #
 
             BRANCH_SRC:
-              description:  '📂 Repo › Source'
+              description:  '↪️ Branch › Source'
               required:     true
               default:      'docker/keeweb'
               type:         string
