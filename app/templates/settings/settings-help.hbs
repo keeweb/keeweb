@@ -3,24 +3,26 @@
     <h2>{{res 'setHelpFormat'}}</h2>
     <p>{{#res 'setHelpFormatBody'}}<a href="https://keepass.info/" target="_blank">KeePass</a>{{/res}}</p>
 
-    <hr>
+    <hr class="sep02">
 
     <h2>{{res 'setHelpProblems'}}</h2>
     <p>{{#res 'setHelpProblems1'}} <a href="{{issueLink}}" target="_blank">{{res 'setHelpOpenIssue'}}</a>{{/res}}
         {{#res 'setHelpProblems2'}}<a href="https://antelle.net/" target="_blank">{{res 'setHelpContactLink'}}</a>{{/res}}.
     </p>
 
-    <hr class="sep02">
+    <hr class="hr40-l">
 
-    <h3>{{res 'setHelpAppInfo'}}:</h3>
+    <h2>{{res 'setHelpAppInfo'}}:</h3>
+    <p>{{#res 'setHelpAppInfoDesc'}}<a href="https://github.com/keeweb/keeweb/issues/new/choose" target="_blank">{{res 'setHelpSubmitIssue'}}</a>{{/res}}</p>
+
     <pre class="settings__pre input-base">{{appInfo}}</pre>
 
-    <hr>
+    <hr class="hr40-l">
 
     <h2>{{res 'setHelpPlatforms'}}</h2>
     <p class="para-slim">{{res 'setHelpPlatformsDesc'}}</p>
 
-    <hr class="sep02">
+    <hr class="sep01">
 
     <h3><a href="{{desktopLink}}" target="_blank">{{res 'setHelpDesktopApps'}}</a></h3>
     <div class="help-platforms">
@@ -40,7 +42,16 @@
         <i class="fa fa-6x fa-edge"></i>
     </div>
 
-    <hr>
+    <hr class="sep01">
+
+    <h3><a href="{{packageGithubLink}}" target="_blank">{{res 'setHelpDockerPlatform'}}</a></h3>
+    <div class="help-platforms">
+        <a href="{{packageDockerhubLink}}" target="_blank"><i class="fa fa-6x fa-docker"></i></a>
+        <a href="{{packageGithubLink}}" target="_blank"><i class="fa fa-6x fa-github"></i></a>
+    </div>
+
+    <hr class="hr40-l">
+
 
     <h2>{{res 'setHelpUpdates'}} <i class="fa fa-twitter"></i></h2>
     <p>{{res 'setHelpTwitter'}}: <a href="https://twitter.com/kee_web" target="_blank">kee_web</a></p>
