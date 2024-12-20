@@ -291,7 +291,7 @@ jobs:
               run: |
                   now=$(date -u '+%m/%d/%Y %H:%M')
                   commit_label="chore(auto): Docker Sync" >> $GITHUB_ENV
-                  commit_message="\`️️🔄 $commit_label 🔄\` \`$now UTC\`" >> $GITHUB_ENV
+                  commit_message="\`️️$commit_label 🔄\` \`$now UTC\`" >> $GITHUB_ENV
                   echo "COMMIT_MESSAGE=$(echo $commit_message)" >> $GITHUB_ENV
                   echo "NOW=$(echo $now)" >> $GITHUB_ENV
 
