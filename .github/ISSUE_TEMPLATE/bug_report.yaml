@@ -90,7 +90,7 @@ body:
       attributes:
           label: Operating System (User)
           description: |
-              What OS are you using to use KeeWeb?
+              What OS are you accessing KeeWeb from?
               If you have Keeweb installed on Docker under Linux, but access it on Windows, your answer would be **Windows**
               If you are running Keeweb and using it on the same machine, the above answer and this answer would be the same.
               **`Required`**
@@ -189,19 +189,11 @@ body:
           render: shell
 
     - type: textarea
-      id: attachment-db
+      id: attachments
       attributes:
-          label: 'Attachments: Database kdbx File'
+          label: 'Attachments'
           description: |
-              Attach a test database below that does give you the described issue.
-              Ensure it has no real security information within it as it will be publicly visible to all.
-              **`Not Required`**
-
-    - type: textarea
-      id: attachment-screenshots
-      attributes:
-          label: 'Attachments: Screenshots'
-          description: |
-              Please provide screenshots of any errors or the issue you're having. 
-              Gifs are even better.
+              Add attachments here.
+              Attach a test database below if your issue is with a specific database. Ensure it has no real security information within it as it will be publicly visible to all.
+              Provide screenshots of any errors or the issue you're having. Gifs are even better.
               **`Not Required`**
