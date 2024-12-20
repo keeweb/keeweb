@@ -2,13 +2,20 @@
 #   @type               github workflow
 #   @author             Aetherinox
 #   @url                https://github.com/Aetherinox
+#
 #   @usage              originally, Keeweb's docker files were hosted in the main branch within the folder /package/docker/*
 #                       with the new setup, the Keeweb docker files are stored in a separate branch from main called `docker/keeweb`.
 #                       this workflow copies the required docker files from the new branch docker/keeweb, and brings them over to the main branch
 #                       and places them within the original subfolder `package/docker/*`
+#
 #   @secrets            secrets.ADMINSERV_GPG_KEY_ASC                   gpg private key (armored) | BEGIN PGP PRIVATE KEY BLOCK
 #                       secrets.ADMINSERV_GPG_PASSPHRASE                gpg private key passphrase
-#                       secrets.IMAGE_GHCR_TOKEN                        github personal access token (classic) with package:write permission
+#
+#   @triggers           this workflow is automatically run every time a PUSH is made to the branch `docker/keeweb`; it will copy docker/keeweb's contents
+#                       to the main branch's `package/docker` folder.
+#
+#                       this workflow can be manually triggered (WORKFLOW_DISPATCH). to select the destination branch, click `Run Workflow` and select `Use Workflow From`
+#                       and select the destination branch
 # #
 
 name: "🔄 Sync › Docker › Github"
@@ -42,36 +49,24 @@ on:
               type:         string
 
             # #
-            #   Repo › Destination
-            #
-            #   Where the files are to be copied to
-            # #
-
-            REPO_DEST:
-              description:  "📂 Repo › Destination"
-              required:     true
-              default:      'main'
-              type:         string
-
-            # #
             #   Destination Path
             #
             #   where the files will be placed
             # #
 
             DEST_PATH:
-                description:  "📂 Destination Path"
+                description:  "📂 Destination Folder"
                 required:     true
                 default:      'package/docker'
                 type:         string
 
             # #
-            #   true:     runs all actions, even ones not scheduled
-            #   false:    only scheduled tasks will run
+            #   true          no changes to the repo will be made
+            #   false         workflow will behave normally, and push any changes detected to the files
             # #
 
-            PRINT_ONLY:
-                description:  "📑 Print Debugs Only"
+            DRY_RUN:
+                description:  "📑 Dry Run Only"
                 required:     true
                 default:      false
                 type:         boolean
@@ -89,9 +84,11 @@ on:
 # #
 
 env:
+    REPO_MAIN:            'main'
     REPO_SRC:             ${{ github.event.inputs.REPO_SRC || 'docker/keeweb' }}
-    REPO_DEST:            ${{ github.event.inputs.DEST_PATH || 'main' }}
+    REPO_DEST:            ${{ github.ref_name || 'main' }}
     DEST_PATH:            ${{ github.event.inputs.DEST_PATH || 'package/docker' }}
+
     BOT_NAME_1:           EuropaServ
     BOT_NAME_DEPENDABOT:  dependabot[bot]
     
@@ -149,19 +146,78 @@ jobs:
                   sudo apt-get install -qq dos2unix
 
             # #
+            #   Sync › Debug
+            # #
+
+            - name: '⚠️ Env Variable › Check'
+              id: task_sync_vars_check
+              run: |
+                  if [[ "${{ env.REPO_SRC }}" == "${{ env.REPO_DEST || env.REPO_MAIN }}" ]]; then
+                      echo "⚠️⚠️⚠️ Source and destination branches are the same, changing destination branch to main ⚠️⚠️⚠️"
+                      branch_Default="${{ env.REPO_MAIN }}"
+                      echo "REPO_DEST=$(echo $branch_Default)" >> $GITHUB_ENV
+                  fi
+
+            # #
+            #   Sync › Var Check › Confirm
+            # #
+
+            - name: '⚠️ Env Variable › Confirm'
+              id: task_sync_vars_confirm
+              run: |
+                  echo "REPO_DEST is now ${{ env.REPO_DEST }}"
+
+            # #
+            #   Sync › Checkpoint › 1
+            # #
+
+            - name: '⚠️ Checkpoint 1'
+              id: task_sync_checkpoint_1
+              run: |
+                  echo "github.actor.......... ${{ github.actor }}"
+                  echo "github.ref ........... ${{ github.ref }}"
+                  echo "github.ref_name ...... ${{ github.ref_name }}"
+                  echo "github.event_name .... ${{ github.event_name }}"
+                  echo "inputs.DRY_RUN ....... ${{ inputs.DRY_RUN }}"
+                  echo "env.REPO_SRC.......... ${{ env.REPO_SRC }}"
+                  echo "env.REPO_DEST......... ${{ env.REPO_DEST || env.REPO_MAIN  }}"
+                  echo "env.DEST_PATH......... ${{ env.DEST_PATH }}"
+
+                  echo " ⚠️⚠️⚠️⚠️ This workflow will copy files [ 📄 root Dockerfile* ] from branch 🏠 ${{ env.REPO_SRC }} to 🔄 ${{ env.REPO_DEST || env.REPO_MAIN }} to folder 📂 ${{ env.DEST_PATH }} ⚠️⚠️⚠️"
+                  echo "    › Copy files ............. 📄 root Dockerfile*"
+                  echo "    › From branch ............ 🏠 ${{ env.REPO_SRC }}"
+                  echo "    › To branch .............. 🔄 ${{ env.REPO_DEST || env.REPO_MAIN }}"
+                  echo "    › In folder .............. 📂 ${{ env.DEST_PATH }}"
+
+            # #
             #   Sync › Copy Dockerfiles to Main branch
             #
             #   this action copies all the required docker files from the docker/keeweb branch, over to 
             #   the main branch within the subfolder `package/docker/*`
+            #
+            #   to discard the actions of git checkout and not commit, run: 
+            #       git checkout -
+            #
+            #   if you are copying files from docker/keeweb which don't exist on the main branch, you must
+            #   run `git add package/docker` to track the new files / folders added
+            #
+            #   this step does the following:
+            #       - deletes the package/docker/* folder contents on the destination repo
+            #       - sets a few settings to get rid of annoying features
+            #       - git checkout origin/main (destination branch)
+            #       - git checkout origin/docker/keeweb (source branch) and sets working tree to /package/docker/
+            #       - adds all changes to git which will be committed in a later step
             # #
 
             - name: '⬇️ Pull Docker Files'
               id: task_sync_files_pull
               run: |
+                  rm -rf ${{ env.DEST_PATH }}/*
                   git config --global pager.diff false
                   git config --global advice.detachedHead false
-                  git checkout origin/${{ env.REPO_DEST }}
-                  git --work-tree=${{ env.DEST_PATH }} checkout origin/${{ env.REPO_SRC }} -- root Dockerfile*
+                  git checkout origin/${{ env.REPO_DEST || env.REPO_MAIN }}                                                      #  ${{ github.ref_name || 'main' }}
+                  git --work-tree=${{ env.DEST_PATH }} checkout origin/${{ env.REPO_SRC }} -- root Dockerfile*  #  ${{ inputs.REPO_SRC || 'docker/keeweb' }}
+                  git add ${{ env.DEST_PATH }}
 
             # #
             #   Sync › Run permission management
@@ -193,7 +249,11 @@ jobs:
             # #
             #   Sync › Show Differences
             # 
-            #   this is just a debugging step, it shows all the files pending commit that will be committed
+            #   this is just a debugging step, it shows all the files pending commit that will be committed.
+            #   if you are stuck in the git pager, hit "Q" to quit.
+            #
+            #   to disable the pager, run the command:
+            #       git config --global pager.diff false
             # #
 
             - name: '📑 View Differences'
@@ -233,16 +293,23 @@ jobs:
                   git_commit_gpgsign: true
 
             # #
-            #   Sync › Debug
+            #   Sync › Checkpoint › 2 
             # #
 
-            - name: '🪪 Debug › Print'
-              id: task_sync_debug_print
+            - name: '⚠️ Checkpoint 2'
+              id: task_sync_checkpoint_2
               run: |
                   echo "github.actor.......... ${{ github.actor }}"
                   echo "github.ref ........... ${{ github.ref }}"
+                  echo "github.ref_name ...... ${{ github.ref_name }}"
                   echo "github.event_name .... ${{ github.event_name }}"
-                  echo "inputs.PRINT_ONLY .... ${{ env.PRINT_ONLY }}"
+                  echo "inputs.DRY_RUN ....... ${{ inputs.DRY_RUN }}"
+
+                  echo " ⚠️⚠️⚠️⚠️ This workflow will copy files [ 📄 root Dockerfile* ] from branch 🏠 ${{ env.REPO_SRC }} to 🔄 ${{ env.REPO_DEST || env.REPO_MAIN }} to folder 📂 ${{ env.DEST_PATH }} ⚠️⚠️⚠️"
+                  echo "    › Copy files ............. 📄 root Dockerfile*"
+                  echo "    › From branch ............ 🏠 ${{ env.REPO_SRC }}"
+                  echo "    › To branch .............. 🔄 ${{ env.REPO_DEST || env.REPO_MAIN }}"
+                  echo "    › In folder .............. 📂 ${{ env.DEST_PATH }}"
 
             # #
             #   Sync › Commit
@@ -253,11 +320,11 @@ jobs:
             - name: '🔄 Sync › Commit'
               id: task_sync_commit
               uses: stefanzweifel/git-auto-commit-action@v5
-              if: ( github.event_name == 'workflow_dispatch' && inputs.PRINT_ONLY == false ) || ( github.event_name == 'push' )
+              if: ( github.event_name == 'workflow_dispatch' && inputs.DRY_RUN == false ) || ( github.event_name == 'push' )
               with:
                   commit_message: ${{ env.COMMIT_MESSAGE }}
                   commit_author: "${{ steps.task_sync_commit_gpg.outputs.name }} <${{ steps.task_sync_commit_gpg.outputs.email }}>"
                   commit_user_name: ${{ steps.task_sync_commit_gpg.outputs.name }}
                   commit_user_email: ${{ steps.task_sync_commit_gpg.outputs.email }}
-                  branch: main
+                  branch: ${{ env.REPO_DEST || env.REPO_MAIN }}
                   add_options: '-u'
