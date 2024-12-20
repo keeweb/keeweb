@@ -20,10 +20,11 @@ body:
           description: |
               How critical is the issue?
               Do not abuse this. Issues that completely break KeeWeb would be classified as critical.
-              If you are requesting a new feature, then it would be low or normal.
+              If you are requesting a new feature, then it would be **Low**
+              **`Required`**
           options:
               - 'Low'
-              - 'Normal'
+              - 'Medium'
               - 'High'
               - 'Urgent'
       validations:
@@ -36,60 +37,110 @@ body:
           description: |
               Version of KeeWeb you are running
               Version is located in Settings › Help › App Information
-          placeholder: 'Ex: v1.18.7'
+              **`Required`**
+          placeholder: 'Ex: v1.19.0'
+      validations:
+          required: true
+
+    - type: input
+      id: ver-docker
+      attributes:
+          label: 'Version: Docker'
+          description: |
+              If you are running Keeweb on docker, provide the docker version.
+              Type in console `docker version`
+              If you are not running Keeweb on docker; **skip**
+              **`Not Required`**
+          placeholder: 'Ex: v27.2.0'
+
+    - type: dropdown
+      id: host-platform
+      attributes:
+          label: Environment
+          description: |
+              How is your KeeWeb hosted?
+              **`Required`**
+          options:
+              - 'Application'
+              - 'Docker'
+              - 'Web'
       validations:
           required: true
 
     - type: dropdown
-      id: build-env
+      id: host-os
       attributes:
-          label: Environment
+          label: Operating System (Build)
           description: |
-              What environment are you running KeeWeb as?
+              What OS is your KeeWeb running on?
+              This is for users hosting Keeweb but using it from elsewhere.
+              If you have Keeweb installed on Docker under Linux, but access it on Windows, your answer would be **Linux**
+              **`Required`**
           options:
-              - 'Web'
-              - 'Desktop'
-
-    - type: dropdown
-      id: build-os
-      attributes:
-          label: Operating System
-          description: |
-              Select which OS you are running:
-          options:
-              - 'Windows'
-              - 'Mac'
+              - 'Android'
+              - 'iOS'
               - 'Linux'
+              - 'Mac'
+              - 'Windows'
+      validations:
+          required: true
 
     - type: dropdown
-      id: issue-target
+      id: user-os
+      attributes:
+          label: Operating System (User)
+          description: |
+              What OS are you using to use KeeWeb?
+              If you have Keeweb installed on Docker under Linux, but access it on Windows, your answer would be **Windows**
+              If you are running Keeweb and using it on the same machine, the above answer and this answer would be the same.
+              **`Required`**
+          options:
+              - 'Android'
+              - 'iOS'
+              - 'Linux'
+              - 'Mac'
+              - 'Windows'
+      validations:
+          required: true
+
+    - type: dropdown
+      id: issue-range
       attributes:
           label: Range of issue
           description: |
               Where does this issue occur?
               Before submitting your bug report, try to see if the issue also occurs on the official demo site at https://app.keeweb.info/
+              **`Required`**
           options:
-              - 'The issue occurs on my own setup AND demo site'
-              - 'The issue only occurs on my own setup, demo site works correctly'
+              - 'Issue occurs on my own install AND demo site'
+              - 'Issue occurs only on my own install, demo site works correctly'
+      validations:
+          required: true
 
     - type: dropdown
-      id: issue-db-type
+      id: issue-db-affect
       attributes:
-          label: Database Type
+          label: Database
           description: |
-              What type of database are you having this issue with?
+              Do different database files fix the issue?
+              **`Required`**
           options:
-              - 'Issue occurs only on new databases'
-              - 'Issue occurs only on existing databases'
-              - 'Issue occurs on both new and existing databases'
+              - 'Issue occurs only with new databases'
+              - 'Issue occurs only with existing databases'
+              - 'Issue occurs with both new + existing databases'
+      validations:
+          required: true
 
     - type: textarea
       id: logs-env
       attributes:
-          label: Environment Copy/Paste
+          label: Copy/Paste Environment Details
           description: |
               Copy all information from Settings › Help inside KeeWeb
+              **`Required`**
           render: shell
+      validations:
+          required: true
 
     - type: textarea
       id: description
@@ -97,6 +148,7 @@ body:
           label: Description
           description: |
               Please provide a description of your issue here.
+              **`Required`**
       validations:
           required: true
 
@@ -106,11 +158,10 @@ body:
           label: Steps To Reproduce
           description: |
               Describe the steps that need taken by the developer(s) to get the error / issue you're experiencing.
+              **`Required`**
           value: |
-              - 
-              - 
-              - 
-              -
+              1. 
+              2. 
       validations:
           required: true
 
@@ -119,12 +170,11 @@ body:
       attributes:
           label: Expected Behavior
           description: |
-              Describe what you expect KeeWeb to actually do if it were working properly
+              What do you expect KeeWeb to actually do if it were working properly
+              **`Required`**
           value: |
               - 
               - 
-              - 
-              -
       validations:
           required: true
 
@@ -133,22 +183,10 @@ body:
       attributes:
           label: Logs
           description: |
-              List any error messages you received in the developer console.
-              Developer console for **web** can be opened with **SHIFT + CTRL + I**
+              List any error messages you receive in the developer console. Developer console for **web** can be opened with **SHIFT + CTRL + I**
               Open **dev tools** in your browser and attach output log from **CONSOLE** tab. If you are using a desktop app, devtools can be opened from Settings › General › Advanced.
+              **`Not Required`**
           render: shell
-
-    - type: textarea
-      id: references
-      attributes:
-          label: Referenced Issues
-          description: |
-              List any existing issues this ticket may be associated with.
-              Structure each issue as:
-                 - #NUMBER
-                 - #3
-          value: |
-              - #
 
     - type: textarea
       id: attachment-db
@@ -157,6 +195,7 @@ body:
           description: |
               Attach a test database below that does give you the described issue.
               Ensure it has no real security information within it as it will be publicly visible to all.
+              **`Not Required`**
 
     - type: textarea
       id: attachment-screenshots
@@ -165,3 +204,4 @@ body:
           description: |
               Please provide screenshots of any errors or the issue you're having. 
               Gifs are even better.
+              **`Not Required`**
