@@ -15,7 +15,7 @@
 #                       to the main branch's `package/docker` folder.
 #
 #                       this workflow can be manually triggered (WORKFLOW_DISPATCH). to select the destination branch, click `Run Workflow` and select `Use Workflow From`
-#                       and select the destination branch
+#                       and select the destination branch the default repo branch is auto-detected
 # #
 
 name: "🔄 Sync › Docker › Github"
