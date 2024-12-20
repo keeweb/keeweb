@@ -1,0 +1,23 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# #
+#   @project        keeweb
+#   @about          Manages self-signed ssl certificates
+#   @file           /root/etc/s6-overlay/s6-rc.d/init-keygen/run
+#   @repo           https://github.com/keeweb/keeweb
+#                   https://github.com/keeweb/alpine-base
+#                   https://hub.docker.com/repository/docker/keeweb/keeweb
+#                   https://hub.docker.com/repository/docker/keeweb/alpine-base
+# #
+
+SUBJECT="/C=NA/ST=NA/L=NA/O=Keeweb/OU=Keeweb Password Manager/CN=*"
+if [[ -f /config/keys/cert.key && -f /config/keys/cert.crt ]]; then
+    echo -e " SSL          : Using existing keys found in /config/keys"
+else
+    echo -e " SSL          : Generating self-signed keys in folder/config/keys. Replace if needed."
+    rm -f \
+        /config/keys/cert.key \
+        /config/keys/cert.crt || true
+    openssl req -new -x509 -days 3650 -nodes -out /config/keys/cert.crt -keyout /config/keys/cert.key -subj "$SUBJECT"
+fi

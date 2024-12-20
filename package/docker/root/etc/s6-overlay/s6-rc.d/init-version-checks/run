@@ -1,0 +1,24 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+# detect nginx configs with dates not matching the provided sample files
+active_confs=$(find /config/nginx/ -name "*.conf" -type f 2>/dev/null)
+
+for i in ${active_confs}; do
+    if [ -f "${i}.sample" ]; then
+        if [ "$(sed -nE 's|^## Version ([0-9]{4}\/[0-9]{2}\/[0-9]{2}).*|\1|p' "${i}")" != "$(sed -nE 's|^## Version ([0-9]{4}\/[0-9]{2}\/[0-9]{2}).*|\1|p' "${i}.sample")" ]; then
+            active_confs_changed="│ $(printf '%10s' "$(sed -nE 's|^## Version ([0-9]{4}\/[0-9]{2}\/[0-9]{2}).*|\1|p' "${i}" | tr / -)") │ $(printf '%10s' "$(sed -nE 's|^## Version ([0-9]{4}\/[0-9]{2}\/[0-9]{2}).*|\1|p' "${i}.sample" | tr / -)") │ $(printf '%-70s' "${i}") │\n${active_confs_changed}"
+        fi
+    fi
+done
+
+# detect site-confs with wrong extension
+site_confs_wrong_ext=$(find /config/nginx/site-confs/ -type f -not -name "*.conf" -not -name "*.conf.sample" 2>/dev/null)
+
+if [ -n "${site_confs_wrong_ext}" ]; then
+    echo "**** The following site-confs have extensions other than .conf ****"
+    echo "**** This may be due to user customization. ****"
+    echo "**** You should review the files and rename them to use the .conf extension or remove them. ****"
+    echo "**** nginx.conf will only include site-confs with the .conf extension. ****"
+    echo -e "${site_confs_wrong_ext}"
+fi
