@@ -1267,7 +1267,7 @@ Upon the workflow being triggered, the branch **`🔀 docker/keeweb`** will be a
 
 <br />
 
-Once the new docker images are built, they will be pushed to [Dockerhub](https://hub.docker.com/)**, and available at:
+Once the new docker images are built, they will be pushed to **[Dockerhub](https://hub.docker.com/)**, and available at:
 
 - https://hub.docker.com/r/antelle/keeweb
 
