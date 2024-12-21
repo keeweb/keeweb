@@ -23,6 +23,8 @@ Please review everything on this page before you submit your contribution.
     - [Variable \& Method Casing](#variable--method-casing)
     - [ESLint \& Prettier](#eslint--prettier)
     - [Spaces Instead Of Tabs](#spaces-instead-of-tabs)
+    - [LF over CRLF](#lf-over-crlf)
+      - [Visual Studio Code Users](#visual-studio-code-users)
   - [Documentation / Wiki](#documentation--wiki)
   - [Donations](#donations)
   - [Translations](#translations)
@@ -298,6 +300,33 @@ When submitting your pull request, these linting and style rules will be verifie
 When writing your code, set your IDE to utilize **spaces**, with a configured size of `4 characters`. Our repo provides a `.editorconfig` file which defines how the file should be formatted. Load that file into programs like Visual Studio code.
 
 <br />
+
+### LF over CRLF
+
+When editing or creating new files, ensure you have converted the file over to Unix line feeds `LF` and not Windows `Carriage Return (ASCII 13, \r ) Line Feed (ASCII 10, \n ).`
+
+We provide an `.editorconfig` file which automatically sets the default to `LF`, which includes existing files that you open.
+
+```ini
+[*]
+end_of_line = lf
+```
+
+<br />
+
+#### Visual Studio Code Users
+
+If you are using **[Visual Studio Code](https://code.visualstudio.com/)**, install the plugin:
+
+- **[EditorConfig for VS Code](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)**
+
+<br />
+
+You can also open your VSC settings, and search for the setting **`EOL`**, then change the default value to **`\n`**.
+
+<br />
+
+<p align="center"><img width="80%" style="text-align: center;" src="/docs/img/CONTRIBUTING/vsc/settings_eol.png"></p>
 
 <br />
 
