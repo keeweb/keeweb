@@ -17,27 +17,31 @@ body:
           description: |
               Explain your feature. Be detailed.
               If your feature addresses a problem; explain the problem.
+              **`Required`**
           placeholder: |
               I would like to request ...
       validations:
           required: true
 
     - type: textarea
-      id: text-alternatives
+      id: text-benefits
       attributes:
-          label: Alternatives Considered
+          label: Benefits
           description: |
-              A clear and concise description of any alternative solutions or features you've considered.
+              Explain why this feature would benefit the community, and not just one or two users.
+              **`Required`**
       validations:
-          required: false
+          required: true
 
     - type: textarea
-      id: attachment-screenshots
+      id: attachments
       attributes:
-          label: 'Attachments: Screenshots'
+          label: 'Attachments'
           description: |
               If possible, provide screenshots.
               Want a feature placed in a specific location? Mark it in a screenshot.
               Want something modified? Try creating a mockup. 
               The more details about how it should look, the better.
-              Not required, but appreciated.
+              **`Not Required`**
+      validations:
+          required: false
