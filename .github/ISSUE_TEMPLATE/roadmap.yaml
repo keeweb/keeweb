@@ -1,71 +1,69 @@
 name: '🗺️ Roadmap'
 description: Planned projects in the future to do.
 title: '🗺️ Roadmap: <title>'
-labels: [
-  "Type ◦ Roadmap"
-]
+labels: ['Type ◦ Roadmap']
 body:
-  - type: input
-    id: roadmap-version-target
-    attributes:
-      label: Target Version
-      description: Which version are we aiming to introduce this into KeeWeb?
-      placeholder: "v1.90.0"
-    validations:
-      required: true
+    - type: input
+      id: roadmap-version-target
+      attributes:
+          label: Target Version
+          description: Which version are we aiming to introduce this into KeeWeb?
+          placeholder: "v1.90.0"
+      validations:
+          required: true
 
-  - type: dropdown
-    id: roadmap-package
-    attributes:
-      label: Package
-      description: |
-          Select which package this roadmap is designed for.
-      options:
-        - ⭐ New NodeJS Package
-        - Argon2
-        - Babel
-        - Electron
-        - ESLint & Prettier
-        - Fontawesome & SVG / TTF
-        - Got & http Resolving
-        - Grunt
-        - Keeweb
-        - Marked & Markdown
-        - Other
-        - Sass & CSS
-        - Webpack
-      default: 0
-    validations:
-      required: true
+    - type: dropdown
+      id: roadmap-package
+      attributes:
+          label: Package
+          description: |
+              Select which package this roadmap is designed for.
+          options:
+              - ⭐ New NodeJS Package
+              - Argon2
+              - Babel
+              - Electron
+              - ESLint & Prettier
+              - Fontawesome & SVG / TTF
+              - Got & http Resolving
+              - Grunt
+              - Keeweb
+              - Marked & Markdown
+              - Other
+              - Sass & CSS
+              - Webpack
+          default: 0
+      validations:
+          required: true
 
-  - type: markdown
-    id: roadmap-summary
-    attributes:
-      value: |
-        1. Please speak English.
-        2. Please take a moment to check if your suggestion hasn't already been implemented, or exists in another ticket.
-        3. Be detailed but to the point.
-        4. Describe the benefits of this plan, and what needs to be taken into consideration during implementation.
-    validations:
-      required: true
+    - type: markdown
+      id: roadmap-summary
+      attributes:
+          value: |
+              1. Please speak English.
+              2. Please take a moment to check if your suggestion hasn't already been implemented, or exists in another ticket.
+              3. Be detailed but to the point.
+              4. Describe the benefits of this plan, and what needs to be taken into consideration during implementation.
+      validations:
+          required: true
 
-  - type: textarea
-    id: roadmap-details
-    attributes:
-      label: Roadmap Details
-      description: |
-        Explain the vital steps in a bullet-point breakdown
-      placeholder: |
-        - Requires package update
-        - Must first integrate item A
-    validations:
-      required: true
+    - type: textarea
+      id: roadmap-details
+      attributes:
+          label: Roadmap Details
+          description: |
+              Explain the vital steps in a bullet-point breakdown
+          placeholder: |
+              - Requires package update
+              - Must first integrate item A
+      validations:
+          required: true
 
-  - type: textarea
-    id: roadmap-screenshots
-    attributes:
-        label: 'Additional Info / Examples / Screenshots'
-        description: |
-            If available, provide mockups or examples.
-            Any further details you want to add.
-            Example snippets of code.
+    - type: textarea
+      id: roadmap-screenshots
+      attributes:
+          label: 'Additional Info / Examples / Screenshots'
+          description: |
+              If available, provide mockups or examples.
+              Any further details you want to add.
+              Example snippets of code.
