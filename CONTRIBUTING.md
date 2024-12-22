@@ -1,14 +1,14 @@
-# Contributing to KeeWeb
+# Contributing to Keeweb Projects
 
-Thank you for your interest in contributing to KeeWeb! :gift:
+Thank you for your interest in contributing to our family of Keeweb projects :gift:
 
-Below are a list of ways that you can help contribute to this project, as well as policies and guides that explain how to get started.
+Below are a list of ways that you can help contribute to our projects, as well as policies and guides that explain how to get started.
 
 Please review everything on this page before you submit your contribution.
 
 <br />
 
-- [Contributing to KeeWeb](#contributing-to-keeweb)
+- [Contributing to Keeweb Projects](#contributing-to-keeweb-projects)
   - [Code of Conduct](#code-of-conduct)
   - [Issues, Bugs, Ideas](#issues-bugs-ideas)
   - [Vulnerabilities](#vulnerabilities)
@@ -43,7 +43,7 @@ This project and everyone participating in it is governed by the [KeeWeb Code of
 
 <br />
 
-By participating, you are expected to uphold this code. Please report unacceptable behavior to antelle.net@gmail.com.
+By participating, you are expected to uphold this code. Please report unacceptable behavior to `antelle.net@gmail.com`.
 
 <br />
 
@@ -65,11 +65,11 @@ Stuff happens, and sometimes as best as we try, there may be issues with KeeWeb 
 
 <br />
 
-If you have found a bug, have an issue with KeeWeb, or maybe even a cool idea; you can let us know by [submitting it](https://github.com/keeweb/keeweb/issues/new/choose). However, before you submit your new issue, bug report, or feature request; head over to the [Issues Section](https://github.com/keeweb/keeweb/issues) and ensure nobody else has already submitted it.
+If you have found a bug, have an issue with any of our projects hosted on Github, or maybe even a cool idea; you can let us know by [submitting it](https://github.com/keeweb/keeweb/issues/new/choose). However, before you submit your new issue, bug report, or feature request; head over to the [Issues Section](https://github.com/keeweb/keeweb/issues) and ensure nobody else has already submitted it.
 
 <br />
 
-Once you are sure that your issue is not already being dealt with; submit it [here](https://github.com/keeweb/keeweb/issues/new/choose). You'll be asked to specify exactly what your new submission targets, such as:
+Once you are sure that your issue is not already being dealt with; submit it [here](https://github.com/keeweb/keeweb/issues/new/choose). You'll be asked to specify exactly what project you're referring to, and what your new submission is for, such as:
 
 - Bug report
 - Feature Suggestion
