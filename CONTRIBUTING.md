@@ -21,10 +21,11 @@ Please review everything on this page before you submit your contribution.
     - [Referencing Issues](#referencing-issues)
     - [Commenting](#commenting)
     - [Variable \& Method Casing](#variable--method-casing)
-    - [ESLint \& Prettier](#eslint--prettier)
+    - [Linting](#linting)
     - [Spaces Instead Of Tabs](#spaces-instead-of-tabs)
     - [LF over CRLF](#lf-over-crlf)
       - [Visual Studio Code Users](#visual-studio-code-users)
+    - [CI Tests](#ci-tests)
   - [Documentation / Wiki](#documentation--wiki)
   - [Donations](#donations)
   - [Translations](#translations)
@@ -64,18 +65,18 @@ Stuff happens, and sometimes as best as we try, there may be issues with KeeWeb 
 
 <br />
 
-If you have found a bug, have an issue with KeeWeb, or maybe even a cool idea; you can let us know by [submitting it](https://github.com/keeweb/keeweb/issues). However, before you submit your new issue, bug report, or feature request; head over to the [Issues Section](https://github.com/keeweb/keeweb/issues) and ensure nobody else has already submitted it.
+If you have found a bug, have an issue with KeeWeb, or maybe even a cool idea; you can let us know by [submitting it](https://github.com/keeweb/keeweb/issues/new/choose). However, before you submit your new issue, bug report, or feature request; head over to the [Issues Section](https://github.com/keeweb/keeweb/issues) and ensure nobody else has already submitted it.
 
 <br />
 
-Once you are sure that your issue is not already being dealt with; you may submit it by clicking [here](https://github.com/keeweb/keeweb/issues/new/choose). You'll be asked to specify exactly what your new submission targets, such as:
+Once you are sure that your issue is not already being dealt with; submit it [here](https://github.com/keeweb/keeweb/issues/new/choose). You'll be asked to specify exactly what your new submission targets, such as:
 
 - Bug report
 - Feature Suggestion
 
 <br />
 
-When submitting your new report, ensure you fill out any of the questions asked of you. If you do not provide enough information, we cannot help. Be as detailed as possible, and provide any logs or screenshots you may have to help us better understand what you mean. Failure to fill out the submission properly may result in it being closed without a response.
+When submitting, ensure you fill out any of the questions asked of you. If you do not provide enough information, we cannot help. Be as detailed as possible, and provide any logs or screenshots you may have to help us better understand what you mean. Failure to fill out the submission properly may result in it being closed without a response.
 
 <br />
 
@@ -155,14 +156,12 @@ All contributions are made via **Pull Requests**. To make a pull request, you wi
 - Include tests that prove that the change works as intended and does not add regressions;
 - Document the changes in the code and/or the project's documentation;
 - Your PR must pass the CI pipeline;
-- When submitting your Pull Request, use one of the following branches:
-    - For bug fixes: `main` branch
-    - For features & functionality: `development` branch
+- When you fork our repository, ensure you fork the active `develop/*` branch.
 - Include a proper git commit message following the [Conventional Commit Specification](https://conventionalcommits.org/en/v1.0.0/#specification).
 
 <br />
 
-If all of these items are checked, the pull request is ready to be reviewed and your pull request's label will be changed to "Ready for Review". At this point, a human will need to step in and manually verify your submission.
+If all of these items are checked, the pull request is ready to be reviewed and your pull request's label will be changed to "**Ready for Review**". At this point, a human will need to step in and manually verify your submission.
 
 Once your submission has been tested and verified; it will be merged.
 
@@ -200,14 +199,11 @@ When commiting your changes, we require you to follow the Conventional Commit Sp
 | `build`     | Alters the build process. E.g: creating a new build task, updating the release script, etc. |
 | `chore`     | Technical / preventative maintenance task that is necessary for managing the app or the repo, such as updating grunt tasks, but is not tied to any specific feature. Usually done for maintanence purposes. |
 | `ci`        | Changes Continuous Integration (usually `yml` and other configuration files). |
-| `deps`      | Additions or updates existing dependencies |
-| `deprecate` | Deprecates existing functionality, but does not remove it from the app. |
 | `docs`      | Change to the website or markdown documents |
 | `feat`      | Introduces a new feature |
 | `fix`       | Addresses a bug for the end-user |
 | `perf`      | Improves performance of algorithms or general execution time of the app, but does not fundamentally change an existing feature. |
 | `refactor`  | Change to production code that leads to no behavior difference, E.g. splitting files, renaming internal variables, improving code style |
-| `remove`    | Removes a feature. Features are usually deprecated first for a period of time before being removed. Removing a feature from the app may be considered a breaking change that will require a major version number increment. |
 | `style`     | Updates or reformats the style of the source code, but does not otherwise change the way the app is implemented. Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc) |
 | `test`      | Adds or refactors tests, no production code change. Usually changes the suite of automated tests for the app. |
 | `revert`    | Reverts a previous commit |
@@ -239,8 +235,8 @@ feat(core): allow overriding of webpack config
   │       └─⫸ Commit Scope: api|autotype|core|dev|dist|grunt|hbs|kdbx|lang|logs|
   │                          plugin|settings|ui|ux|web|
   │
-  └─⫸ Commit Type: build|ci|doc|docs|feat|fix|perf|refactor|test
-                    website|chore|style|type|revert|deprecate
+  └─⫸ Commit Type: build|chore|ci|docs|feat|fix|perf|refactor
+                    style|test|revert
 ```
 
 <br />
@@ -272,7 +268,7 @@ When writing your code, ensure you utilize `camelCase` when naming variables and
 
 <br />
 
-### ESLint & Prettier
+### Linting
 
 This app is developed with the following packages installed:
 
@@ -283,21 +279,31 @@ This app is developed with the following packages installed:
 
 <br />
 
-Within the root folder of the repo, there are several configuration files which you should be using within the project. These files dictate how prettier and eslint will behave and what is acceptable / not acceptable.
-
-- [.eslintrc](https://github.com/keeweb/keeweb/blob/master/.eslintrc) - ESLint < v9 config
-- [eslint.config.mjs](https://github.com/keeweb/keeweb/blob/master/eslint.config.mjs) - ESLint >= v9 config
-- [.prettierrc](https://github.com/Aetherinox/kwdev/blob/main/.prettierrc) - prettier rules
+Ensure you follow the lint rules supplied within our ESLint config file [eslint.config.cjs](https://github.com/keeweb/keeweb/blob/master/eslint.config.cjs). If ESLint throws any errors, you must fix them prior to submitting your PR. 
 
 <br />
 
-When submitting your pull request, these linting and style rules will be verified with all of your files. If you did not follow these rules; the linter tests on your pull request will fail; and you'll be expected to correct these issues before your submission will be transferred over for human review.
+The easiest way to lint quickly is to install the following tools: 
+- [Visual Studio Code](https://code.visualstudio.com/) >= v1.95
+- [VSC Plugin: ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) >= v3.0.10
+- [VSC Plugin: Prettier ESLInt](https://marketplace.visualstudio.com/items?itemName=rvest.vs-code-prettier-eslint) >= v6.0.0
+
+<br />
+
+Once the above tools are installed, you may configure the plugins to load up our [eslint.config.cjs](https://github.com/keeweb/keeweb/blob/master/eslint.config.cjs) and Visual Studio Code should start showing any issues automatically in your Visual Studio Code **Output Window**. You may need to restart Visual Studio Code after you install the plugins.
+
+<br >
+
+> [!NOTE]
+> We utilize ESLint v9+ and the new **[flat config](https://eslint.org/blog/2022/08/new-config-system-part-2/)** structure. You cannot load our flat config into ESLint v8 or older.
 
 <br />
 
 ### Spaces Instead Of Tabs
 
 When writing your code, set your IDE to utilize **spaces**, with a configured size of `4 characters`. Our repo provides a `.editorconfig` file which defines how the file should be formatted. Load that file into programs like Visual Studio code.
+
+<br />
 
 <br />
 
@@ -328,6 +334,13 @@ You can also open your VSC settings, and search for the setting **`EOL`**, then 
 
 <p align="center"><img width="80%" style="text-align: center;" src="/docs/img/CONTRIBUTING/vsc/settings_eol.png"></p>
 
+<br />
+
+### CI Tests
+
+When submitting a pull request, all of your changes will be ran through our CI tests to check for issues, including linting. If any errors were found, you will be notified at the bottom of your PR request. You will need to review the test results and fix whatever was found wrong. You'll be expected to correct these issues before your submission will be transferred over for human review.
+
+<br />
 <br />
 
 <div align="center">
