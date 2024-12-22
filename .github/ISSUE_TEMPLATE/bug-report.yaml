@@ -14,6 +14,26 @@ body:
               <br />
 
     - type: dropdown
+      id: app-target
+      attributes:
+          label: Target App
+          description: |
+              Which application / service are you having issues with?
+              We use this repo for several different projects which are part of the Keeweb collection.
+              **`Required`**
+          options:
+              - '🔑 Keeweb Password Manager'
+              - '🌍 Web App (app.keeweb.info)'
+              - '🌍 Beta Web App (beta.keeweb.info)'
+              - '🔌 Keeweb Connect (Browser Extension)'
+              - 'Ghcr.io Badge Service'
+              - 'Favicon Service'
+              - 'Kdbxweb Kdbx Web Library'
+              - 'Keeweb Native Modules'
+      validations:
+          required: true
+
+    - type: dropdown
       id: priority-type
       attributes:
           label: Priority
@@ -160,8 +180,8 @@ body:
               Describe the steps that need taken by the developer(s) to get the error / issue you're experiencing.
               **`Required`**
           value: |
-              1. 
-              2. 
+              1.
+              2.
       validations:
           required: true
 
@@ -173,8 +193,8 @@ body:
               What do you expect KeeWeb to actually do if it were working properly
               **`Required`**
           value: |
-              - 
-              - 
+              -
+              -
       validations:
           required: true
 
