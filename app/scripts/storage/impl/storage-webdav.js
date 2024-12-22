@@ -127,7 +127,7 @@ class StorageWebDav extends StorageBase {
             .catch((err) => {
                 this.logger.error('stat: error', err);
 
-                if (err.response.status === 404) {
+                if (err.response?.status === 404) {
                     err = { notFound: true };
                 }
 
