@@ -737,6 +737,23 @@ To configure Dropbox support on your self-hosted setup [view our Wiki page](http
 
 ## Build From Source
 
+> [!NOTE]
+> Keeweb v1.19.0+ requires a minimum of Node v20.9.0 LTS in order to build.
+> If you require multiple versions of node, you can install `nvm`
+>
+> ```shell
+> # install nvm
+> wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+>
+> # install node 20
+> nvm install 20
+>
+> # switch to node 20
+> nvm use 20
+> ```
+
+<br />
+
 The easiest way to clone all KeeWeb repos is:
 
 ```bash
