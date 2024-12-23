@@ -38,6 +38,7 @@ KeeWeb is a browser and desktop password manager which is capable of opening up 
   - [Quick Links](#quick-links)
 - [Self-hosting](#self-hosting)
   - [Docker](#docker)
+    - [Images](#images)
     - [Docker Run](#docker-run)
     - [Docker Compose](#docker-compose)
     - [Traefik Integration](#traefik-integration)
@@ -106,9 +107,6 @@ Review some of our most important links below to learn more about KeeWeb and who
 | **Social** | [kee_web](https://twitter.com/kee_web) | Check us out on our social media |
 | **Donate** | [OpenCollective](https://opencollective.com/keeweb#support), [GitHub](https://github.com/sponsors/antelle) | Help keep us going |
 
-
-
-
 <br />
 
 ---
@@ -131,6 +129,18 @@ If you wish to host Keeweb within a Docker container, we provide pre-built image
 
 > [!NOTE]
 > For a full set of Docker instructions, visit our **[docker/keeweb readme](https://github.com/keeweb/keeweb/tree/docker/keeweb)**
+
+<br />
+
+#### Images
+Use any of the following images in your `📄 docker-compose.yml` or `run` command:
+
+<br />
+
+| Service | Version | Image Link |
+| --- | --- | --- |
+| `Docker Hub` | [![Docker Version][dockerhub-version-ftb-img]][dockerhub-version-ftb-uri] | `🔖 keeweb/keeweb:latest` <br /> `🔖 keeweb/keeweb:1.19.0` <br /> `🔖 keeweb/keeweb:1.19.0-amd64` <br /> `🔖 keeweb/keeweb:1.19.0-arm64` <br /> `🔖 keeweb/keeweb:development` <br /> `🔖 keeweb/keeweb:development-amd64` <br /> `🔖 keeweb/keeweb:development-arm64` |
+| `Github` | [![Github Version][github-version-ftb-img]][github-version-ftb-uri] | `🔖 ghcr.io/keeweb/keeweb:latest` <br /> `🔖 ghcr.io/keeweb/keeweb:1.19.0` <br /> `🔖 ghcr.io/keeweb/keeweb:1.19.0-amd64` <br /> `🔖 ghcr.io/keeweb/keeweb:1.19.0-arm64` <br /> `🔖 ghcr.io/keeweb/keeweb:development` <br /> `🔖 ghcr.io/keeweb/keeweb:development-amd64` <br /> `🔖 ghcr.io/keeweb/keeweb:development-arm64` |
 
 <br />
 
@@ -727,6 +737,23 @@ To configure Dropbox support on your self-hosted setup [view our Wiki page](http
 
 ## Build From Source
 
+> [!NOTE]
+> Keeweb v1.19.0+ requires a minimum of Node v20.9.0 LTS in order to build.
+> If you require multiple versions of node, you can install `nvm`
+>
+> ```shell
+> # install nvm
+> wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+>
+> # install node 20
+> nvm install 20
+>
+> # switch to node 20
+> nvm use 20
+> ```
+
+<br />
+
 The easiest way to clone all KeeWeb repos is:
 
 ```bash
@@ -853,7 +880,7 @@ Please note: donation does not imply any type of service contract.
 <br />
 
 ## Contributors ✨
-We are always looking for contributors. If you feel that you can provide something useful to Gistr, then we'd love to review your suggestion. Before submitting your contribution, please review the following resources:
+We are always looking for contributors. If you feel that you can provide something useful to Keeweb or our other projects, then we'd love to review your suggestion. Before submitting your contribution, please review the following resources:
 
 - [Pull Request Procedure](.github/PULL_REQUEST_TEMPLATE.md)
 - [Contributor Policy](CONTRIBUTING.md)
@@ -916,6 +943,10 @@ Want to help but can't write code?
   [github-version-img]: https://img.shields.io/github/v/tag/keeweb/keeweb?logo=GitHub&label=Version&color=ba5225
   [github-version-uri]: https://github.com/keeweb/keeweb/releases
 
+<!-- BADGE > VERSION > GITHUB (For the Badge) -->
+  [github-version-ftb-img]: https://img.shields.io/github/v/tag/keeweb/keeweb?style=for-the-badge&logo=github&logoColor=FFFFFF&logoSize=34&label=%20&color=ba5225
+  [github-version-ftb-uri]: https://github.com/keeweb/keeweb/releases
+
 <!-- BADGE > VERSION > NPMJS -->
   [npm-version-img]: https://img.shields.io/npm/v/keeweb?logo=npm&label=Version&color=ba5225
   [npm-version-uri]: https://npmjs.com/package/keeweb
@@ -953,20 +984,31 @@ Want to help but can't write code?
   [contribs-all-uri]: https://github.com/all-contributors/all-contributors
 
 <!-- BADGE > GITHUB > BUILD > NPM -->
-  [github-build-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/release-build.yml?logo=github&logoColor=FFFFFF&label=Build&color=%23278b30
-  [github-build-uri]: https://github.com/keeweb/keeweb/actions/workflows/release-build.yml
+  [github-build-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/deploy-docker-github.yml?logo=github&logoColor=FFFFFF&label=Build&color=%23278b30
+  [github-build-uri]: https://github.com/keeweb/keeweb/actions/workflows/deploy-docker-github.yml
 
 <!-- BADGE > GITHUB > BUILD > Pypi -->
   [github-build-pypi-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/release-pypi.yml?logo=github&logoColor=FFFFFF&label=Build&color=%23278b30
-  [github-build-pypi-uri]: https://github.com/keeweb/keeweb/actions/workflows/release-pypi.yml
+  [github-build-pypi-uri]: https://github.com/keeweb/keeweb/actions/workflows/pypi-release.yml
 
 <!-- BADGE > GITHUB > TESTS -->
-  [github-tests-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/build-tests.yml?logo=github&label=Tests&color=2c6488
-  [github-tests-uri]: https://github.com/keeweb/keeweb/actions/workflows/build-tests.yml
+  [github-tests-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/npm-tests.yml?logo=github&label=Tests&color=2c6488
+  [github-tests-uri]: https://github.com/keeweb/keeweb/actions/workflows/npm-tests.yml
 
 <!-- BADGE > GITHUB > COMMIT -->
   [github-commit-img]: https://img.shields.io/github/last-commit/keeweb/keeweb?logo=conventionalcommits&logoColor=FFFFFF&label=Last%20Commit&color=313131
   [github-commit-uri]: https://github.com/keeweb/keeweb/commits/main/
+
+<!-- BADGE > DOCKER HUB > VERSION -->
+  [dockerhub-version-img]: https://img.shields.io/docker/v/antelle/keeweb/latest?logo=docker&logoColor=FFFFFF&label=Docker%20Version&color=ba5225
+  [dockerhub-version-uri]: https://hub.docker.com/repository/docker/antelle/keeweb/general
+
+<!-- BADGE > DOCKER HUB > VERSION (For the Badge) -->
+  [dockerhub-version-ftb-img]: https://img.shields.io/docker/v/antelle/keeweb/latest?style=for-the-badge&logo=docker&logoColor=FFFFFF&logoSize=34&label=%20&color=ba5225
+  [dockerhub-version-ftb-uri]: https://hub.docker.com/repository/docker/antelle/keeweb/tags
+
+<!-- BADGE > DOCKER HUB > PULLS -->
+  [dockerhub-pulls-img]: https://img.shields.io/docker/pulls/antelle/keeweb?logo=docker&logoColor=FFFFFF&label=Docker%20Pulls&color=af9a00
 
 <!-- prettier-ignore-end -->
 <!-- markdownlint-restore -->
