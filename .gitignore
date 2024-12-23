@@ -54,6 +54,7 @@ bin/
 dist
 **/dist
 .opt-*
+workspace.xml
 
 # #
 #    Directories potentially created on remote AFP share
@@ -79,11 +80,17 @@ test/dist
 # #
 
 .dev
-.idea
 .vscode
 .env
 .aetherx
 keys
+
+# #
+#   Intellij
+# #
+
+.idea/
+*.iml
 
 # #
 #   NodeJS
@@ -94,3 +101,8 @@ npm-debug.log
 .env
 .aws
 
+# #
+#   Distribution
+# #
+
+dist/
