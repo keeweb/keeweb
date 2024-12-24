@@ -45,7 +45,7 @@
         width:         calc(100% - 20px);
         padding: 10px;
         font-size: 1.1rem;
-        background-color: #131212;
+        background-color: var(--generator-result-box);
         border: 1px solid rgba(255, 255, 255, 0.4);
 
         &::-webkit-scrollbar {
