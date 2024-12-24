@@ -6,7 +6,7 @@
     override rules
     @ref        https://github.com/eslint/eslint/discussions/18574#discussioncomment-9729092
                 https://eslint.org/docs/latest/use/configure/configuration-files#experimental-configuration-file-resolution
-    
+
     eslint config migration docs
     @ref        https://eslint.org/docs/latest/use/configure/migration-guide
 */
@@ -55,17 +55,16 @@ const compat = new FlatCompat({
     Eslint > Flat Config
 */
 
-module.exports = [
-    ...compat.extends('eslint:recommended', 'plugin:prettier/recommended', 'plugin:chai-friendly/recommended'),
-    {
-        ignores: [
-            'coverage/**',
-            'node_modules/**',
-            '**/node_modules/**',
-            '**/dist/**/*',
-            '**/__tmp__/**/*',
-            'eslint.config.cjs'
-        ],
+module.exports = [{
+    ignores: [
+        'coverage/**',
+        'node_modules/**',
+        '**/node_modules/**',
+        '**/dist/**/*',
+        '**/__tmp__/**/*',
+        'eslint.config.cjs'
+    ],
+}, ...compat.extends('eslint:recommended', 'plugin:prettier/recommended', 'plugin:chai-friendly/recommended'), {
         files: ['**/*.js', './src/**/*.js', './test/**/*.js'],
         plugins: {
             'n': pluginNode,
@@ -260,6 +259,19 @@ module.exports = [
             'no-console': 'off',
             'no-undef': 'off',
             'no-var': 'off'
+        }
+    },
+    {
+        files: ['test/*.js'],
+        languageOptions: {
+            ecmaVersion: 5,
+            globals: {
+                ...customGlobals,
+                ...globals.mocha
+            },
+        },
+        rules: {
+            'no-unused-expressions': 'off'
         }
     }
 ];
