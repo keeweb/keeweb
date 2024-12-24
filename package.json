@@ -112,6 +112,7 @@
         "url-loader": "4.1.1",
         "uuid": "^11.0.3",
         "wawoff2": "2.0.1",
+        "webdav": "^5.7.1",
         "webpack": "5.97.1"
     },
     "optionalDependencies": {
