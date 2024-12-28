@@ -117,7 +117,7 @@ env:
     IMAGE_DOCKERHUB_USERNAME:   ${{ github.event.inputs.IMAGE_DOCKERHUB_USERNAME || 'antelle' }}
     BOT_NAME_1:                 EuropaServ
     BOT_NAME_DEPENDABOT:        dependabot[bot]
-    
+
 # #
 #   Jobs
 #
@@ -411,7 +411,7 @@ jobs:
               id: task_release_dh_dos2unix
               run: |
                   find ./ \( -path "./.git" -o -path "./docs" -o -path "./.github" -o -path "*.png" -o -path "*.jpg" \) -prune -o -name '*' -print | xargs dos2unix --
-                  
+
             # #
             #   Release › Dockerhub › Fix Permissions
             # #
@@ -475,13 +475,16 @@ jobs:
                       #  latest yes
                       type=raw,value=latest,enable=${{ !inputs.DEV_RELEASE }}
 
-                      #  dispatch       add x1.x.x-amd64
+                      #  dispatch       add 1.x.x
+                      type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == false }},priority=300,prefix=,suffix=,value=${{ env.IMAGE_VERSION }}
+
+                      #  dispatch       add 1.x.x-amd64
                       type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == false }},priority=300,prefix=,suffix=-amd64,value=${{ env.IMAGE_VERSION }}
 
                       #  dispatch       add amd64-development
                       type=raw,enable=${{ github.event_name == 'workflow_dispatch' && inputs.DEV_RELEASE == true }},priority=300,prefix=,suffix=-development,value=amd64
 
-                      #  tag            add tag-arm64
+                      #  tag            add tag-amd64
                       type=ref,enable=${{ github.event_name == 'pull_request' || github.event_name == 'push'}},priority=600,prefix=,suffix=-amd64,event=tag
 
                       #  add development tag
