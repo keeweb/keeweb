@@ -3,6 +3,7 @@ import { Events } from 'framework/events';
 import { Shortcuts } from 'comp/app/shortcuts';
 import { KeyHandler } from 'comp/browser/key-handler';
 import { Keys } from 'const/keys';
+import { Logger } from 'util/logger';
 import { Comparators } from 'util/data/comparators';
 import { Features } from 'util/features';
 import { StringFormat } from 'util/formatting/string-format';
@@ -99,10 +100,12 @@ class ListSearchView extends View {
             },
             { value: '-rank', icon: 'arrow-down-wide-short', loc: () => Locale.searchRank }
         ];
+
         this.sortIcons = {};
         this.sortOptions.forEach((opt) => {
             this.sortIcons[opt.value] = opt.icon;
         });
+
         this.advancedSearch = {
             user: true,
             other: true,
@@ -115,15 +118,17 @@ class ListSearchView extends View {
             history: false,
             title: true
         };
+
         if (this.model.advancedSearch) {
             this.advancedSearch = { ...this.model.advancedSearch };
         }
+
         this.setLocale();
         this.onKey(Keys.DOM_VK_F, this.findKeyPress, KeyHandler.SHORTCUT_ACTION);
         this.onKey(Keys.DOM_VK_N, this.newKeyPress, KeyHandler.SHORTCUT_OPT);
         this.onKey(Keys.DOM_VK_DOWN, this.downKeyPress);
         this.onKey(Keys.DOM_VK_UP, this.upKeyPress);
-        this.listenTo(this, 'show', this.viewShown);
+        this.listenTo(this, 'show', this.viewShown); // this event ensures main window is focused on keypress
         this.listenTo(this, 'hide', this.viewHidden);
         this.listenTo(Events, 'filter', this.filterChanged);
         this.listenTo(Events, 'set-locale', this.setLocale);
@@ -139,6 +144,7 @@ class ListSearchView extends View {
         this.sortOptions.forEach((opt) => {
             opt.text = opt.loc();
         });
+
         this.createOptions = [
             {
                 value: 'entry',
@@ -150,6 +156,7 @@ class ListSearchView extends View {
             },
             { value: 'group', icon: 'folder', text: StringFormat.capFirst(Locale.group) }
         ];
+
         if (this.el) {
             this.render();
         }
@@ -160,6 +167,10 @@ class ListSearchView extends View {
     }
 
     removeKeypressHandler() {}
+
+    /*
+        Only triggered once on page load
+    */
 
     viewShown() {
         const keypressHandler = (e) => this.documentKeyPress(e);
@@ -176,11 +187,13 @@ class ListSearchView extends View {
         if (this.inputEl) {
             searchVal = this.inputEl.val();
         }
+
         super.render({
             adv: this.advancedSearch,
             advEnabled: this.advancedSearchEnabled,
             canCreate: this.model.canCreateEntries()
         });
+
         this.inputEl = this.$el.find('.list__search-field');
         if (searchVal) {
             this.inputEl.val(searchVal);
@@ -192,9 +205,11 @@ class ListSearchView extends View {
             case Keys.DOM_VK_UP:
             case Keys.DOM_VK_DOWN:
                 break;
+
             case Keys.DOM_VK_RETURN:
                 e.target.blur();
                 break;
+
             case Keys.DOM_VK_ESCAPE:
                 if (this.inputEl.val()) {
                     this.inputEl.val('');
@@ -202,6 +217,7 @@ class ListSearchView extends View {
                 }
                 e.target.blur();
                 break;
+
             default:
                 return;
         }
@@ -213,27 +229,50 @@ class ListSearchView extends View {
     }
 
     inputChange() {
+        new Logger('list-search-view.js').dev('<fnc>:inputChange', '<act>:ran');
+
         const text = this.inputEl.val();
         this.inputEl[0].parentElement.classList.toggle('list__search-field-wrap--text', text);
         Events.emit('add-filter', { text });
     }
 
     inputFocus(e) {
+        new Logger('list-search-view.js').dev('<fnc>:inputFocus', '<act>:ran');
+
         $(e.target).trigger('select');
     }
 
+    /*
+        triggered when key is pressed on main interface
+    */
+
     documentKeyPress(e) {
+        /*
+            Password generator needs keyboard focus when open.
+            check if gen exists and give it focus if so;
+
+            otherwise, give main interface focus for shortcuts / search.
+        */
+
+        const bGenExists = document.getElementsByClassName('gen');
+        if (bGenExists.length === 1) {
+            return;
+        }
+
         if (this.hidden) {
             return;
         }
+
         const code = e.charCode;
         if (!code) {
             return;
         }
+
         this.hideSearchOptions();
         this.inputEl.val(String.fromCharCode(code)).focus();
         this.inputEl[0].setSelectionRange(1, 1);
         this.inputChange();
+
         e.preventDefault();
     }
 
@@ -267,15 +306,19 @@ class ListSearchView extends View {
 
     filterChanged(filter) {
         this.hideSearchOptions();
+
         if (filter.filter.text !== this.inputEl.val()) {
             this.inputEl.val(filter.text || '');
         }
+
         const sortIconCls = this.sortIcons[filter.sort] || 'sort';
         this.$el.find('.list__search-btn-sort>i').attr('class', 'fa fa-' + sortIconCls);
+
         let adv = !!filter.filter.advanced;
         if (this.model.advancedSearch) {
             adv = filter.filter.advanced !== this.model.advancedSearch;
         }
+
         if (this.advancedSearchEnabled !== adv) {
             this.advancedSearchEnabled = adv;
             this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
@@ -284,11 +327,13 @@ class ListSearchView extends View {
 
     createOptionsClick(e) {
         e.stopImmediatePropagation();
+
         if (e.shiftKey) {
             this.hideSearchOptions();
             this.emit('create-entry');
             return;
         }
+
         this.toggleCreateOptions();
     }
 
@@ -300,12 +345,15 @@ class ListSearchView extends View {
     advancedSearchClick() {
         this.advancedSearchEnabled = !this.advancedSearchEnabled;
         this.$el.find('.list__search-adv').toggleClass('hide', !this.advancedSearchEnabled);
+
         let advanced = false;
+
         if (this.advancedSearchEnabled) {
             advanced = this.advancedSearch;
         } else if (this.model.advancedSearch) {
             advanced = this.model.advancedSearch;
         }
+
         Events.emit('add-filter', { advanced });
     }
 
@@ -334,15 +382,19 @@ class ListSearchView extends View {
             this.hideSearchOptions();
             return;
         }
+
         this.hideSearchOptions();
         this.$el.find('.list__search-btn-sort').addClass('sel--active');
+
         const view = new DropdownView();
         view.isSort = true;
+
         this.listenTo(view, 'cancel', this.hideSearchOptions);
         this.listenTo(view, 'select', this.sortDropdownSelect);
         this.sortOptions.forEach(function (opt) {
             opt.active = this.model.sort === opt.value;
         }, this);
+
         view.render({
             position: {
                 top: this.$el.find('.list__search-btn-sort')[0].getBoundingClientRect().bottom,
@@ -350,6 +402,7 @@ class ListSearchView extends View {
             },
             options: this.sortOptions
         });
+
         this.views.searchDropdown = view;
     }
 
