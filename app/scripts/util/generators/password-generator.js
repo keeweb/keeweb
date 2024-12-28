@@ -349,7 +349,7 @@ const PasswordGenerator = {
                     if (opts.separator) {
                         p = p + AppSettingsModel.generatorWordSeparator + '-';
                     } else {
-                        p = p + AppSettingsModel.generatorWordSeparator + '-';
+                        p = p + '-';
                     }
                 }
             }
