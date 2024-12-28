@@ -59,6 +59,7 @@ MenuSectionModel.defineModelProperties({
     defaultItems: null,
     items: null,
     scrollable: false,
+    cls: null,
     grow: false,
     drag: false,
     visible: undefined,

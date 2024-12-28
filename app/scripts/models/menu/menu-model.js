@@ -20,11 +20,13 @@ class MenuModel extends Model {
                 icon: 'table-cells-large',
                 active: true,
                 shortcut: Keys.DOM_VK_A,
+                cls: 'sub',
                 filterKey: '*'
             }
         ]);
         this.allItemsItem = this.allItemsSection.items[0];
-        this.groupsSection = new GroupsMenuModel();
+        this.allItemsSection.set({ cls: 'all' });
+        this.groupsSection = new GroupsMenuModel('groups');
         this.colorsSection = new MenuSectionModel([
             {
                 locTitle: 'menuColors',
@@ -36,9 +38,10 @@ class MenuModel extends Model {
             }
         ]);
         this.colorsItem = this.colorsSection.items[0];
+        this.colorsSection.set({ cls: 'colors' });
         const defTags = [this._getDefaultTagItem()];
         this.tagsSection = new MenuSectionModel(defTags);
-        this.tagsSection.set({ scrollable: true, drag: true });
+        this.tagsSection.set({ scrollable: true, drag: true, cls: 'tags' });
         this.tagsSection.defaultItems = defTags;
         this.trashSection = new MenuSectionModel([
             {
@@ -50,6 +53,8 @@ class MenuModel extends Model {
                 drop: true
             }
         ]);
+        this.trashSection.set({ cls: 'trash' });
+
         Colors.AllColors.forEach((color) => {
             const option = {
                 cls: `fa ${color}-color`,
@@ -58,11 +63,12 @@ class MenuModel extends Model {
             };
             this.colorsSection.items[0].addOption(option);
         });
+
         this.menus.app = new MenuSectionCollection([
             this.allItemsSection,
-            this.colorsSection,
-            this.tagsSection,
             this.groupsSection,
+            this.tagsSection,
+            this.colorsSection,
             this.trashSection
         ]);
 
