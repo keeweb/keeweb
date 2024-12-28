@@ -86,8 +86,8 @@ describe('PasswordGenerator', () => {
             PasswordGenerator.generate({
                 length: 8,
                 name: 'Passphrase',
-                spaces: true,
-                upper: true
+                upper: true,
+                separator: ' '
             })
         ).to.match(/^[a-zA-Z-]+(?:\s{1}[a-zA-Z-]+){7,}$/);
     });
@@ -99,36 +99,36 @@ describe('PasswordGenerator', () => {
                 length: 6,
                 name: 'Passphrase',
                 digits: true,
-                spaces: true,
-                upper: true
+                upper: true,
+                separator: ' '
             })
         ).to.match(/^[a-zA-Z-]+(?:[\d{1}]\s{1}[a-zA-Z-]+){5,}\d{1}$/);
     });
 
     // https://regex101.com/r/w5gPht/3
-    it('should generate passphrase with 7 words seperated by hyphens', () => {
+    it('should generate passphrase with 7 words separated by hyphens', () => {
         expect(
             PasswordGenerator.generate({
                 length: 7,
                 name: 'Passphrase',
                 digits: false,
-                spaces: false,
                 high: true,
-                upper: true
+                upper: true,
+                separator: ''
             })
         ).to.match(/^[a-zA-Z-]+(?:[\-{1}][a-zA-Z-]+){6,}$/);
     });
 
     // https://regex101.com/r/vbK2KN/2
-    it('should generate passphrase with 10 words seperated by hyphens, spaces with number at end', () => {
+    it('should generate passphrase with 10 words separated by hyphens, spaces with number at end', () => {
         expect(
             PasswordGenerator.generate({
                 length: 10,
                 name: 'Passphrase',
                 digits: true,
-                spaces: true,
                 high: true,
-                upper: true
+                upper: true,
+                separator: ' '
             })
         ).to.match(/^[a-zA-Z-]+(?:\d{1}\s{1}\-{1}\s{1}[a-zA-Z-]+){9,}\d{1}$/);
     });
