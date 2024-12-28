@@ -3,9 +3,7 @@ import { MenuSectionModel } from 'models/menu/menu-section-model';
 
 class GroupsMenuModel extends MenuSectionModel {
     constructor(cls = undefined) {
-        super(new GroupCollection(), {
-            cls: cls
-        });
+        super(new GroupCollection());
         this.cls = cls;
     }
 }

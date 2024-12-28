@@ -20,7 +20,6 @@ class MenuModel extends Model {
                 icon: 'table-cells-large',
                 active: true,
                 shortcut: Keys.DOM_VK_A,
-                cls: 'sub',
                 filterKey: '*'
             }
         ]);
