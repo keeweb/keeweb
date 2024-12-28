@@ -887,10 +887,13 @@ class OpenView extends View {
         if (this.busy) {
             return;
         }
+
         this.closeConfig();
         const icon = this.$el.find('.open__icon-storage[data-storage=' + storage.name + ']');
         this.busy = true;
+
         icon.toggleClass('flip3d', true);
+
         storage.list(config && config.dir, (err, files) => {
             icon.toggleClass('flip3d', false);
             this.busy = false;
@@ -899,6 +902,7 @@ class OpenView extends View {
                 if (err === 'browser-auth-started') {
                     return;
                 }
+
                 if (err.lastIndexOf('OAuth', 0) !== 0 && !Alerts.alertDisplayed) {
                     Alerts.error({
                         header: Locale.openError,
@@ -908,6 +912,7 @@ class OpenView extends View {
                 }
                 return;
             }
+
             if (!files.length) {
                 Alerts.error({
                     header: Locale.openNothingFound,
@@ -923,6 +928,7 @@ class OpenView extends View {
                 }
                 return fileNameComparator(x, y);
             });
+
             if (config && config.dir) {
                 files.unshift({
                     path: config.prevDir,
@@ -930,6 +936,7 @@ class OpenView extends View {
                     dir: true
                 });
             }
+
             const listView = new StorageFileListView({ files });
             listView.on('selected', (file) => {
                 if (file.dir) {
@@ -941,6 +948,7 @@ class OpenView extends View {
                     this.openStorageFile(storage, file);
                 }
             });
+
             Alerts.alert({
                 header: Locale.openSelectFile,
                 body: Locale.openSelectFileBody,
@@ -957,6 +965,7 @@ class OpenView extends View {
         if (this.busy) {
             return;
         }
+
         this.params.id = null;
         this.params.storage = storage.name;
         this.params.path = file.path;
@@ -972,9 +981,11 @@ class OpenView extends View {
         if (this.busy) {
             return;
         }
+
         if (this.views.openConfig) {
             this.views.openConfig.remove();
         }
+
         const config = {
             id: storage.name,
             name: Locale[storage.name] || storage.name,
@@ -982,9 +993,11 @@ class OpenView extends View {
             buttons: true,
             ...storage.getOpenConfig()
         };
+
         this.views.openConfig = new OpenConfigView(config, {
             parent: '.open__config-wrap'
         });
+
         this.views.openConfig.on('cancel', this.closeConfig.bind(this));
         this.views.openConfig.on('apply', this.applyConfig.bind(this));
         this.views.openConfig.render();
@@ -997,10 +1010,12 @@ class OpenView extends View {
             this.storageWaitId = null;
             this.busy = false;
         }
+
         if (this.views.openConfig) {
             this.views.openConfig.remove();
             delete this.views.openConfig;
         }
+
         this.$el.find('.open__pass-area').removeClass('hide');
         this.$el.find('.open__config').addClass('hide');
         this.focusInput();
@@ -1010,10 +1025,12 @@ class OpenView extends View {
         if (this.busy || !config) {
             return;
         }
+
         this.busy = true;
         this.views.openConfig.setDisabled(true);
         const storage = Storage[config.storage];
         this.storageWaitId = Math.random();
+
         const path = config.path;
         const opts = omit(config, ['path', 'storage']);
         const req = {
@@ -1022,6 +1039,7 @@ class OpenView extends View {
             path,
             opts
         };
+
         if (storage.applyConfig) {
             storage.applyConfig(opts, this.storageApplyConfigComplete.bind(this, req));
         } else {
@@ -1098,26 +1116,31 @@ class OpenView extends View {
             this.views.gen.remove();
             return;
         }
+
         const el = this.$el.find('.open__icon-generate');
         const rect = el[0].getBoundingClientRect();
         const pos = {
             left: rect.left,
             top: rect.top
         };
+
         if (Features.isMobile) {
             pos.left = '50vw';
             pos.top = '50vh';
             pos.transform = 'translate(-50%, -50%)';
         }
+
         const generator = new GeneratorView({
             copy: true,
             noTemplateEditor: true,
             pos
         });
+
         generator.render();
         generator.once('remove', () => {
             delete this.views.gen;
         });
+
         this.views.gen = generator;
     }
 

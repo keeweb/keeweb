@@ -76,16 +76,20 @@ class View extends EventEmitter {
                 if (typeof parent === 'string') {
                     parent = document.querySelector(parent);
                 }
+
                 if (!parent) {
                     throw new Error(`Error rendering ${this.constructor.name}: parent not found`);
                 }
+
                 if (this.options.replace) {
                     Tip.destroyTips(parent);
                     parent.innerHTML = '';
                 }
+
                 const el = document.createElement('div');
                 el.innerHTML = html;
                 const root = el.firstChild;
+
                 if (this.options.ownParent) {
                     if (root) {
                         parent.appendChild(root);
@@ -95,15 +99,18 @@ class View extends EventEmitter {
                     this.el = root;
                     parent.appendChild(this.el);
                 }
+
                 if (this.modal) {
                     FocusManager.setModal(this.modal);
                 }
+
                 this.bindEvents();
             } else {
                 throw new Error(
                     `Error rendering ${this.constructor.name}: I don't know how to insert the view`
                 );
             }
+
             this.$el = $(this.el); // legacy
         }
     }
@@ -113,9 +120,11 @@ class View extends EventEmitter {
         for (const [eventDef, method] of Object.entries(this.events)) {
             const spaceIx = eventDef.indexOf(' ');
             let event, selector;
+
             if (spaceIx > 0) {
                 event = eventDef.slice(0, spaceIx);
                 selector = eventDef.slice(spaceIx + 1);
+
                 if (DoesNotBubble[event]) {
                     this.elementEventListeners.push({ event, selector, method, els: [] });
                     continue;
@@ -123,17 +132,21 @@ class View extends EventEmitter {
             } else {
                 event = eventDef;
             }
+
             if (!eventsMap[event]) {
                 eventsMap[event] = [];
             }
+
             eventsMap[event].push({ selector, method });
         }
+
         for (const [event, handlers] of Object.entries(eventsMap)) {
             this.debugLogger?.debug('Bind', 'view', event, handlers);
             const listener = (e) => this.eventListener(e, handlers);
             this.eventListeners[event] = listener;
             this.el.addEventListener(event, listener);
         }
+
         this.bindElementEvents();
     }
 
@@ -141,6 +154,7 @@ class View extends EventEmitter {
         for (const [event, listener] of Object.entries(this.eventListeners)) {
             this.el.removeEventListener(event, listener);
         }
+
         this.unbindElementEvents();
     }
 
@@ -148,6 +162,7 @@ class View extends EventEmitter {
         if (!this.elementEventListeners.length) {
             return;
         }
+
         this.unbindElementEvents();
         for (const cfg of this.elementEventListeners) {
             const els = this.el.querySelectorAll(cfg.selector);
@@ -164,6 +179,7 @@ class View extends EventEmitter {
         if (!this.elementEventListeners.length) {
             return;
         }
+
         for (const cfg of this.elementEventListeners) {
             for (const el of cfg.els) {
                 el.removeEventListener(cfg.event, cfg.listener);
@@ -181,10 +197,12 @@ class View extends EventEmitter {
                     continue;
                 }
             }
+
             if (!this[method]) {
                 this.debugLogger?.debug('Method not defined', method);
                 continue;
             }
+
             this.debugLogger?.debug('Handling event', e.type, method);
             this[method](e);
         }
@@ -194,8 +212,8 @@ class View extends EventEmitter {
         if (this.modal && FocusManager.modal === this.modal) {
             FocusManager.setModal(null);
         }
-        this.emit('remove');
 
+        this.emit('remove');
         this.removeInnerViews();
         Tip.hideTips(this.el);
         this.el.remove();
@@ -215,6 +233,7 @@ class View extends EventEmitter {
                     }
                 }
             }
+
             this.views = {};
         }
     }
@@ -236,13 +255,16 @@ class View extends EventEmitter {
 
     toggle(visible) {
         this.debugLogger?.debug(visible ? 'Show' : 'Hide');
+
         if (visible === undefined) {
             visible = this.hidden;
         }
+
         if (this.hidden === !visible) {
             this.debugLogger?.debug('Toggle: noop', visible);
             return;
         }
+
         this.hidden = !visible;
         if (this.modal) {
             if (visible) {
@@ -251,6 +273,7 @@ class View extends EventEmitter {
                 FocusManager.setModal(null);
             }
         }
+
         if (this.el) {
             this.el.classList.toggle('show', !!visible);
             this.el.classList.toggle('hide', !visible);
@@ -258,6 +281,7 @@ class View extends EventEmitter {
                 Tip.hideTips(this.el);
             }
         }
+
         this.emit(visible ? 'show' : 'hide');
     }
 

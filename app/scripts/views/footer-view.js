@@ -63,17 +63,22 @@ class FooterView extends View {
             this.views.gen.remove();
             return;
         }
+
         const el = this.$el.find('.footer__btn-generate');
         const rect = el[0].getBoundingClientRect();
         const bodyRect = document.body.getBoundingClientRect();
         const right = bodyRect.right - rect.right;
         const bottom = bodyRect.bottom - rect.top;
+
         const generator = new GeneratorView({ copy: true, pos: { right, bottom } });
         generator.render();
         generator.once('remove', () => {
             delete this.views.gen;
         });
+
         this.views.gen = generator;
+        this.generator = this.$el.find('.gen');
+        this.generator.trigger('focus');
     }
 
     showFile(e) {

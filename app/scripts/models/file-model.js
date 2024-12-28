@@ -31,8 +31,8 @@ class FileModel extends Model {
         try {
             const challengeResponse = ChalRespCalculator.build(this.chalResp);
             const credentials = new kdbxweb.Credentials(password, keyFileData, challengeResponse);
-            const ts = logger.ts();
 
+            const ts = logger.ts();
             kdbxweb.Kdbx.load(fileData, credentials)
                 .then((db) => {
                     this.db = db;
@@ -137,6 +137,7 @@ class FileModel extends Model {
         const demoFile = kdbxweb.ByteUtils.arrayToBuffer(
             kdbxweb.ByteUtils.base64ToBytes(demoFileData)
         );
+
         kdbxweb.Kdbx.load(demoFile, credentials)
             .then((db) => {
                 this.db = db;

@@ -340,7 +340,7 @@ class AppView extends View {
                         actions when switching between open vaults.
                         should be called when a new vault file is opened, which auto selects it in the footer ui.
         @event          show-file
-        @arg            obj e 
+        @arg            obj e
                         Object { fileId: "abcdef12-1a2b-3c4d-5ef0-1a23ac802ab4" }
     */
 
@@ -405,12 +405,12 @@ class AppView extends View {
 
     /*
         File > Open Settings
-        
+
         allows the user to modify settings specifically for the opened vault.
         change password, add/remove key, backups, clear history, etc.
 
         @event          settings-file
-        @arg            obj e 
+        @arg            obj e
                         Object { fileId: "abcdef12-1a2b-3c4d-5ef0-1a23ac802ab4" }
     */
 
@@ -554,7 +554,7 @@ class AppView extends View {
         @usage          wallpaperToggle(true)       hides wallpaper
                         wallpaperToggle()           shows wallpaper
         @event          wallpaper-toggle
-        @arg            bool bOff 
+        @arg            bool bOff
     */
 
     wallpaperToggle(bOff) {
