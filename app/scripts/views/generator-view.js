@@ -116,17 +116,6 @@ class GeneratorView extends View {
         this.presets.forEach((pr) => {
             pr.pseudoLength = this.lengthToPseudoValue(pr.length);
         });
-
-        /*
-            Inject user setting `generatorWordSeparator` in each present
-            this is so we can call the user's current setting in the password generator hbs template textfield
-        */
-
-        // this.presets.forEach((pr) => {
-        //     console.log('separatorChar ' + AppSettingsModel.generatorWordSeparator)
-        //    pr.separatorChar = AppSettingsModel.generatorWordSeparator;
-        //     console.log(pr)
-        // });
     }
 
     lengthToPseudoValue(length) {
@@ -219,23 +208,28 @@ class GeneratorView extends View {
         */
 
         if (this.presetId === 'passphrase') {
-            const cbSpecial = document.getElementsByClassName('checkbox-special');
-            const cbHigh = document.getElementsByClassName('checkbox-high');
+            const cboxOptSpecial = this.$el.find('.checkbox-special');
+            const cboxOptHigh = this.$el.find('.checkbox-high');
+
+            /*
+                these rules ensure you can't check two specific settings at once.
+                if the `special` character checkbox is checked, the characters for `high` are unchecked, vice versa.
+            */
 
             if (id === 'special') {
-                // upper checked -> uncheck and re-enable lower
-                if (cbSpecial.item(0).checked) {
+                // if opt `special` enabled, disable opt `high`
+                if (cboxOptSpecial.is(':checked')) {
                     this.$el.find('.checkbox-high').attr('disabled', 'disabled');
-                    cbHigh.item(0).checked = false;
+                    cboxOptHigh.prop('checked', false);
                     this.gen.high = false;
                 } else {
                     this.$el.find('.checkbox-high').removeAttr('disabled');
                 }
             } else if (id === 'high') {
-                // upper checked -> uncheck and re-enable lower
-                if (cbHigh.item(0).checked) {
+                // if opt `high` enabled, disable opt `special`
+                if (cboxOptHigh.is(':checked')) {
                     this.$el.find('.checkbox-special').attr('disabled', 'disabled');
-                    cbSpecial.item(0).checked = false;
+                    cboxOptSpecial.prop('checked', false);
                     this.gen.special = false;
                 } else {
                     this.$el.find('.checkbox-special').removeAttr('disabled');
