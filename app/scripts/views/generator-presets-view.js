@@ -4,6 +4,7 @@ import { GeneratorPresets } from 'comp/app/generator-presets';
 import { PasswordGenerator, CharRanges } from 'util/generators/password-generator';
 import { Locale } from 'util/locale';
 import { Scrollable } from 'framework/views/scrollable';
+import { AppSettingsModel } from 'models/app-settings-model';
 import template from 'templates/generator-presets.hbs';
 
 class GeneratorPresetsView extends View {
@@ -35,16 +36,19 @@ class GeneratorPresetsView extends View {
         if (!this.selected || !this.presets.some((p) => p.name === this.selected)) {
             this.selected = (this.presets.filter((p) => p.default)[0] || this.presets[0]).name;
         }
+
         super.render({
             presets: this.presets,
             selected: this.getPreset(this.selected),
             ranges: this.getSelectedRanges()
         });
+
         this.createScroll({
             root: this.$el.find('.gen-ps')[0],
             scroller: this.$el.find('.scroller')[0],
             bar: this.$el.find('.scroller__bar')[0]
         });
+
         this.renderExample();
     }
 
@@ -60,6 +64,7 @@ class GeneratorPresetsView extends View {
         const rangeOverride = {
             high: '¡¢£¤¥¦§©ª«¬®¯°±¹²´µ¶»¼÷¿ÀÖîü...'
         };
+
         return [
             'Upper',
             'Lower',
@@ -105,6 +110,7 @@ class GeneratorPresetsView extends View {
                 break;
             }
         }
+
         const selected = this.getPreset(this.selected);
         const preset = {
             name,
@@ -119,6 +125,7 @@ class GeneratorPresetsView extends View {
             spaces: selected.spaces,
             include: selected.include
         };
+
         GeneratorPresets.add(preset);
         this.selected = name;
         this.render();

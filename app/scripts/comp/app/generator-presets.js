@@ -9,7 +9,8 @@ const GeneratorPresets = {
             length: 16,
             upper: true,
             lower: true,
-            digits: true
+            digits: true,
+            disabledElements: ['separator']
         };
     },
 
@@ -34,7 +35,8 @@ const GeneratorPresets = {
                 title: Locale.genPresetPronounceable,
                 length: 10,
                 lower: true,
-                upper: true
+                upper: true,
+                disabledElements: ['separator']
             },
             {
                 name: 'Med',
@@ -45,7 +47,8 @@ const GeneratorPresets = {
                 digits: true,
                 special: true,
                 brackets: true,
-                ambiguous: true
+                ambiguous: true,
+                disabledElements: ['separator']
             },
             {
                 name: 'Long',
@@ -53,7 +56,8 @@ const GeneratorPresets = {
                 length: 32,
                 upper: true,
                 lower: true,
-                digits: true
+                digits: true,
+                disabledElements: ['separator']
             },
             {
                 name: 'Passphrase',
@@ -61,8 +65,9 @@ const GeneratorPresets = {
                 length: 4,
                 digits: false,
                 lower: true,
-                spaces: true,
-                disabledElements: ['ambiguous', 'brackets']
+                spaces: false,
+                separator: true,
+                disabledElements: ['ambiguous', 'brackets', 'spaces']
             },
             {
                 name: 'UUID',
@@ -76,14 +81,26 @@ const GeneratorPresets = {
                 name: 'Pin4',
                 title: Locale.genPresetPin4,
                 length: 4,
-                digits: true
+                digits: true,
+                disabledElements: ['separator']
             },
             {
                 name: 'Mac',
                 title: Locale.genPresetMac,
                 length: 17,
-                include: '0123456789ABCDEF',
-                pattern: 'XX-'
+                include: '0123456789abcdefABCDEF',
+                pattern: 'XX-',
+                upper: true,
+                lower: true,
+                digits: true,
+                disabledElements: [
+                    'brackets',
+                    'spaces',
+                    'special',
+                    'high',
+                    'ambiguous',
+                    'separator'
+                ]
             },
             {
                 name: 'Hash128',
@@ -91,7 +108,15 @@ const GeneratorPresets = {
                 length: 32,
                 lower: true,
                 include: '0123456789abcdef',
-                disabledElements: ['digits', 'special', 'brackets', 'high', 'ambiguous', 'spaces']
+                disabledElements: [
+                    'digits',
+                    'special',
+                    'brackets',
+                    'high',
+                    'ambiguous',
+                    'spaces',
+                    'separator'
+                ]
             },
             {
                 name: 'Hash256',
@@ -99,7 +124,15 @@ const GeneratorPresets = {
                 length: 64,
                 lower: true,
                 include: '0123456789abcdef',
-                disabledElements: ['digits', 'special', 'brackets', 'high', 'ambiguous', 'spaces']
+                disabledElements: [
+                    'digits',
+                    'special',
+                    'brackets',
+                    'high',
+                    'ambiguous',
+                    'spaces',
+                    'separator'
+                ]
             },
             {
                 name: 'Hash512',
@@ -107,7 +140,15 @@ const GeneratorPresets = {
                 length: 128,
                 lower: true,
                 include: '0123456789abcdef',
-                disabledElements: ['digits', 'special', 'brackets', 'high', 'ambiguous', 'spaces']
+                disabledElements: [
+                    'digits',
+                    'special',
+                    'brackets',
+                    'high',
+                    'ambiguous',
+                    'spaces',
+                    'separator'
+                ]
             }
         ];
     },
@@ -117,25 +158,30 @@ const GeneratorPresets = {
         presets.forEach((preset) => {
             preset.builtIn = true;
         });
+
         const setting = AppSettingsModel.generatorPresets;
         if (setting) {
             if (setting.user) {
                 presets = presets.concat(setting.user.map((item) => ({ ...item })));
             }
+
             let hasDefault = false;
             presets.forEach((preset) => {
                 if (setting.disabled && setting.disabled[preset.name]) {
                     preset.disabled = true;
                 }
+
                 if (setting.default === preset.name) {
                     hasDefault = true;
                     preset.default = true;
                 }
             });
+
             if (!hasDefault) {
                 presets[0].default = true;
             }
         }
+
         return presets;
     },
 
@@ -144,6 +190,7 @@ const GeneratorPresets = {
         if (!allPresets.length) {
             allPresets.push(this.defaultPreset);
         }
+
         return allPresets;
     },
 
@@ -152,6 +199,7 @@ const GeneratorPresets = {
         if (!setting) {
             setting = { user: [] };
         }
+
         return setting;
     },
 
@@ -190,6 +238,7 @@ const GeneratorPresets = {
                 delete setting.disabled[name];
             }
         }
+
         this.save(setting);
     },
 
@@ -200,6 +249,7 @@ const GeneratorPresets = {
         } else {
             delete setting.default;
         }
+
         this.save(setting);
     },
 

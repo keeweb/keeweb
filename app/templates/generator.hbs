@@ -1,4 +1,5 @@
 <div class="gen">
+
     <div>{{res 'genLen'}}: <span class="gen__length-range-val">{{opt.length}}</span>
         <i class="fa fa-sync-alt gen__btn-refresh gen__top-btn" title="{{res 'genNewPass'}}"></i>
         {{#unless showToggleButton}}
@@ -12,6 +13,7 @@
             > </label>
         {{/unless}}
     </div>
+
     <select class="gen__sel-tpl input-base">
         {{#each presets as |ps|}}
             <option value="{{ps.name}}" {{#ifeq ps.name ../preset}}selected{{/ifeq}}>{{ps.title}}</option>
@@ -20,6 +22,7 @@
             <option value="...">...</option>
         {{/if}}
     </select>
+
     <input type="range" class="gen__length-range" value="{{opt.pseudoLength}}" min="0" max="26" />
     <div>
         <div class="gen__check"><input class="checkbox-upper" type="checkbox" id="gen__check-upper"
@@ -37,8 +40,22 @@
         <div class="gen__check"><input class="checkbox-ambiguous" type="checkbox" id="gen__check-ambiguous"
             data-id="ambiguous" {{#if opt.ambiguous}}checked{{/if}}><label for="gen__check-ambiguous">0Oo</label></div>
         <div class="gen__check spaces"><input class="checkbox-spaces" type="checkbox" id="gen__check-spaces"
-            data-id="spaces" {{#if opt.spaces}}checked{{/if}}><label for="gen__check-spaces">Spaces</label></div>
+            data-id="spaces" {{#if opt.spaces}}checked{{/if}}><label for="gen__check-spaces">{{res 'genPsSpaces'}}</label></div>
+        <div class="gen__check separator"><input class="checkbox-separator" type="checkbox" id="gen__check-separator"
+            data-id="separator" {{#if opt.separator}}checked{{/if}}><label for="gen__check-separator">{{res 'genPsWordSeparator'}}</label></div>
     </div>
-    <div class="gen__result"></div>
-    <div class="gen__btn-wrap"><button class="gen__btn-ok">{{btnTitle}}</button></div>
+
+    {{#if opt.separator}}
+        <div class="gen-ps__field">
+            <div class="gen-ps__spacer"></div>
+            <label for="gen-ps__field-title">{{Res 'genWordSeparator'}}:</label>
+            <input type="text" class="gen__input-sep input-base" id="gen-ps__field-title" value="{{separatorChar}}" maxlength="8" required />
+        </div>
+    {{/if}}
+
+    <div class="gen__result gen__result__select"></div>
+    <div class="gen__btn-wrap">
+        <button class="gen__btn-generate">{{btnGenerate}}</button>
+        <button class="gen__btn-ok">{{btnTitle}}</button>
+    </div>
 </div>

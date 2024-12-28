@@ -182,7 +182,8 @@ input[type='checkbox'] {
     display: none;
 
     &:disabled + label {
-        opacity: 0.4;
+        opacity: 0.3;
+        text-decoration: line-through;
     }
 
     &:not([disabled]) + label:hover:before {

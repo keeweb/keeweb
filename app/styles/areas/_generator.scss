@@ -6,6 +6,7 @@
     z-index: 99999;
     &__length-range {
     }
+
     &__top-btn {
         float: right;
         cursor: pointer;
@@ -22,6 +23,7 @@
         width: 100%;
         height: 2em;
         margin-top: $base-padding-v;
+        cursor: pointer;
     }
     &__check {
         width: 40%;
@@ -47,6 +49,10 @@
         font-size: 1.1rem;
         background-color: var(--generator-result-box);
         border: 1px solid rgba(255, 255, 255, 0.4);
+
+        &__select {
+            cursor: text;
+        }
 
         &::-webkit-scrollbar {
             width: 9px;
@@ -100,6 +106,24 @@
     }
 }
 
+.gen-ps {
+    &__field {
+
+        > input {
+            background-color: var(--generator-result-box);
+            width: 100%;
+            color: var(--generator-result-txt);
+            border: none;
+            box-shadow: none !important;
+        }
+    }
+
+    &__spacer {
+        padding-top: 10px;
+        padding-bottom: 5px
+    }
+}
+
 @-moz-document url-prefix() {
     .gen__result_textbox {
         padding-top: 10px;
@@ -114,6 +138,7 @@
 .__nowrap {
     white-space: wrap;
     word-break: normal;
+    overflow-wrap: break-word;
 }
 
 /*

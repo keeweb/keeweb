@@ -17,13 +17,15 @@ class GeneratorView extends View {
     events = {
         'click': 'click',
         'mousedown .gen__length-range': 'generate',
-        'input .gen__length-range': 'lengthChange',
-        'change .gen__length-range': 'lengthChange',
-        'change .gen__check input[type=checkbox]': 'checkChange',
+        'input .gen__length-range': 'rangeLengthChange',
+        'change .gen__length-range': 'rangeLengthChange',
+        'change .gen__check input[type=checkbox]': 'cboxOptionOnChange',
         'change .gen__check-hide': 'hideChange',
-        'click .gen__btn-ok': 'btnOkClick',
-        'change .gen__sel-tpl': 'presetChange',
-        'click .gen__btn-refresh': 'newPass'
+        'click .gen__btn-ok': 'btnOkOnClick',
+        'click .gen__btn-generate': 'btnGenerateOnClick',
+        'click .gen__btn-refresh': 'btnGenerateOnClick',
+        'change .gen__sel-tpl': 'dropdownPresetOnChange',
+        'input .gen__input-sep': 'txtSeparatorOnTextChange'
     };
 
     valuesMap = [
@@ -51,20 +53,39 @@ class GeneratorView extends View {
                 ? Locale.alertCopy
                 : Locale.alertClose
             : Locale.alertOk;
+        const btnGenerate = Locale.alertGenerate;
+
         super.render({
             btnTitle,
+            btnGenerate,
             showToggleButton: this.model.copy,
             opt: this.gen,
             hide: this.hide,
             spaces: false,
+            separatorChar: AppSettingsModel.generatorWordSeparator || String.fromCharCode(32),
             presets: this.presets,
             preset: this.preset,
-            presetLC: this.preset.toLowerCase(),
+            presetId: this.preset.toLowerCase(),
             showTemplateEditor: !this.model.noTemplateEditor
         });
 
         this.resultEl = this.$el.find('.gen__result');
         this.$el.css(this.model.pos);
+        this.generate();
+    }
+
+    /*
+        Change Separator
+        triggered when the separator character is changed in the 'generate password' ui.
+    */
+
+    txtSeparatorOnTextChange(e) {
+        let value = e.target.value;
+        if (!value) {
+            value = '';
+        }
+
+        AppSettingsModel.generatorWordSeparator = value;
         this.generate();
     }
 
@@ -84,10 +105,28 @@ class GeneratorView extends View {
             this.preset = defaultPreset.name;
         }
 
-        this.presetLC = this.preset.toLowerCase();
+        /*
+            present id is preset name, but lowercase chars, and spaces replaced by underscores; just to add conformity
+
+                MAC Address     => mac_address
+                Medium Length   => medium_length
+        */
+
+        this.presetId = this.preset.toLowerCase().replace(/ /g, '_');
         this.presets.forEach((pr) => {
             pr.pseudoLength = this.lengthToPseudoValue(pr.length);
         });
+
+        /*
+            Inject user setting `generatorWordSeparator` in each present
+            this is so we can call the user's current setting in the password generator hbs template textfield
+        */
+
+        // this.presets.forEach((pr) => {
+        //     console.log('separatorChar ' + AppSettingsModel.generatorWordSeparator)
+        //    pr.separatorChar = AppSettingsModel.generatorWordSeparator;
+        //     console.log(pr)
+        // });
     }
 
     lengthToPseudoValue(length) {
@@ -99,6 +138,10 @@ class GeneratorView extends View {
 
         return this.valuesMap.length - 1;
     }
+
+    /*
+        Show generated password in textfield
+    */
 
     showPassword() {
         if (this.hide && !this.model.copy) {
@@ -123,15 +166,25 @@ class GeneratorView extends View {
         e.stopPropagation();
     }
 
-    lengthChange(e) {
+    /*
+        range > character length
+
+        fired when user adjusts how long a password should be (in chars)
+    */
+
+    rangeLengthChange(e) {
         const val = this.valuesMap[e.target.value];
         if (val !== this.gen.length) {
             this.gen.length = val;
             this.$el.find('.gen__length-range-val').text(val);
-            this.optionChanged('length');
+            this.optionOnChange('length');
 
-            // dont allow spaces unless password is a certain length
-            if (this.presetLC !== 'passphrase') {
+            /*
+                if present is anything besides `passphrase`, don't add spaces
+                unless password is a certain length
+            */
+
+            if (this.presetId !== 'passphrase') {
                 const cboxSpaces = document.getElementsByClassName('checkbox-spaces');
                 if (this.gen.length > this.spacesLenMin) {
                     this.$el.find('.checkbox-spaces').removeAttr('disabled');
@@ -144,17 +197,28 @@ class GeneratorView extends View {
                     this.gen.spaces = false; // force spaces to be disabled
                 }
             }
+
             this.generate();
         }
     }
 
-    checkChange(e) {
+    /*
+        Checkbox > Change Option
+
+        fire action every time checkbox is toggled on/off
+    */
+
+    cboxOptionOnChange(e) {
         const id = $(e.target).data('id');
         if (id) {
             this.gen[id] = e.target.checked;
         }
 
-        if (this.presetLC === 'passphrase') {
+        /*
+            dropdown > preset > passphrase
+        */
+
+        if (this.presetId === 'passphrase') {
             const cbSpecial = document.getElementsByClassName('checkbox-special');
             const cbHigh = document.getElementsByClassName('checkbox-high');
 
@@ -179,25 +243,32 @@ class GeneratorView extends View {
             }
         }
 
-        this.optionChanged(id);
+        this.optionOnChange(id);
+        this.render();
         this.generate();
     }
 
-    optionChanged(option) {
-        // certain presets should allow users to check custom options.
-        // if a preset is not in the list, checking any checkbox will set preset to 'custom'
+    /*
+        option > on change
+
+        fired when an option checkbox is changed
+        certain presets should allow users to check custom options.
+        if a preset is not in the list, checking any checkbox will set preset to 'custom'
+    */
+
+    optionOnChange(option) {
         if (
-            this.presetLC === 'custom' ||
-            (this.presetLC === 'passphrase' &&
-                ['length', 'lower', 'upper', 'digits', 'high', 'special', 'spaces'].indexOf(
+            this.presetId === 'custom' ||
+            (this.presetId === 'passphrase' &&
+                ['length', 'lower', 'upper', 'digits', 'high', 'special', 'separator'].indexOf(
                     option
                 ) >= 0) ||
-            ((this.presetLC === 'hash128' ||
-                this.presetLC === 'hash256' ||
-                this.presetLC === 'hash512') &&
+            ((this.presetId === 'hash128' ||
+                this.presetId === 'hash256' ||
+                this.presetId === 'hash512') &&
                 ['lower', 'upper'].indexOf(option) >= 0) ||
-            (this.presetLC === 'uuid' && ['lower', 'upper', 'digits'].indexOf(option) >= 0) ||
-            (this.presetLC === 'pronounceable' && ['length', 'lower', 'upper'].indexOf(option) >= 0)
+            (this.presetId === 'uuid' && ['lower', 'upper', 'digits'].indexOf(option) >= 0) ||
+            (this.presetId === 'pronounceable' && ['length', 'lower', 'upper'].indexOf(option) >= 0)
         ) {
             return;
         }
@@ -211,8 +282,8 @@ class GeneratorView extends View {
         this.setDisabledElements();
         this.showPassword();
 
-        // disable spaces checkif if password is below minimum
-        if (this.gen.length < this.spacesLenMin && this.presetLC !== 'passphrase') {
+        // disable spaces check if if password is below minimum
+        if (this.gen.length < this.spacesLenMin && this.presetId !== 'passphrase') {
             this.$el.find('.checkbox-spaces').attr('disabled', 'disabled');
             const cboxSpaces = document.getElementsByClassName('checkbox-spaces');
             cboxSpaces.item(0).checked = false;
@@ -225,7 +296,7 @@ class GeneratorView extends View {
         this.setInputHeight();
 
         // password vs passphrase word wrapping
-        this.resultEl.toggleClass(this.presetLC === 'passphrase' ? '__nowrap' : '__wrap');
+        this.resultEl.toggleClass(this.presetId === 'passphrase' ? '__nowrap' : '__wrap');
     }
 
     hideChange(e) {
@@ -247,7 +318,13 @@ class GeneratorView extends View {
         }
     }
 
-    btnOkClick() {
+    /*
+        button > ok / copy
+
+        fired when copy button pressed
+    */
+
+    btnOkOnClick() {
         if (this.model.copy) {
             if (!CopyPaste.simpleCopy) {
                 CopyPaste.createHiddenInput(this.password);
@@ -259,7 +336,23 @@ class GeneratorView extends View {
         this.remove();
     }
 
-    presetChange(e) {
+    /*
+        button > generate
+
+        fired when requesting new password to be generated
+    */
+
+    btnGenerateOnClick() {
+        this.generate();
+    }
+
+    /*
+        dropdown > presets
+
+        Fired when present in dropdown is changed
+    */
+
+    dropdownPresetOnChange(e) {
         const name = e.target.value;
         if (name === '...') {
             Events.emit('edit-generator-presets');
@@ -268,7 +361,7 @@ class GeneratorView extends View {
         }
 
         this.preset = name;
-        this.presetLC = this.preset.toLowerCase();
+        this.presetId = this.preset.toLowerCase();
         const preset = this.presets.find((t) => t.name === name);
         this.gen = { ...preset };
         this.render();
@@ -280,7 +373,7 @@ class GeneratorView extends View {
             check if user changed to passphrase preset and set wrapping
         */
 
-        if (this.presetLC === 'passphrase' && this.hide) {
+        if (this.presetId === 'passphrase' && this.hide) {
             this.resultEl.toggleClass('__pass-hidden');
         } else {
             this.resultEl.removeClass('__pass-hidden');
@@ -290,7 +383,7 @@ class GeneratorView extends View {
     setInputHeight() {
         const MinHeight = 10;
         this.resultEl.height(MinHeight);
-        let newHeight = this.resultEl[0].scrollHeight;
+        let newHeight = this.resultEl[0].scrollHeight - 18;
         if (newHeight <= MinHeight) {
             newHeight = MinHeight;
         }
@@ -300,10 +393,6 @@ class GeneratorView extends View {
         }
 
         this.resultEl.height(newHeight);
-    }
-
-    newPass() {
-        this.generate();
     }
 }
 
