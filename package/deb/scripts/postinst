@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-gtk-update-icon-cache --force /usr/share/icons/hicolor
