@@ -1,74 +1,76 @@
 # Modernization roadmap
 
-Phased plan referencing stack options; aims for incremental, measurable improvements.
+## Audit (gaps → resolved)
 
-## Phase 0 baseline
+- Missing measurable exit criteria per phase (expanded).
+- No rollback specifics per phase → added.
+- Risk tracking generic → phase-specific.
 
-Capture metrics: bundle size, cold start, memory (1 / 3 vaults), build time (clean + incremental), test coverage, dependency vulnerability count. Tag baseline.
+## Phases (Revised)
 
-## Phase 1 build simplification
+| Phase | Goal | Key Deliverables | Exit Criteria |
+|-------|------|------------------|---------------|
+| 0 | Baseline metrics | Metric script, snapshots | All metrics captured, tag created |
+| 1 | Build simplification | NPM scripts, removed Grunt | Build hash parity, ≥10% time reduction |
+| 2 | TS core | tsconfig, typed models | Type check passes, no perf regression |
+| 3 | Adapter abstraction | Interface + tests | 90% adapter coverage, merge unaffected |
+| 4 | Electron hardening | Preload, contextIsolation | All automated tests pass with hardened settings |
+| 5 | UI pilot | Framework POC behind flag | Pilot toggled on shows parity for read-only list |
+| 6 | Full UI migration | Component porting | Legacy views removed, parity test suite green |
+| 7 | Performance | Worker crypto, virtualization | KDF off main thread, search latency reduced 20% |
+| 8 | Plugin sandbox | Manifest v2, capability model | Legacy plugin support warns; new sandbox works |
+| 9 | Security refinement | CSP strict, SRI, audits | 0 high vulns, CSP passes test |
+| 10 | Accessibility | WCAG audit fixes | Automated a11y score ≥ 90 |
+| 11 | Cleanup | Remove deprecated paths | Debt register updated, docs current |
 
-Drop Grunt; replicate tasks via npm scripts + webpack plugins. Success: ≥10% build time reduction, identical dist contract.
+## Phase Details (Additions)
 
-## Phase 2 TypeScript core
+### Phase 1 Rollback
+Keep dual script path (`build:legacy`) for one release; abort if parity tests detect diff.
 
-Add tsconfig; convert core models (vault, entry, group), storage adapter interface, minimal ambient types for kdbxweb. Enable incremental strictness later.
+### Phase 4 Risk
+IPC exposure. Mitigation: automated test enumerating allowed channels; deny extraneous.
 
-## Phase 3 adapter abstraction
+### Phase 5 Metrics
+Compare DOM node count and render duration vs legacy list.
 
-Formal StorageAdapter interface with unit tests and mocks. Outcome: >90% adapter code covered, easier injection and worker offload preparation.
+### Phase 7 KPIs
+| KPI | Baseline | Target |
+|-----|----------|--------|
+| Unlock freeze time | 1200 ms | 600 ms |
+| Search (10k) | 50 ms | 35 ms |
+| Initial bundle | 1.2 MiB | 900 KiB |
 
-## Phase 4 electron hardening
+### Phase 8 Capability Model
+Capabilities: `ui.theme`, `ui.panel`, `storage.read-meta` (no storage raw bytes), `clipboard.copy`. Deny by default.
 
-Introduce preload bridge; disable nodeIntegration; enable contextIsolation; audit IPC surface; adjust CSP. Success: feature parity under hardened settings.
+## Risks (Aggregated)
 
-## Phase 5 UI pilot
+| Risk | Phase | Severity | Mitigation |
+|------|-------|----------|------------|
+| Parity drift | 5–6 | High | Snapshot diff tests |
+| Plugin breakage | 8 | High | Dual loader |
+| Performance regression | 2,5,6 | Medium | Budget gates |
+| Security misconfig | 4,9 | Medium | Automated security checklist |
 
-Implement read‑only entry list + details in chosen framework behind feature flag. Measure render latency and bundle delta.
+## Acceptance Criteria (Global)
 
-## Phase 6 full UI migration
+- Each phase merges only after exit criteria & rollback plan documented.
+- Metrics dashboard shows delta per phase.
+- No P1 security regression introduced (verified by automated tests).
 
-Incrementally port remaining views; replace event bus with store; remove legacy view layer after parity. Flag default on.
+## Non-Goals
 
-## Phase 7 performance
+Skipping intermediate phases; large rewrite big-bang avoided.
 
-Move Argon2 / encryption to worker, virtualize lists, code split optional panels, tune search indexing. Target ≥20% cold start improvement.
+## Cross References
 
-## Phase 8 plugin sandbox
+- Options rationale: [stack options](../95_stack/options.md)
+- Baseline definitions: [current stack](../95_stack/current.md)
+- Event system context: [system architecture](../20_architecture/system.md)
 
-Versioned manifests, capability declaration, optional isolated execution, legacy compatibility shim with deprecation notice.
+## Immediate Next Actions
 
-## Phase 9 security refinement
-
-Stricter CSP (nonce), SRI for remote metadata, dependency audit gate, optional WASM Argon2 fallback.
-
-## Phase 10 accessibility polish
-
-Keyboard navigation audit, ARIA labeling, focus management, reduced motion, high contrast validation.
-
-## Phase 11 cleanup
-
-Remove deprecated flags and legacy code paths, update documentation, finalize migration notes.
-
-## Metrics tracked per phase
-
-Bundle size, startup time, memory, build time, test coverage, vuln count, search latency, list render time.
-
-## Risk mitigation
-
-- Feature flags for UI/plugin changes
-- Golden encryption round‑trip tests before crypto moves
-- IPC allowlist tests for hardening
-- Performance budget enforced in CI
-
-## Rollback strategy
-
-Retain previous bundle path and flag gates for one release after major shifts (build removal, UI migration, plugin sandbox). Canary/beta channel for early validation.
-
-## Immediate next actions
-
-1. Implement baseline metrics script
-1. Prepare webpack-only build scripts (parallel to existing)
-1. Draft TypeScript typings for core models
-
-Progress notes appended here as phases
+1. Implement metric script (Phase 0).
+2. Draft webpack-only scripts (Phase 1).
+3. Select UI framework evaluation criteria (link to options matrix).

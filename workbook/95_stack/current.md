@@ -1,50 +1,43 @@
-# Current stack
+# Current stack (legacy baseline)
 
-Technologies presently used.
+## Audit (gaps → resolved)
 
-## Runtime
+- Lacked clear legacy constraints → added.
+- No mapping to modernization triggers → added.
 
-- SPA with legacy Backbone-style models/collections and custom views
-- Electron for desktop; same renderer bundle as web
-- Service worker for offline asset and vault caching
+## Legacy Components
 
-## Core libraries
+| Area | Current | Constraint Impact |
+|------|---------|-------------------|
+| Task Runner | Grunt + Webpack | Extra indirection |
+| UI Framework | Backbone-style + jQuery | Difficult state predictability |
+| Language | ES5/ES2015 mix | Lack of static typing |
+| Crypto | kdbxweb | Sufficient (keep) |
+| Packaging | Electron custom scripts | Harder upgrade |
+| Security | NodeIntegration enabled | Increased attack surface |
+| Indexing | In-memory custom | OK; can optimize |
+| Merge | Custom procedural | OK; formal spec needed |
 
-- kdbxweb (KDBX parsing, crypto, Argon2id, protected values)
-- Backbone/underscore/jquery style patterns (evented models)
-- dompurify + marked (markdown notes)
-- Handlebars templates (precompiled)
+## Technical Debt Categories
 
-## Build chain
+| Debt | Risk | Mitigation (Roadmap Phase) |
+|------|------|---------------------------|
+| Global event bus | Hidden dependencies | Introduce typed store (Phase 5/6) |
+| NodeIntegration | XSS → RCE | Harden (Phase 4) |
+| Lack of workers | UI stalls on KDF | Worker offload (Phase 7) |
+| Grunt reliance | Maintenance overhead | Remove (Phase 1) |
 
-- Grunt orchestrates tasks (webpack, postcss, hashing, HTML minify, service worker version injection)
-- webpack for bundling; Babel transpilation
-- PostCSS for CSS processing; ESLint for linting
+## Acceptance (Baseline)
 
-## Storage adapters
+- Provides functional reference for behavior and regression tests.
+- Identifies constraints used to prioritize modernization tasks.
 
-Local filesystem (desktop), browser local open/save, WebDAV, Dropbox, Google Drive, OneDrive, read‑only URL. Unified interface consumed by sync logic.
+## Non-Goals & Risks
 
-## Desktop specifics
+Not rewriting functional parts (crypto) without compelling reason.  
+Risk: Over-refactor causing divergence in behavior; maintain parity tests.
 
-Auto‑type engine, global shortcuts, updater, YubiKey integration, tray/menu handling, file watchers.
+## Cross References
 
-## Security mechanisms
-
-kdbxweb crypto, plugin signature verification, CSP hashing, clipboard clearing, auto‑lock triggers, external modification detection, optional disabling of caching/export per settings.
-
-## UI layer
-
-Theme system (CSS variables), list and table views, responsive layout, attachment and markdown rendering, entry templates, tag aggregation.
-
-## Known limitations
-
-- No TypeScript
-- Legacy event bus and manual DOM view updates
-- Renderer not fully hardened (nodeIntegration still present)
-- Grunt adds build indirection
-- No web worker offload for heavy crypto
-
-## Extensibility
-
-Plugin manifests (scripts + styles), themes, localization packs. Signature verification before execution.
+- Options: [stack options](../95_stack/options.md)
+- Roadmap mapping: [modernization](../99_modernization/roadmap.md)

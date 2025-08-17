@@ -1,68 +1,63 @@
 # Stack options and comparison
 
-Modernization avenues relative to current stack (see current stack file for baseline).
+## Audit (gaps → resolved)
 
-## Build tooling
+- Previous lacked decision matrix; added.
+- No risk score per option; added.
 
-- Remove Grunt → direct npm scripts + webpack (lowest risk)
-- Later migrate to Vite for faster dev reload (after legacy globals reduced)
-- esbuild/rspack considered only if webpack maintenance becomes costlier
+## Decision Matrix (Excerpt)
 
-## Language
+| Dimension | React | Vue 3 | Svelte | Keep (Minimal) |
+|-----------|-------|-------|--------|----------------|
+| Bundle Size (core) | Med | Med | Small | Small |
+| Ecosystem | Large | Large | Growing | Minimal |
+| Learning Curve | Moderate | Low-Mod | Low | Legacy |
+| TypeScript Support | Mature | Mature | Improving | Manual |
+| Migration Path | Component-wise | Component-wise | Component-wise | N/A |
 
-Incremental TypeScript: start with domain models and storage adapters; enable stricter compiler options in phases.
+Weights (illustrative): Ecosystem 30%, Maintainability 25%, Performance 20%, Migration Effort 15%, Community 10.
 
-## UI framework
+## Storage Adapter Abstraction Options
 
-Evaluate small pilot in:
+| Option | Pros | Cons |
+|--------|------|------|
+| Interface + Classes | Familiar | Boilerplate |
+| Functional Adapters | Light | Less explicit typing |
+| DI Container | Testable | Complexity |
 
-- React + lightweight state (Zustand or Redux Toolkit)
-- Vue 3 + Pinia
-- Svelte (size advantage, smaller ecosystem)
+Recommendation: Start with simple interface + factory.
 
-Prototype entry list + details to judge complexity; decide before large migration.
+## State Management Options
 
-## State management
+| Option | Pros | Cons |
+|--------|------|------|
+| Redux Toolkit | Predictable, tooling | Boilerplate |
+| Zustand | Minimal, fast | Less devtools |
+| Pinia (Vue) | Intuitive | Framework lock |
+| Custom Signals | Tiny | Reinvent wheel |
 
-Central store replacing ad‑hoc event bus; predictable updates and easier testing. Keep pluggable for framework choice.
+## Risk Scores (1 low – 5 high)
 
-## Plugin isolation
+| Change | Risk | Mitigation |
+|--------|------|------------|
+| Electron hardening | 3 | Preload bridge, audit dependencies |
+| UI framework migration | 4 | Feature flags, parity tests |
+| TS introduction | 2 | Incremental, strict mode later |
+| Plugin sandbox | 4 | Dual loader grace period |
+| Worker crypto | 3 | Golden KDF tests |
 
-Introduce versioned manifest schema and capability declaration; optional sandbox (iframe or isolated context) with restricted messaging API.
+## Acceptance Criteria (Options Phase)
 
-## Electron hardening
+- Selected UI framework documented with rationale referencing matrix.
+- Chosen state management includes POC proving search & edit flows.
+- Adapter abstraction benchmarks show ≤5% overhead vs direct calls.
 
-Enable contextIsolation, disable nodeIntegration, restrict IPC channels, preload bridge with explicit allowlist.
+## Non-Goals & Risks
 
-## Performance improvements
+Non-Goal: Simultaneous adoption of multiple experimental frameworks.  
+Risk: Over-optimizing early; enforce metric-driven decisions.
 
-Web workers for Argon2/encryption, virtualized large lists, code splitting for rarely used panels (generator, plugin manager), lazy load storage adapters.
+## Cross References
 
-## CSS and theming
-
-Consolidate theme differences with CSS variables; consider utility layer (optional) only after migration to prevent churn.
-
-## Testing expansion
-
-Add unit (Vitest/Jest), component tests (after framework), and end‑to‑end (Playwright) including desktop harness.
-
-## Security upgrades
-
-Stricter CSP (nonce only), SRI for plugin gallery metadata, automated dependency audits gating CI, WASM Argon2 fallback.
-
-## Migration order (summary)
-
-1. Build simplification
-1. TypeScript foundations
-1. Adapter interface extraction
-1. Electron hardening groundwork
-1. UI pilot
-1. Full UI migration
-1. Performance (workers, splitting)
-1. Plugin sandbox
-1. Security tightening
-1. Cleanup
-
-## Deferred
-
-Switching away from Electron (e.g. Tauri) or reimplementing kdbxweb are explicitly out of scope until post‑migration stability.
+- Baseline: [current stack](../95_stack/current.md)
+- Implementation plan: [roadmap](../99_modernization/roadmap.md)

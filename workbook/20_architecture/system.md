@@ -1,76 +1,143 @@
 # System architecture
 
-Structural overview of components and data flow.
+## Audit (gaps → resolved)
 
-## Runtime shape
+- Event system unspecified → event catalog added.
+- State machines missing → added (Lock + Sync).
+- Module boundaries not explicit → added layered map.
+- Error propagation and logging strategy absent → added.
+- Glossary centralization → added.
+- Performance considerations (workers, indexing) → added.
 
-Single-page application (shared by web and desktop). Desktop wraps the same build in Electron main process. Service worker adds offline asset and vault caching for web.
+## Layered Map
 
-## Layered breakdown
+| Layer | Responsibility | Key Modules |
+|-------|----------------|-------------|
+| UI | Render, input, accessibility | Components |
+| Presentation | View models, formatting, diff presentation | Presenters |
+| Domain | Vault, Entry, Group logic, history, tagging | Models |
+| Persistence | Serialization (KDBX), adapters, cache | KdbxSerializer, AdapterSet |
+| Crypto | KDF, cipher, ProtectedValue | CryptoEngine |
+| Sync | Merge, conflict detection, scheduling | SyncManager |
+| Security | Clipboard clearing, auto-lock, plugin verification | SecurityManager |
+| Platform | Electron bridges, browser APIs, service worker | PlatformAdapter |
+| Plugin Host | Manifest parse, sandbox (future) | PluginManager |
+| Infrastructure | Event bus, logging, config, telemetry | CoreRuntime |
 
-1. Models and collections\
-   Vault (file) model, group and entry models, collections for groups, entries, file infos. Event-driven updates.
-1. Domain operations\
-   Open/create, merge, history, search indexing, tag aggregation, entry templates, auto‑type (desktop only).
-1. Crypto layer\
-   kdbxweb handles parsing, encryption/decryption, KDF, protected values. Composite key assembly before decryption.
-1. Storage adapters\
-   Uniform interface (load, save, stat, revoke) for each backend. Injected into sync logic.
-1. Sync/merge coordinator\
-   Orchestrates stat, conditional load, merge, save, conflict resolution, cache updates, backups.
-1. UI layer\
-   Legacy view system (Backbone-like) binding models to DOM; renders panels, lists, dialogs, settings.
-1. Plugin subsystem\
-   Manifest + signature validation; dynamic script/style loading; extension hooks (themes, features).
-1. Persistence and cache\
-   Local settings store, file info collection, encrypted remote vault cache, optional backups.
-1. Event bus\
-   Global pub/sub for lock, sync triggers, theme change, shortcut routing.
+## Event Catalog (Bus)
 
-## Key flows
+| Event | Payload | Subscribers |
+|-------|---------|-------------|
+| `vault:opened` | vaultId | UI refresh, sync scheduler |
+| `vault:dirty` | vaultId | Status bar, auto-save timer |
+| `vault:locked` | vaultId | UI lock overlay |
+| `vault:saved` | vaultId, revision | Notifications, status |
+| `merge:conflicts` | list(conflicts) | Conflict dialog |
+| `search:query` | query | EntryList filter |
+| `clipboard:copied` | fieldName | Security timer |
+| `theme:changed` | themeId | UI theme reload |
+| `shortcut:trigger` | actionId | Dispatcher |
+| `plugin:loaded` | pluginId | UI maybe extend |
+| `sync:error` | vaultId, error | Status bar |
 
-Open vault:
+Guarantee: Events dispatched synchronously (publish after model mutation). Listeners must not block >16ms; else offload to microtask.
 
-- Load source (local dialog, remote adapter, cache)
-- Decrypt via kdbxweb
-- Build object maps (entries/groups), resolve references
-- Index for search, expose to UI
+## Sync State Machine (Per Vault)
 
-Save / sync:
+```
+Idle
+ ├─(Dirty|Timer)→ Saving → (Success)→ Idle
+ │                      └─(Conflict)→ Merging → (Resolved)→ Saving
+ ├─(RemoteChange)→ Merging → (Resolved)→ Saving
+ └─(Error)→ ErrorState → (UserRetry)→ (branch depending)
+```
 
-- Serialize current db
-- Encrypt
-- Save to cache (if enabled) and optionally remote
-- Update revision / metadata; clear dirty state on success
+## Lock State Machine
 
-Merge (remote change):
+See UI file for states; architecture handles memory clearing on transition into Locked.
 
-- Load remote
-- Parse remote db
-- kdbx merge
-- Mark dirty if local modifications remain unsaved
-- Refresh object maps and UI
+## Serialization (KDBX)
 
-Lock:
+Process:
+1. Collect model tree.
+2. Write header (version, cipher id, KDF params, seeds).
+3. Serialize groups/entries XML/binary as per spec.
+4. Encrypt payload: `stream = cipher(masterKey, iv)`.
+5. Compute HMAC / hash blocks.
+6. Output binary.
 
-- Clear decrypted sensitive values
-- Replace active views with unlock prompt (vault instances remain listed)
-- On unlock, rederive key and reopen db in memory
+Deserialization reverse with integrity checks early (header) and late (block hash).  
+Reference to spec externally (not reproduced).
 
-## Separation web vs desktop
+## Logging Strategy
 
-Desktop adds:
+Levels: `error`, `warn`, `info`, `debug`.  
+Sensitive Data Redaction: Replace patterns matching base64 > 128 chars, password fields with `<redacted>`.  
+Sink:
+- Console (dev)
+- Rotating file (desktop) truncated to 1 MiB
+- In-memory ring buffer (web) for support export.
 
-- File system watch
-- Auto‑type engine
-- Hardware integration (YubiKey)
-- Tray/menu integration and updater
-  Web relies solely on browser APIs and service worker.
+## Performance Considerations
 
-## Security considerations (summary)
+- Index building executed in micro-chunks if >2000 entries (yield to event loop).
+- Optional Web Worker (roadmap) for KDF/crypto heavy operations (currently blocking).
+- Debounce save operations (e.g. 2s after last edit) unless manual save invoked.
 
-Renderer isolation not fully modern (see modernization roadmap). Plugin signatures validated. CSP hardened. Sensitive data kept only in process memory of active session; local caches are encrypted KDBX files.
+## Concurrency
 
-## Out of scope here
+Single-threaded JS; merge ensures idempotence. No parallel writes (serialize queue).
 
-Detailed build pipeline, technology choices, and modernization steps live in dedicated files (build, stack, options, roadmap) to avoid duplication.
+## Error Propagation
+
+- Domain errors throw typed objects `{ code, message, meta }`.
+- Bus emits `sync:error`, `vault:error`.
+- UI maps codes to localized messages.
+
+## Configuration Sources
+
+Priority: CLI flags (desktop) > Environment Variables > User Settings File > Defaults.
+
+| Key | Type | Default | Purpose |
+|-----|------|---------|---------|
+| `APP_THEME` | string | `auto` | Initial theme |
+| `APP_HISTORY_MAX` | int | 10 | Entry revision limit |
+| `APP_ARGON_MEM` | int MiB | 64 | Argon2 memory |
+| `APP_ARGON_ITER` | int | 2 | Argon2 iterations |
+| `APP_CLIPBOARD_TIMEOUT` | int sec | 30 | Clipboard clear |
+| `APP_SYNC_INTERVAL` | int sec | 300 | Stat polling |
+| `APP_DISABLE_CACHE` | bool | false | Skip remote cache |
+| `APP_PORTABLE_DIR` | path | (unset) | Overrides config path |
+
+## Glossary
+
+| Term | Definition |
+|------|------------|
+| Vault | One KDBX database instance in memory |
+| Group | Hierarchical container for entries |
+| Entry | Credential record with fields & attachments |
+| ProtectedValue | Wrapper storing encrypted or masked secret |
+| Adapter | Backend implementing load/save/stat for vault bytes |
+| Merge | Reconciliation process between local unsaved and remote revision |
+| Revision | Identifier returned by adapter to represent remote version |
+| Plugin | Signed extension bundle (scripts/styles) |
+| Service Worker | Offline caching layer for web assets & encrypted vault blobs |
+| Auto-Type | Desktop feature simulating keystrokes into target application |
+
+## Non-Goals & Risks
+
+Non-Goals: Multi-process sharding of models, distributed sync.  
+Risks: Blocking main thread during large KDF (mitigate by user cost recommendations).
+
+## Acceptance Criteria
+
+- Event bus dispatch under 1ms overhead per event (baseline).
+- Opening a 10k entry vault completes deserialize+index within budget (<1.5s).
+- Lock transition clears ProtectedValue buffers (heap snapshot diff shows removal).
+- Configuration overrides load in documented priority order.
+
+## Cross References
+
+- Build env details: [build pipeline](../40_build/pipeline.md)
+- Security specifics: [security features](../10_features/security.md)
+- Modernization worker plan: [roadmap](../99_modernization/roadmap.md#phase-7-performance)
