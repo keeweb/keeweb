@@ -1,126 +1,76 @@
-# System Architecture (High Level)
+# System architecture
 
-Plain-language map of the app structure; no deep implementation yet.
+Structural overview of components and data flow.
 
-## Overview
+## Runtime shape
 
-Single-page application (SPA) shared by web and desktop:
+Single-page application (shared by web and desktop). Desktop wraps the same build in Electron main process. Service worker adds offline asset and vault caching for web.
 
-- Core UI and logic bundled (webpack + grunt) into assets served as static files
-- Desktop wraps the same build in Electron ([desktop/main.js](../../desktop/main.js))
-- Web served as static HTML ([app/index.html](../../app/index.html)) with a service worker for offline use
+## Layered breakdown
 
-## Major Layers
+1. Models and collections\
+   Vault (file) model, group and entry models, collections for groups, entries, file infos. Event-driven updates.
+1. Domain operations\
+   Open/create, merge, history, search indexing, tag aggregation, entry templates, auto‑type (desktop only).
+1. Crypto layer\
+   kdbxweb handles parsing, encryption/decryption, KDF, protected values. Composite key assembly before decryption.
+1. Storage adapters\
+   Uniform interface (load, save, stat, revoke) for each backend. Injected into sync logic.
+1. Sync/merge coordinator\
+   Orchestrates stat, conditional load, merge, save, conflict resolution, cache updates, backups.
+1. UI layer\
+   Legacy view system (Backbone-like) binding models to DOM; renders panels, lists, dialogs, settings.
+1. Plugin subsystem\
+   Manifest + signature validation; dynamic script/style loading; extension hooks (themes, features).
+1. Persistence and cache\
+   Local settings store, file info collection, encrypted remote vault cache, optional backups.
+1. Event bus\
+   Global pub/sub for lock, sync triggers, theme change, shortcut routing.
 
-1. UI layer
+## Key flows
 
-   - Views/layouts composed with legacy MVC patterns (Backbone-style collections/models: entries, groups, files)
-   - Reactive updates: model change events trigger view re-render or partial DOM updates
-   - Theming done via compiled CSS (postcss) plus optional plugin-provided CSS
+Open vault:
 
-1. Domain models
+- Load source (local dialog, remote adapter, cache)
+- Decrypt via kdbxweb
+- Build object maps (entries/groups), resolve references
+- Index for search, expose to UI
 
-   - File model: wraps an opened `.kdbx` vault, tracks dirty state, path/backend, sync revision, lock state
-   - Entry and group models: hierarchical tree; support tags, history, attachments
-   - Collections: in-memory indexes for fast search and filtered views
+Save / sync:
 
-1. Crypto / KDBX layer
+- Serialize current db
+- Encrypt
+- Save to cache (if enabled) and optionally remote
+- Update revision / metadata; clear dirty state on success
 
-   - kdbxweb library handles parsing, encrypt/decrypt, KDF (Argon2id or AES-KDF), ciphers (AES/ChaCha20)
-   - ProtectedValue objects defer decrypting sensitive fields until needed; wiped on lock
-   - Key assembly: password + optional keyfile + optional hardware challenge (YubiKey on desktop) → KDF → master key
+Merge (remote change):
 
-1. Storage adapters
+- Load remote
+- Parse remote db
+- kdbx merge
+- Mark dirty if local modifications remain unsaved
+- Refresh object maps and UI
 
-   - Local (desktop fs) via Node APIs (Electron)
-   - Local (web) via user file open/save dialogs (no background write)
-   - WebDAV via HTTP (PROPFIND, GET, PUT)
-   - Dropbox, Google Drive, OneDrive via OAuth 2 (short‑lived tokens where supported)
-   - URL (read-only fetch)
-   - Each adapter implements: load, save (if writable), stat/modified check, revoke/logout
+Lock:
 
-1. Sync & merge
+- Clear decrypted sensitive values
+- Replace active views with unlock prompt (vault instances remain listed)
+- On unlock, rederive key and reopen db in memory
 
-   - Load: fetch remote (or local) bytes, decrypt into models
-   - Save: serialize models → encrypt → push adapter save method
-   - Merge flow on remote change: load remote, diff entries/groups, auto-merge non-conflicting, flag conflicts for user choice, preserve entry history
+## Separation web vs desktop
 
-1. State & events
+Desktop adds:
 
-   - Central app state holds list of opened File models and the active file
-   - Global event bus for cross-cutting actions (lock, theme change, shortcut dispatch, sync trigger)
-   - Dirty flag per file; timers for auto-save or periodic remote change polling (configurable)
+- File system watch
+- Auto‑type engine
+- Hardware integration (YubiKey)
+- Tray/menu integration and updater
+  Web relies solely on browser APIs and service worker.
 
-1. Search & indexing
+## Security considerations (summary)
 
-   - On file load builds in-memory indexes (titles, usernames, urls, tags)
-   - Advanced search can traverse additional fields / history when requested
-   - Filtering pipeline: base collection → group/tag scope → text filter → sort (user setting)
+Renderer isolation not fully modern (see modernization roadmap). Plugin signatures validated. CSP hardened. Sensitive data kept only in process memory of active session; local caches are encrypted KDBX files.
 
-1. Plugin system
+## Out of scope here
 
-   - Loads signed plugin manifest (remote or local) listing scripts/styles
-   - Signature verification before executing (public keys embedded)
-   - Plugin assets extend UI (themes, features) via defined extension points
-
-1. Offline support
-
-   - Service worker caches core assets and previously opened vault responses (if remote)
-   - Cached encrypted file allows reopen and modification offline; queued save until manual sync
-   - Desktop inherently offline capable (local filesystem copy)
-
-1. Configuration & persistence
-
-   - Settings stored locally (desktop: config with optional encryption key stored in OS keychain; web: local storage / IndexedDB)
-   - References to recent files, storage tokens, UI preferences (theme, layout, columns, shortcuts)
-   - Optional restrictions (disable save/export) respected in UI conditionals
-
-## Desktop vs Web
-
-| Concern | Desktop (Electron) | Web |
-|--------|---------------------|-----|
-| File I/O | Direct fs read/write dialogs, watchers for external changes | User-initiated open/save (File API); no background write |
-| Auto-type | Global shortcuts + window title/process matching | Not available (browser security) |
-| Hardware | YubiKey (USB) | None |
-| Keychain | OS keychain for config encryption | N/A |
-| Updates | In-app updater with signature verification | Browser handles asset refresh |
-| Tray / dock | Tray or menu bar integration, global focus control | Standard browser tab / PWA |
-
-## Locking Flow
-
-1. Trigger (timeout, manual, system event)
-1. In-memory decrypted values cleared (ProtectedValue only re-derivable from file)
-1. UI switches to unlock screen for each locked file (can unlock individually)
-1. On unlock: derive composite key → decrypt header → restore model graph
-
-## Error & Conflict Handling
-
-- Network/auth errors surface non-blocking notifications with retry action
-- Merge conflicts captured as structured differences (per entry field); user picks local or remote
-- External modification (desktop) prompts before overwriting unsaved local changes
-
-## Build & Packaging (Pointer)
-
-- Webpack bundle orchestrated by grunt tasks ([Gruntfile.js](../../Gruntfile.js), [webpack.config.js](../../webpack.config.js))
-- Desktop packaging produces platform installers and portable builds (configured in packaging scripts)
-- Output artifacts: single-page app assets + Electron bundles
-
-## Security Surface (Pointers)
-
-- CSP applied (tightened over releases)
-- Plugin signatures validated prior to execution
-- Short-lived OAuth tokens for storages (Dropbox etc.)
-- Service worker scope limited to app assets
-
-## Data Flow (Typical Save)
-
-User edit → model mutation → dirty flag → (auto-save or manual save) → serialize via kdbxweb → encrypt → adapter.save() → update revision metadata → clear dirty
-
-## What Comes Later
-
-Subsequent documents:
-
-- repo-map: concrete directories and entry points
-- build/pipeline: detailed build chain, packaging, update
-- stack/current: libraries and runtime environment specifics
-- modernization: proposed refactors (isolation, framework update, security hardening)
+Detailed build pipeline, technology choices, and modernization steps live in dedicated files (build, stack, options, roadmap) to avoid duplication.

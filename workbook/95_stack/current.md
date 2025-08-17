@@ -1,104 +1,50 @@
-# Current Stack (Frameworks & Tools)
+# Current stack
 
-Snapshot of libraries, runtime environment, and build tooling in this repo.
+Technologies presently used.
 
-## Runtime Overview
+## Runtime
 
-- Single-page application loaded from [app/index.html](../../app/index.html)
-- Desktop wrapper via Electron main process ([desktop/main.js](../../desktop/main.js)) loading the same SPA
-- Service worker (offline cache of core assets and previously opened vaults)
-- Plain ES (no TypeScript); legacy MV\* patterns (Backbone-style models/collections, event-driven views)
+- SPA with legacy Backbone-style models/collections and custom views
+- Electron for desktop; same renderer bundle as web
+- Service worker for offline asset and vault caching
 
-## Core Libraries / Modules
+## Core libraries
 
-- kdbxweb: KDBX parsing, encryption (AES-256, ChaCha20), KDF (Argon2id, AES-KDF), ProtectedValue handling
-- Backbone-style stack (Backbone + underscore/lodash + jQuery pattern) for models, collections, event bus
-- Plugin system: loads signed plugin manifests (themes, features)
-- Localization: string resource bundles (loaded at runtime, language auto-detected or user-selected)
+- kdbxweb (KDBX parsing, crypto, Argon2id, protected values)
+- Backbone/underscore/jquery style patterns (evented models)
+- dompurify + marked (markdown notes)
+- Handlebars templates (precompiled)
 
-## Build & Tooling
+## Build chain
 
-- Node / npm project ([package.json](../../package.json))
-- Grunt as orchestrator ([Gruntfile.js](../../Gruntfile.js), [grunt.tasks.js](../../grunt.tasks.js), [grunt.entrypoints.js](../../grunt.entrypoints.js))
-- Webpack bundling ([webpack.config.js](../../webpack.config.js)) fed with multiple entrypoints
-- Babel transpilation ([.babelrc](../../.babelrc))
-- PostCSS for CSS transforms ([postcss.config.js](../../postcss.config.js))
-- ESLint for linting ([.eslintrc](../../.eslintrc))
-- jsconfig for editor intellisense ([jsconfig.json](../../jsconfig.json))
+- Grunt orchestrates tasks (webpack, postcss, hashing, HTML minify, service worker version injection)
+- webpack for bundling; Babel transpilation
+- PostCSS for CSS processing; ESLint for linting
 
-## Desktop Integration
+## Storage adapters
 
-- Electron APIs for:
-  - File system access (open/save dialogs, watching external modifications)
-  - Global shortcuts (auto-type, show window)
-  - Tray / menu bar, custom title bars
-  - Auto-update (delta packages, signature verification)
-  - Hardware integration (YubiKey via USB modules)
-- Platform-specific packaging scripts (driven by Grunt tasks, resources in [package/](../../package))
+Local filesystem (desktop), browser local open/save, WebDAV, Dropbox, Google Drive, OneDrive, read‑only URL. Unified interface consumed by sync logic.
 
-## Storage & Sync Adapters
+## Desktop specifics
 
-- Local filesystem (desktop direct read/write)
-- Local (browser) via user file picker (manual save)
-- WebDAV (HTTPS, PROPFIND/GET/PUT)
-- Dropbox, Google Drive, OneDrive (OAuth 2; short-lived tokens supported)
-- URL (read-only fetch)
-- Unified adapter interface: load, save (if writable), stat/change check, revoke/logout
+Auto‑type engine, global shortcuts, updater, YubiKey integration, tray/menu handling, file watchers.
 
-## Security / Crypto Components
+## Security mechanisms
 
-- kdbxweb for all cryptography (encryption, KDF, ProtectedValue)
-- Composite key assembly (password + optional keyfile + optional YubiKey challenge)
-- Plugin signature verification (public keys embedded, rotation noted in [release-notes.md](../../release-notes.md))
-- Content Security Policy tightened over releases
-- Config encryption key stored in OS keychain (desktop)
-- Auto-lock, clipboard clearing, file external modification protection
+kdbxweb crypto, plugin signature verification, CSP hashing, clipboard clearing, auto‑lock triggers, external modification detection, optional disabling of caching/export per settings.
 
-## UI / Theming / UX
+## UI layer
 
-- CSS themes (dark, light, high contrast, macOS variants)
-- Dynamic system dark/light switching
-- Table and list views, responsive/mobile layout, PWA manifests
-- Favicon fetch service integration
-- Markdown notes (toggleable), attachment/image preview
+Theme system (CSS variables), list and table views, responsive layout, attachment and markdown rendering, entry templates, tag aggregation.
 
-## Plugins & Extensibility
+## Known limitations
 
-- Signed plugin manifests (remote or local)
-- Extensions: themes (CSS), feature scripts, localization packs
-- Public key list compiled into app for signature validation
+- No TypeScript
+- Legacy event bus and manual DOM view updates
+- Renderer not fully hardened (nodeIntegration still present)
+- Grunt adds build indirection
+- No web worker offload for heavy crypto
 
-## Testing & Quality
+## Extensibility
 
-- Tests under [test/](../../test) (unit/integration; executed via CI workflows)
-- GitHub Actions workflows (.github/workflows) for build, tests, release, Docker, PyPI, npm
-- Linting via ESLint in CI
-
-## Containers / Distribution
-
-- Docker images (GitHub Container Registry + Docker Hub) serving dist/ static site
-- gh-pages branch archive for static hosting
-- Platform installers: macOS dmg/zip, Windows installer/portable, Linux AppImage/deb/rpm/snap
-
-## Known Legacy / Debt
-
-- Grunt-based pipeline (could be replaced by native npm+webpack scripts)
-- Electron contextIsolation disabled (modern hardening pending)
-- nodeIntegration still enabled in renderer
-- Plain JavaScript (no static typing)
-- Backbone-era patterns instead of modern reactive framework (React/Vue/Svelte)
-
-## Not Used
-
-- No proprietary server backend (pure static + optional cloud APIs)
-- No real-time multi-user collaboration (file-based merge only)
-- No TypeScript (yet)
-
-## Reference Files
-
-- Build config: [Gruntfile.js](../../Gruntfile.js), [webpack.config.js](../../webpack.config.js)
-- Entry HTML: [app/index.html](../../app/index.html)
-- Desktop main: [desktop/main.js](../../desktop/main.js)
-- Release history / security changes: [release-notes.md](../../release-notes.md)
-
-Further comparison with alternative stacks will appear in `95_stack/options.md`.
+Plugin manifests (scripts + styles), themes, localization packs. Signature verification before execution.

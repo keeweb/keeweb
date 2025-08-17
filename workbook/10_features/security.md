@@ -1,71 +1,45 @@
-# Security Features
+# Security features
 
-Plain-English snapshot of end‑user security aspects (no deep internals yet).
+End‑user security capabilities; implementation details are covered elsewhere.
 
-## Encryption & Format
+## Encryption
 
-- KeePass KDBX format (v3/v4 variants supported) for interoperability.
-- Cipher (per KDBX spec): AES‑256; other exotic ciphers (e.g. ChaCha20) are not exposed in current UI/code path here.
-- Key derivation: Argon2id (preferred) or legacy AES-KDF for older databases; user can switch in file settings.
-- Composite key = password + optional keyfile + optional YubiKey challenge‑response, fed into KDF.
+Standard KeePass KDBX (v3, v4, v4.1) with AES‑256 or ChaCha20. Key derivation via Argon2id (tunable) or legacy AES‑KDF for older vaults. Composite key = password + optional keyfile + optional hardware challenge (YubiKey desktop).
 
-## Key Material Options
+## Credentials options
 
-- Master password (required).
-- Keyfile: supports standard binary / `.keyx`; path can be remembered per file.
-- YubiKey (desktop): challenge‑response (HMAC-SHA1) supported; presence indicated on open screen.
+- Master password (required)
+- Keyfile (binary / keyx)
+- YubiKey challenge‑response (desktop)
+  All factors processed client‑side; no server component.
 
-## Protected Fields & Memory
+## Protected data handling
 
-- Toggle visibility for passwords, OTP, protected custom fields; protected values processed with minimal exposure (kdbxweb ProtectedValue helpers).
-- Clipboard auto‑clear after configurable timeout; also clears on app exit if still holding copied secret.
-- Auto‑lock triggers: inactivity timeout, manual lock, app minimize/OS events (configurable in settings).
+Sensitive fields (password, custom protected fields, OTP secret) can remain hidden; revealing is local only. Clipboard clears after timeout or exit. Auto‑lock on inactivity, minimize, system lock, or manual trigger.
 
-## Entry History & Safety
+## Entry safety
 
-- Each secret change stored in encrypted history; user can inspect/restore or prune.
-- Automatic trimming prevents unbounded growth (per file settings).
+Encrypted history of changes; revert or inspect old versions. History trimming prevents unbounded growth.
 
-## Password Generator
+## Password generation and quality
 
-- Character set toggles (upper, lower, digits, digits look‑alikes exclusion, symbols, brackets, ambiguous, space, etc.).
-- Length + estimated entropy indicator.
-- Presets & pattern-based generation masks.
-- Inline generator in entry details & start/open screen.
-- Optional Have I Been Pwned (k‑Anon range API) breach check + quality meter.
+Configurable generator (character sets, length, patterns, presets) with entropy estimation and optional breach (Have I Been Pwned) warning. Inline generator integrated in entry edit.
 
-## Integrity & Authenticity
+## Integrity and authenticity
 
-- Update packages (desktop) verified using signature files before applying.
-- Plugin gallery JSON and individual plugin resources verified against embedded public keys; mismatches abort load.
-- Public key list embedded; rotation handled via app updates.
+Signed desktop releases; plugin signature verification with public key rotation support. Optional update channel checks.
 
-## Config & Local Security
+## Local configuration
 
-- Settings/preferences stored locally; sensitive per‑file secrets remain only in encrypted KDBX.
-- Optional restrictions (e.g. disabling save/export) available for hardened deployments.
-- File modification detection warns if an opened vault changes externally before saving.
+Settings stored locally (desktop config can encrypt sensitive bits via OS keychain). Option to disable specific export/save actions via configuration flags.
 
-## Offline & Attack Surface Reduction
+## Offline posture
 
-- Fully offline workflow supported (no account requirement).
-- Remote storage use (WebDAV, cloud providers) optional; tokens stored only as needed.
-- Content Security Policy hashes generated during build to restrict inline script execution.
-- Electron runs with nodeIntegration enabled (legacy model) and contextIsolation disabled (see `desktop/main.js`); modernization would target flipping these for stronger isolation.
+All crypto and vault operations run locally; remote storage only transfers encrypted blobs. Offline use does not degrade security characteristics.
 
-## Usability vs Security Aids
+## Additional protections
 
-- Password quality meter + warnings (strength & breach exposure).
-- Pwned password check (opt‑in, hashed prefix range query).
-- Auto‑type supports obfuscation options; verifies context before typing.
-- Clear unlock dialog context (e.g. reason, multi‑file state) when re‑prompting.
-
-## What Comes Later
-
-Later sections will map to:
-
-- Crypto pipeline (kdbxweb integration, KDF switching, ProtectedValue usage)
-- Storage & sync (provider auth flows, caching, conflict handling)
-- Desktop vs web threat surface & planned hardening (isolation, sandboxing, CSP tightening)
-
-Those details live in upcoming architecture and stack documents.
+- External modification detection (desktop)
+- Clipboard obfuscation timing
+- Auto‑type window verification (desktop)
+- Memory clearing on lock (protected values dropped)

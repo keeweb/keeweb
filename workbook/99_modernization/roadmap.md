@@ -1,204 +1,74 @@
-# Modernization Roadmap
+# Modernization roadmap
 
-High-level phased plan derived from analysis in [95_stack/current.md](../95_stack/current.md) and options in [95_stack/options.md](../95_stack/options.md).
+Phased plan referencing stack options; aims for incremental, measurable improvements.
 
-## Principles
+## Phase 0 baseline
 
-- Incremental, user-visible parity preserved each step
-- Reversible where practical (feature flags)
-- Security and data integrity over cosmetic change
-- Measure before / after
+Capture metrics: bundle size, cold start, memory (1 / 3 vaults), build time (clean + incremental), test coverage, dependency vulnerability count. Tag baseline.
 
-## Phase 0: Baseline
+## Phase 1 build simplification
 
-Tasks:
+Drop Grunt; replicate tasks via npm scripts + webpack plugins. Success: ≥10% build time reduction, identical dist contract.
 
-- Snapshot metrics (bundle size, cold start, memory after opening 1 / 3 vaults, build time, test coverage, open vulnerabilities)
-- Lock dependency versions in [package.json](../../package.json)
-- Tag baseline
+## Phase 2 TypeScript core
 
-Exit:
+Add tsconfig; convert core models (vault, entry, group), storage adapter interface, minimal ambient types for kdbxweb. Enable incremental strictness later.
 
-- Metrics documented in this file
-- Green CI
+## Phase 3 adapter abstraction
 
-## Phase 1: Build Simplification
+Formal StorageAdapter interface with unit tests and mocks. Outcome: >90% adapter code covered, easier injection and worker offload preparation.
 
-Tasks:
+## Phase 4 electron hardening
 
-- Replace Grunt ([Gruntfile.js](../../Gruntfile.js), [grunt.tasks.js](../../grunt.tasks.js), [grunt.entrypoints.js](../../grunt.entrypoints.js)) with direct npm scripts invoking [webpack.config.js](../../webpack.config.js) and PostCSS
-- Preserve output contract (dist/ contents unchanged)
-- Remove only Grunt-specific dev helpers, keep logic
+Introduce preload bridge; disable nodeIntegration; enable contextIsolation; audit IPC surface; adjust CSP. Success: feature parity under hardened settings.
 
-Risks: accidental change in hashing or service worker scope\
-Mitigation: diff dist/ vs baseline (excluding hash values)
+## Phase 5 UI pilot
 
-Exit:
+Implement read‑only entry list + details in chosen framework behind feature flag. Measure render latency and bundle delta.
 
-- Build time improvement target ≥10%
-- All features load identically
+## Phase 6 full UI migration
 
-## Phase 2: TypeScript Foundations
+Incrementally port remaining views; replace event bus with store; remove legacy view layer after parity. Flag default on.
 
-Tasks:
+## Phase 7 performance
 
-- Add tsconfig; allow js with checkJs false initially
-- Convert domain models (file, entry, group, storage adapter interfaces) first
-- Add minimal type definitions for kdbxweb usage
-- Enforce noImplicitAny later (two-step)
+Move Argon2 / encryption to worker, virtualize lists, code split optional panels, tune search indexing. Target ≥20% cold start improvement.
 
-Risks: type drift vs runtime\
-Exit: core domain modules typed; build passes; no runtime errors increase
+## Phase 8 plugin sandbox
 
-## Phase 3: Storage Adapter Abstraction
+Versioned manifests, capability declaration, optional isolated execution, legacy compatibility shim with deprecation notice.
 
-Tasks:
+## Phase 9 security refinement
 
-- Formal interface (StorageAdapter) implemented by existing backends
-- Isolated tests (mock network, local fs) in [test/](../../test)
-- Central registry injection
+Stricter CSP (nonce), SRI for remote metadata, dependency audit gate, optional WASM Argon2 fallback.
 
-Benefits: easier future providers, worker offloading later\
-Exit: 90% adapter logic covered by tests
+## Phase 10 accessibility polish
 
-## Phase 4: Electron Security Hardening
+Keyboard navigation audit, ARIA labeling, focus management, reduced motion, high contrast validation.
 
-Prereq: types for bridges and adapter isolation
+## Phase 11 cleanup
 
-Tasks:
+Remove deprecated flags and legacy code paths, update documentation, finalize migration notes.
 
-- Introduce preload script; disable nodeIntegration; enable contextIsolation in [desktop/main.js](../../desktop/main.js)
-- Whitelist IPC channels; remove global window leaks
-- Audit CSP in index ( [app/index.html](../../app/index.html) )
+## Metrics tracked per phase
 
-Exit: App functional under hardened settings; security checklist items applied
+Bundle size, startup time, memory, build time, test coverage, vuln count, search latency, list render time.
 
-## Phase 5: UI Pilot Migration
+## Risk mitigation
 
-Tasks:
+- Feature flags for UI/plugin changes
+- Golden encryption round‑trip tests before crypto moves
+- IPC allowlist tests for hardening
+- Performance budget enforced in CI
 
-- Choose framework (React or Vue) after spike
-- Implement read-only entry list + details bound to existing models via adapter layer
-- Feature flag toggle (settings)
+## Rollback strategy
 
-Metrics: pilot bundle delta, render latency vs legacy\
-Exit: Pilot merged, flag off by default
+Retain previous bundle path and flag gates for one release after major shifts (build removal, UI migration, plugin sandbox). Canary/beta channel for early validation.
 
-## Phase 6: Full UI Migration
+## Immediate next actions
 
-Tasks:
+1. Implement baseline metrics script
+1. Prepare webpack-only build scripts (parallel to existing)
+1. Draft TypeScript typings for core models
 
-- Incrementally port views (search bar, sidebar, modals, generator, settings)
-- Replace event bus with state store (see options doc)
-- Remove legacy view code once parity reached
-
-Exit: Flag on by default; legacy code deleted
-
-## Phase 7: Performance Improvements
-
-Tasks:
-
-- Web worker for Argon2 / encryption path (kdbxweb off main thread)
-- Virtualized lists for large vaults
-- Code splitting (auth providers, generator, plugin manager)
-- Measure cold start improvement target ≥20%
-
-Exit: Metrics improved; no functional regressions
-
-## Phase 8: Plugin System Modernization
-
-Tasks:
-
-- Versioned manifest schema
-- Capability declaration and enforcement
-- Optional iframe / isolated context execution
-- Backward compatibility shim for legacy plugins
-
-Risks: community plugin breakage\
-Mitigation: dual loader window during transition
-
-Exit: New API documented; legacy path deprecated with warning
-
-## Phase 9: Security Enhancements
-
-Tasks:
-
-- Strict CSP (hash/nonce only)
-- Optional Subresource Integrity for gallery manifest
-- Dependency audit gate in CI (npm audit, osv scanner)
-- Optional WASM Argon2 fallback
-
-Exit: Reduced high severity advisories (target zero)
-
-## Phase 10: Accessibility & UX Polish
-
-Tasks:
-
-- WCAG pass: keyboard traps, aria labels, focus outlines
-- High contrast validation
-- Reduced motion preference support
-
-Exit: Accessibility checklist complete
-
-## Phase 11: Cleanup & Debt Removal
-
-Tasks:
-
-- Remove unused config flags
-- Purge deprecated APIs
-- Update documentation (README, self-hosting, developer guide)
-
-Exit: Changelog entry summarizing deprecations
-
-## Metrics To Track (Per Phase)
-
-- Bundle size (main + total)
-- Cold start (DOMContentLoaded to interactive)
-- Memory (after opening 3 large vaults)
-- Build time (clean + incremental)
-- Test coverage %
-- Vulnerability count (prod dependencies)
-- UI interaction latency (search keystroke to paint)
-
-## Risk Summary
-
-- Data loss (storage merge, encryption refactor)
-- Plugin breakage (API changes)
-- Security regression (IPC exposure)
-- Performance regressions (framework overhead)
-
-Mitigations:
-
-- Golden file encryption tests (round-trip)
-- Plugin compatibility test harness
-- IPC allowlist tests
-- Performance budget thresholds in CI
-
-## Sequencing Dependencies
-
-- TypeScript before deep refactors (gives safety)
-- Adapter abstraction before worker offload
-- Security hardening after removal of implicit globals
-- Plugin sandbox after framework migration (avoid double-work)
-
-## Rollback Strategy
-
-- Feature flags for phases 5–8
-- Keep legacy build script for one release after Phase 1
-- Dual plugin loader while deprecating old manifests
-- Canary releases (beta channel) for end-user validation
-
-## Done Definition Per Phase
-
-- All tasks implemented
-- Tests updated
-- Documentation touched (this file + change log in [release-notes.md](../../release-notes.md))
-- Metrics recorded with delta vs baseline
-
-## Next Immediate Actions
-
-1. Implement Phase 0 metric script (node script reading dist stats + simple puppeteer run)
-1. Draft Phase 1 npm scripts mirroring Grunt flows
-1. Prepare tsconfig and convert first model file
-
-(Record progress inline below as phases complete.)
+Progress notes appended here as phases

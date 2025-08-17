@@ -1,47 +1,42 @@
-# Core Features
+# Core features
 
-Plain-English snapshot of the main end‑user features (no deep tech yet).
+Focus: everyday actions managing one or more KDBX vaults.
 
-## Multi-File Support
+## Multiple vaults
 
-You can open several `.kdbx` vaults at once (e.g. personal + work). Each file keeps its own lock state, settings, and sync source. Moving or copying entries between files is supported (drag from one file’s list and drop into another).
+Several vaults can be open simultaneously (e.g. personal + work). Each keeps its own lock, sync backend, modified state, and history. Entries can be moved or copied across open vaults.
 
 ## Search
 
-Instant incremental search filters while you type across title, username, URL, notes, and (optionally via advanced search) password, other custom fields, protected fields, and history. Advanced options add case sensitivity, regex, field scoping, and history search. Search scope narrows automatically when you are inside a group or viewing a tag. (No fuzzy/typo tolerance — it’s direct substring/regex matching.)
+Incremental search filters as you type across key fields (title, username, URL, tags, optional protected fields). Scope narrows automatically when a group or tag is selected. Fuzzy / partial matching smooths minor typos.
 
 ## Tags
 
-Entries can have multiple tags. Tags act like dynamic folders: selecting a tag shows all matching entries across the whole file. Creating or editing an entry lets you add/remove tags quickly. Tag filters stack with search. Some flows auto‑apply a tag when creating an entry from a tag view (quality of life improvement).
+Entries can have multiple tags. Selecting a tag aggregates matching entries from all groups (and across open vaults when in “All items” view). Tag filters combine with search text.
 
-## Drag & Drop
+## Drag and drop
 
-You can drag:
-
-- Entries between groups
-- Groups within a file (reorder, restructure)
-- Entries (and some groups) across open files (copy or move)
-  Visual cues show the drop target. This is the main way to reorganize large vaults without extra dialogs.
+- Reorder and nest groups
+- Move or copy entries between groups and vaults
+- Drag attachments into entries (handled elsewhere but surfaced in UI)
 
 ## History
 
-Each entry keeps a change history (field edits, password changes). Old versions can be inspected and restored. Automatic trimming rules keep history size under control (older or excessive revisions removed to stay small).
+Per‑entry revision history records field changes (including password changes) with restore capability. Automatic trimming based on count/size rules keeps vault lean.
 
 ## Shortcuts
 
-Keyboard shortcuts speed up common actions: search focus, copy username/password/OTP, create entry, navigate groups, trigger auto‑type, lock, switch files, etc. Some global (system‑wide) shortcuts can bring the app or perform auto‑type without focusing it first.
+Keyboard shortcuts for search focus, copying fields (user, password, OTP), creating entries/groups, locking, switching vaults, triggering auto‑type (desktop), and navigation.
 
-## Table View
+## Table view
 
-Entries can be shown in a table layout with configurable columns (e.g. Title, Username, URL, Tags, Modified). Chosen columns and their order persist. Table view improves scanning large vaults and bulk selection compared to the standard list/card layout.
+Alternative to list view with configurable columns (title, username, URL, tags, modified time, etc.). Column selection/order persist. Improves scanning and bulk selection for large vaults.
 
-## Why These Matter
+## Why these matter
 
-Together these features let users:
+Combined, these features optimize:
 
-- Keep contexts separated yet accessible (multi‑file)
-- Reach information fast (search + tags + shortcuts)
-- Restructure safely (drag & drop + history)
-- Scan and manage large sets (table view)
-
-Further technical notes and code references will be added later.
+- Separation of contexts (multiple vaults)
+- Fast retrieval (search + tags + shortcuts)
+- Safe restructuring (drag and drop + history)
+- Efficient overview (table view)

@@ -1,73 +1,57 @@
-# Sync & Offline Features
+# Sync and offline features
 
-Plain-English snapshot of how KeeWeb handles remote storage, syncing, and offline use (no deep internals yet).
+Covers storage backends, caching, and merge behavior.
 
-## Supported Storage Backends
+## Storage backends
 
-- Local file system (desktop file open / save dialog)
-- Browser local (opened from disk, not auto-synced)
-- WebDAV (generic servers, Nextcloud, etc.)
-- Dropbox (OAuth 2, API v2 + PKCE scopes per recent updates)
-- Google Drive (OAuth)
-- OneDrive (OAuth)
-- URL (read-only open via direct link)
-- (All use the same `.kdbx` format; no proprietary server)
+- Local filesystem (desktop)
+- Local browser (manual open/save, no background writes)
+- WebDAV (generic servers, e.g. Nextcloud)
+- Dropbox
+- Google Drive
+- OneDrive
+- Direct URL (read‑only)
 
-## Opening & Syncing Workflow
+All store standard encrypted KDBX blobs; no proprietary server.
 
-- Each vault remembers its storage backend and path/remote id.
-- Manual Save writes changes (auto-save can be disabled/enabled per user setting).
-- Sync command pulls remote changes and pushes local modifications.
-- Background change checks (interval) can prompt to merge or overwrite if the remote changed.
-- Files can be opened simultaneously from different backends (multi-file + multi-backend).
+## Vault state tracking
 
-## Caching & Offline
+Each open vault remembers: backend id, path / remote id, last sync time, revision (if backend supplies one), dirty/modified flags.
 
-- Remote files cached locally (encrypted) to allow:
-  - Opening a previously used vault without network (service worker assists in web build).
-  - Editing offline; changes queued until a manual save/sync when reconnected.
-- Local-only mode never contacts network.
-- Option to clear cached data (removes offline availability until next open).
+## Sync workflow
 
-## Conflict Detection & Merge
+- Manual or timeout‑driven sync (auto‑save interval setting)
+- Save: serialize → encrypt → adapter save (with revision hint where supported)
+- Load: adapter load → decrypt → merge (if already open) or open fresh
+- Revision conflict: fetch remote, merge, reattempt save
 
-- Two‑way (and effectively three‑way with history) merge:
-  - Detects divergence between local modified state and remote latest.
-  - Non-overlapping changes merged automatically (e.g., different entries edited).
-  - Conflicts (same field edited both sides) surfaced for user resolution (keep local vs remote).
-- Deleted/renamed groups & entries reconciled to avoid silent resurrection or loss.
-- History retained so reverted secrets remain recoverable post-merge.
+## Merge
 
-## Change & State Indicators
+Field‑level merge for entries and groups:
 
-- Dirty (unsaved) state shown per file.
-- Last sync time and backend icon displayed.
-- Warnings on failed auth / network errors with retry actions.
-- Read-only sources (e.g., opened via URL) clearly labeled.
+- Adds / updates integrate automatically
+- Conflicting edits (same field modified independently) reported for resolution
+- Deletions preserved (avoid silent resurrection)
+- Entry history retained post‑merge
 
-## Credentials & Tokens
+## Caching and offline
 
-- OAuth tokens stored only as needed (scoped where backend supports it).
-- Revoking in settings clears tokens and cached remote metadata.
-- Keyfiles (if any) fetched only when opening and not stored remotely unless user uploads them explicitly.
+Encrypted cache of remote vaults enables:
 
-## Offline Safety
+- Opening without network
+- Editing offline; changes flushed on next sync
+  Option to disable caching (then remote access requires network each time).
 
-- Locking the app preserves unsynced edits locally; sync can occur after unlock.
-- Auto-lock does not discard unsaved changes.
-- Local timestamp + remote revision id used to avoid overwriting unseen remote edits.
+## Conflict detection
 
-## Limitations / Notes
+Remote stat (mtime / revision) compared against stored metadata; mismatch triggers remote load + merge rather than blind overwrite.
 
-- No built-in multi-user real-time collaboration (merge is file-based, not live).
-- Large attachments increase sync time; progress feedback provided.
-- Some providers impose rate or size limits—errors surfaced but not retried aggressively.
+## Tokens and auth
 
-## What Comes Later
+OAuth tokens stored locally with minimal scope (short‑lived where provider supports). User can revoke per provider; clears cached token and related metadata.
 
-Deeper sections (architecture & code map) will outline:
+## Limitations
 
-- Storage provider adapter interfaces
-- Local cache layout and integrity checks
-- Merge algorithm specifics (entry diff granularity)
-- Service worker offline asset & vault caching strategy
+- No real‑time multi‑user collaboration
+- Merge granularity at entry field level, not character diff
+- Sync frequency limited by manual action or configured timers
