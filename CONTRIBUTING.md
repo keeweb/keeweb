@@ -6,7 +6,7 @@ There are different ways to help the project, you will find a summary here.
 
 ## Code of conduct
 
-This project and everyone participating in it is governed by the [KeeWeb Code of Conduct](https://github.com/keeweb/keeweb/blob/master/.github/CODE_OF_CONDUCT.md#readme). 
+This project and everyone participating in it is governed by the [KeeWeb Code of Conduct](https://github.com/keeweb/keeweb/blob/master/.github/CODE_OF_CONDUCT.md#readme).
 By participating, you are expected to uphold this code. Please report unacceptable behavior to antelle.net@gmail.com.
 
 ## Issues
@@ -30,8 +30,9 @@ Indeed, questions on that page are not applicable in this case.
 
 ## Development
 
-We don't accept (and in foreseeable future, we won't accept) anyone as a project collaborator directly. 
+We don't accept (and in foreseeable future, we won't accept) anyone as a project collaborator directly.
 Instead, the code should be contributed via pull requests. To get started with development, take a look at these pages:
+
 - [Architecture](https://github.com/keeweb/keeweb/wiki/Architecture)
 - [Engineering](https://github.com/keeweb/keeweb/wiki/Engineering)
 - [Unsupported Features](https://github.com/keeweb/keeweb/wiki/Unsupported%20Features)
@@ -48,11 +49,12 @@ If you would like to improve it, please [open an issue](https://github.com/keewe
 
 ## Donations
 
-There are two ways of donating:  
+There are two ways of donating:
+
 - join as backer on [OpenCollective](https://opencollective.com/keeweb#support);
 - sponsor the developer directly on [GitHub](https://github.com/sponsors/antelle).
 
-Please note: donation does not imply any type of service contract.  
+Please note: donation does not imply any type of service contract.
 
 ## Translations
 
@@ -61,6 +63,6 @@ join us on [OneSky](https://keeweb.oneskyapp.com).
 
 ## PR
 
-We would be happy to support you if you decide to post, blog, or review the project, 
-or provide any other kind of PR. Please [contact the developer](mailto:antelle.net@gmail.com) 
+We would be happy to support you if you decide to post, blog, or review the project,
+or provide any other kind of PR. Please [contact the developer](mailto:antelle.net@gmail.com)
 if you have anything to share. You can also poke us on [Twitter](https://twitter.com/kee_web).
