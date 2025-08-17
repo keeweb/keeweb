@@ -18,19 +18,21 @@ KeeWeb is a browser and desktop password manager which is capable of opening up 
 <div align="center">
 
 <!-- prettier-ignore-start -->
+
 [![Version][github-version-img]][github-version-uri]
 [![Tests][github-tests-img]][github-tests-uri]
 [![Downloads][github-downloads-img]][github-downloads-uri]
 [![Size][github-size-img]][github-size-img]
 [![Last Commit][github-commit-img]][github-commit-img]
 [![Contributors][contribs-all-img]](#contributors-)
+
 <!-- prettier-ignore-end -->
 
 </div>
 
 <br />
 
----
+______________________________________________________________________
 
 <br />
 
@@ -52,7 +54,7 @@ KeeWeb is a browser and desktop password manager which is capable of opening up 
     - [Authentik Integration](#authentik-integration)
       - [Labels](#labels-1)
       - [Dynamic.yml](#dynamicyml-1)
-  - [Env \& Volumes](#env--volumes)
+  - [Env & Volumes](#env--volumes)
     - [Env Variables](#env-variables)
     - [Volumes](#volumes)
   - [Dropbox Support](#dropbox-support)
@@ -71,7 +73,7 @@ KeeWeb is a browser and desktop password manager which is capable of opening up 
 
 <br />
 
----
+______________________________________________________________________
 
 <br />
 
@@ -98,7 +100,7 @@ Review some of our most important links below to learn more about KeeWeb and who
 | Topic | Links | Description |
 | --- | --- | --- |
 | **Apps** | [Web](https://app.keeweb.info/), [Desktop](https://github.com/keeweb/keeweb/releases/latest) | Try out our application |
-| **Demos** | [Web](https://app.keeweb.info/), [Beta](https://beta.keeweb.info ) | Test our stable and beta releases of Keeweb |
+| **Demos** | [Web](https://app.keeweb.info/), [Beta](https://beta.keeweb.info) | Test our stable and beta releases of Keeweb |
 | **Services** | [Favicon Grabber](https://services.keeweb.info/favicon) | Services integrated within Keeweb |
 | **Branches** | [docker/alpine-base](https://github.com/keeweb/keeweb/tree/docker/alpine-base), [docker/keeweb](https://github.com/keeweb/keeweb/tree/docker/keeweb) | Important branches related to our project |
 | **Timeline** | [Release Notes](release-notes.md), [TODO](https://github.com/keeweb/keeweb/wiki/TODO) | See what we're planning |
@@ -109,7 +111,7 @@ Review some of our most important links below to learn more about KeeWeb and who
 
 <br />
 
----
+______________________________________________________________________
 
 <br />
 
@@ -133,6 +135,7 @@ If you wish to host Keeweb within a Docker container, we provide pre-built image
 <br />
 
 #### Images
+
 Use any of the following images in your `📄 docker-compose.yml` or `run` command:
 
 <br />
@@ -145,6 +148,7 @@ Use any of the following images in your `📄 docker-compose.yml` or `run` comma
 <br />
 
 #### Docker Run
+
 If you wish to use `docker run`; use the following command:
 
 ```shell
@@ -154,6 +158,7 @@ docker run -d --restart=unless-stopped -p 443:443 --name keeweb -v ${PWD}/keeweb
 <br />
 
 #### Docker Compose
+
 For users wishing to use `docker compose`, create a new `docker-compose.yml` with the following:
 
 ```yml
@@ -176,13 +181,14 @@ services:
 <br />
 
 #### Traefik Integration
+
 You can put this container behind Traefik if you want to use a reverse proxy and let Traefik handle the SSL certificate management.
 
 <br />
 
 > [!NOTE]
-> These steps are **optional**. 
-> 
+> These steps are **optional**.
+>
 > If you do not use Traefik, you can skip this section of steps. This is only for users who wish to put this container behind Traefik.
 >
 > If you do not wish to use Traefik, remember that if you make your Keeweb container public facing, you will need to utilize a service such as **[certbot/lets encrypt](https://phoenixnap.com/kb/letsencrypt-docker)** to generate SSL certificates.
@@ -297,6 +303,7 @@ http:
 <br />
 
 ##### Static.yml
+
 These entries will go in your Traefik `static.yml` file. Any changes made to this file requires that you restart Traefik afterward.
 
 <br />
@@ -414,13 +421,14 @@ CF_API_KEY=Your-Cloudflare-API-Key
 
 <br />
 
-Save the `.env` file and exit. For these environment variables to be detected by Traefik, you must give your Traefik container a restart. Until you restart Traefik, it will not be able to generate your new SSL certificates. 
+Save the `.env` file and exit. For these environment variables to be detected by Traefik, you must give your Traefik container a restart. Until you restart Traefik, it will not be able to generate your new SSL certificates.
 
 You can wait and restart in a moment after you finish editing the `static.yml` file, as there are more items to add below.
 
 <br />
 
 ###### entryPoints (Normal)
+
 Finally, inside the Traefik `static.yml`, we need to make sure we have our `entryPoints` configured. Add the following to the Traefik `static.yml` file only if you **DON'T** have entry points set yet:
 
 ```yml
@@ -449,11 +457,13 @@ entryPoints:
 <br />
 
 ###### entryPoints (Cloudflare)
+
 If your website is behind Cloudflare's proxy service, you need to modify your `entryPoints` above so that you can automatically allow Cloudflare's IP addresses through. This means your entry points will look a bit different.
 
 <br />
 
 In the example below, we will add `forwardedHeaders` -> `trustedIPs` and add all of Cloudflare's IPs to the list which are available here:
+
 - https://cloudflare.com/ips/
 
 ```yml
@@ -537,6 +547,7 @@ For the **provider**, select `Proxy Provider`.
 <br />
 
 Add the following provider values:
+
 - **Name**: `Keeweb ForwardAuth`
 - **Authentication Flow**: `default-source-authentication (Welcome to authentik!)`
 - **Authorization Flow**: `default-provider-authorization-implicit-consent (Authorize Application)`
@@ -544,6 +555,7 @@ Add the following provider values:
 <br />
 
 Select **Forward Auth (single application)**:
+
 - **External Host**: `https://keeweb.domain.lan`
 
 <br />
@@ -563,6 +575,7 @@ Once finished, click **Create**. Then on the left-side menu, select **Applicatio
 <br />
 
 Add the following parameters:
+
 - **Name**: `Keeweb (Password Manager)`
 - **Slug**: `keeweb`
 - **Group**: `Security`
@@ -678,31 +691,34 @@ After you've done everything above, give your **Traefik** and **Authentik** cont
 
 <br />
 
----
+______________________________________________________________________
 
 <br />
 
 ### Env & Volumes
+
 This section outlines that environment variables can be specified, and which volumes you can mount when the container is started.
 
 <br />
 
 #### Env Variables
+
 The following env variables can be modified before spinning up this container:
 
 <br />
 
 | Env Var | Default | Description |
 | --- | --- | --- |
-| `PUID`        | 1000      | <sub>User ID running the container</sub> |
-| `PGID`        | 1000      | <sub>Group ID running the container</sub> |
-| `TZ`          | Etc/UTC   | <sub>Timezone</sub> |
-| `PORT_HTTP`   | 80        | <sub>Defines the HTTP port to run on</sub> |
-| `PORT_HTTPS`  | 443       | <sub>Defines the HTTPS port to run on</sub> |
+| `PUID` | 1000 | <sub>User ID running the container</sub> |
+| `PGID` | 1000 | <sub>Group ID running the container</sub> |
+| `TZ` | Etc/UTC | <sub>Timezone</sub> |
+| `PORT_HTTP` | 80 | <sub>Defines the HTTP port to run on</sub> |
+| `PORT_HTTPS` | 443 | <sub>Defines the HTTPS port to run on</sub> |
 
 <br />
 
 #### Volumes
+
 The following volumes can be mounted with this container:
 
 <br />
@@ -718,10 +734,10 @@ By mounting the volume above, you should now have access to the following folder
 
 | Folder | Description |
 | ---- | ---- |
-| `📁 keys`   | <sub>Responsible for storing your ssl certificate `cert.crt` + key `cert.key`</sub> |
-| `📁 log`    | <sub>All nginx / container logs</sub> |
-| `📁 nginx`  | <sub>Contains `nginx.conf`, `resolver.conf`, `ssl.conf`, `site-confs`</sub> |
-| `📁 www`    | <sub>Folder which stores the Keeweb files, images, and plugins</sub> |
+| `📁 keys` | <sub>Responsible for storing your ssl certificate `cert.crt` + key `cert.key`</sub> |
+| `📁 log` | <sub>All nginx / container logs</sub> |
+| `📁 nginx` | <sub>Contains `nginx.conf`, `resolver.conf`, `ssl.conf`, `site-confs`</sub> |
+| `📁 www` | <sub>Folder which stores the Keeweb files, images, and plugins</sub> |
 
 <br />
 
@@ -731,7 +747,7 @@ To configure Dropbox support on your self-hosted setup [view our Wiki page](http
 
 <br />
 
----
+______________________________________________________________________
 
 <br />
 
@@ -847,7 +863,7 @@ npm run electron
 To debug your build:
 
 1. run `npm run dev`
-2. open `http://localhost:8085`
+1. open `http://localhost:8085`
 
 <br />
 
@@ -855,14 +871,14 @@ Once built, the output files will be generated in `tmp`:
 
 <br />
 
----
+______________________________________________________________________
 
 <br />
 
 ## Donations
 
-KeeWeb is not free to develop. It takes time, requires paid code signing certificates and domains.  
-You can help the project or say "thank you" with this button:  
+KeeWeb is not free to develop. It takes time, requires paid code signing certificates and domains.\
+You can help the project or say "thank you" with this button:\
 [<img src="https://opencollective.com/keeweb/tiers/backer.svg?avatarHeight=42&width=880" alt="OpenCollective">](https://opencollective.com/keeweb#support)
 
 <br />
@@ -875,11 +891,12 @@ Please note: donation does not imply any type of service contract.
 
 <br />
 
----
+______________________________________________________________________
 
 <br />
 
 ## Contributors ✨
+
 We are always looking for contributors. If you feel that you can provide something useful to Keeweb or our other projects, then we'd love to review your suggestion. Before submitting your contribution, please review the following resources:
 
 - [Pull Request Procedure](.github/PULL_REQUEST_TEMPLATE.md)
@@ -888,6 +905,7 @@ We are always looking for contributors. If you feel that you can provide somethi
 <br />
 
 Want to help but can't write code?
+
 - Review [active questions by our community](https://github.com/keeweb/keeweb/labels/help%20wanted) and answer the ones you know.
 
 <br />
@@ -904,12 +922,17 @@ Want to help but can't write code?
 <div align="center">
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![Contributors][contribs-all-img]](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+
 <!-- prettier-ignore-start -->
+
 <!-- markdownlint-disable -->
+
 <table>
   <tbody>
     <tr>
@@ -921,94 +944,74 @@ Want to help but can't write code?
 </table>
 
 <!-- markdownlint-restore -->
+
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 <br />
 <br />
 
----
+______________________________________________________________________
 
 <br />
 
 <!-- prettier-ignore-start -->
+
 <!-- markdownlint-disable -->
 
 <!-- BADGE > GENERAL -->
-  [general-npmjs-uri]: https://npmjs.com
-  [general-nodejs-uri]: https://nodejs.org
-  [general-npmtrends-uri]: http://npmtrends.com/keeweb
 
 <!-- BADGE > VERSION > GITHUB -->
-  [github-version-img]: https://img.shields.io/github/v/tag/keeweb/keeweb?logo=GitHub&label=Version&color=ba5225
-  [github-version-uri]: https://github.com/keeweb/keeweb/releases
 
 <!-- BADGE > VERSION > GITHUB (For the Badge) -->
-  [github-version-ftb-img]: https://img.shields.io/github/v/tag/keeweb/keeweb?style=for-the-badge&logo=github&logoColor=FFFFFF&logoSize=34&label=%20&color=ba5225
-  [github-version-ftb-uri]: https://github.com/keeweb/keeweb/releases
 
 <!-- BADGE > VERSION > NPMJS -->
-  [npm-version-img]: https://img.shields.io/npm/v/keeweb?logo=npm&label=Version&color=ba5225
-  [npm-version-uri]: https://npmjs.com/package/keeweb
 
 <!-- BADGE > VERSION > PYPI -->
-  [pypi-version-img]: https://img.shields.io/pypi/v/keeweb
-  [pypi-version-uri]: https://pypi.org/project/keeweb/
 
 <!-- BADGE > LICENSE > MIT -->
-  [license-mit-img]: https://img.shields.io/badge/MIT-FFF?logo=creativecommons&logoColor=FFFFFF&label=License&color=9d29a0
-  [license-mit-uri]: https://github.com/keeweb/keeweb/blob/main/LICENSE
 
 <!-- BADGE > GITHUB > DOWNLOAD COUNT -->
-  [github-downloads-img]: https://img.shields.io/github/downloads/keeweb/keeweb/total?logo=github&logoColor=FFFFFF&label=Downloads&color=376892
-  [github-downloads-uri]: https://github.com/keeweb/keeweb/releases
 
 <!-- BADGE > NPMJS > DOWNLOAD COUNT -->
-  [npmjs-downloads-img]: https://img.shields.io/npm/dw/%40keeweb%2Fkeeweb?logo=npm&&label=Downloads&color=376892
-  [npmjs-downloads-uri]: https://npmjs.com/package/keeweb
 
 <!-- BADGE > GITHUB > DOWNLOAD SIZE -->
-  [github-size-img]: https://img.shields.io/github/repo-size/keeweb/keeweb?logo=github&label=Size&color=59702a
-  [github-size-uri]: https://github.com/keeweb/keeweb/releases
 
 <!-- BADGE > NPMJS > DOWNLOAD SIZE -->
-  [npmjs-size-img]: https://img.shields.io/npm/unpacked-size/keeweb/latest?logo=npm&label=Size&color=59702a
-  [npmjs-size-uri]: https://npmjs.com/package/keeweb
 
 <!-- BADGE > CODECOV > COVERAGE -->
-  [codecov-coverage-img]: https://img.shields.io/codecov/c/github/keeweb/keeweb?token=MPAVASGIOG&logo=codecov&logoColor=FFFFFF&label=Coverage&color=354b9e
-  [codecov-coverage-uri]: https://codecov.io/github/keeweb/keeweb
 
 <!-- BADGE > ALL CONTRIBUTORS -->
-  [contribs-all-img]: https://img.shields.io/github/all-contributors/keeweb/keeweb?logo=contributorcovenant&color=de1f6f&label=contributors
-  [contribs-all-uri]: https://github.com/all-contributors/all-contributors
 
 <!-- BADGE > GITHUB > BUILD > NPM -->
-  [github-build-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/deploy-docker-github.yml?logo=github&logoColor=FFFFFF&label=Build&color=%23278b30
-  [github-build-uri]: https://github.com/keeweb/keeweb/actions/workflows/deploy-docker-github.yml
 
 <!-- BADGE > GITHUB > BUILD > Pypi -->
-  [github-build-pypi-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/release-pypi.yml?logo=github&logoColor=FFFFFF&label=Build&color=%23278b30
-  [github-build-pypi-uri]: https://github.com/keeweb/keeweb/actions/workflows/pypi-release.yml
 
 <!-- BADGE > GITHUB > TESTS -->
-  [github-tests-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/npm-tests.yml?logo=github&label=Tests&color=2c6488
-  [github-tests-uri]: https://github.com/keeweb/keeweb/actions/workflows/npm-tests.yml
 
 <!-- BADGE > GITHUB > COMMIT -->
-  [github-commit-img]: https://img.shields.io/github/last-commit/keeweb/keeweb?logo=conventionalcommits&logoColor=FFFFFF&label=Last%20Commit&color=313131
-  [github-commit-uri]: https://github.com/keeweb/keeweb/commits/main/
 
 <!-- BADGE > DOCKER HUB > VERSION -->
-  [dockerhub-version-img]: https://img.shields.io/docker/v/antelle/keeweb/latest?logo=docker&logoColor=FFFFFF&label=Docker%20Version&color=ba5225
-  [dockerhub-version-uri]: https://hub.docker.com/repository/docker/antelle/keeweb/general
 
 <!-- BADGE > DOCKER HUB > VERSION (For the Badge) -->
-  [dockerhub-version-ftb-img]: https://img.shields.io/docker/v/antelle/keeweb/latest?style=for-the-badge&logo=docker&logoColor=FFFFFF&logoSize=34&label=%20&color=ba5225
-  [dockerhub-version-ftb-uri]: https://hub.docker.com/repository/docker/antelle/keeweb/tags
 
 <!-- BADGE > DOCKER HUB > PULLS -->
-  [dockerhub-pulls-img]: https://img.shields.io/docker/pulls/antelle/keeweb?logo=docker&logoColor=FFFFFF&label=Docker%20Pulls&color=af9a00
 
 <!-- prettier-ignore-end -->
+
 <!-- markdownlint-restore -->
+
+[contribs-all-img]: https://img.shields.io/github/all-contributors/keeweb/keeweb?logo=contributorcovenant&color=de1f6f&label=contributors
+[dockerhub-version-ftb-img]: https://img.shields.io/docker/v/antelle/keeweb/latest?style=for-the-badge&logo=docker&logoColor=FFFFFF&logoSize=34&label=%20&color=ba5225
+[dockerhub-version-ftb-uri]: https://hub.docker.com/repository/docker/antelle/keeweb/tags
+[github-commit-img]: https://img.shields.io/github/last-commit/keeweb/keeweb?logo=conventionalcommits&logoColor=FFFFFF&label=Last%20Commit&color=313131
+[github-downloads-img]: https://img.shields.io/github/downloads/keeweb/keeweb/total?logo=github&logoColor=FFFFFF&label=Downloads&color=376892
+[github-downloads-uri]: https://github.com/keeweb/keeweb/releases
+[github-size-img]: https://img.shields.io/github/repo-size/keeweb/keeweb?logo=github&label=Size&color=59702a
+[github-tests-img]: https://img.shields.io/github/actions/workflow/status/keeweb/keeweb/npm-tests.yml?logo=github&label=Tests&color=2c6488
+[github-tests-uri]: https://github.com/keeweb/keeweb/actions/workflows/npm-tests.yml
+[github-version-ftb-img]: https://img.shields.io/github/v/tag/keeweb/keeweb?style=for-the-badge&logo=github&logoColor=FFFFFF&logoSize=34&label=%20&color=ba5225
+[github-version-ftb-uri]: https://github.com/keeweb/keeweb/releases
+[github-version-img]: https://img.shields.io/github/v/tag/keeweb/keeweb?logo=GitHub&label=Version&color=ba5225
+[github-version-uri]: https://github.com/keeweb/keeweb/releases
