@@ -245,7 +245,7 @@ class StorageDropbox extends StorageBase {
     }
 
     _apiCall(args) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return args.error(err);
             }

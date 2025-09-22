@@ -209,21 +209,21 @@ class StorageBase {
         return new URL(`oauth-result/${this.name}.html`, redirectUrl).href;
     }
 
-    _oauthAuthorize(callback) {
-        if (this._tokenIsValid(this._oauthToken)) {
-            return callback();
-        }
-        const opts = this._getOAuthConfig();
-        const oldToken = this.runtimeData[this.name + 'OAuthToken'];
-        if (this._tokenIsValid(oldToken)) {
-            this._oauthToken = oldToken;
-            return callback();
-        }
+    _oauthAuthorize(opts, callback) {
+        if (opts.forceAuth !== true) {
+            if (this._tokenIsValid(this._oauthToken)) {
+                return callback();
+            }
+            const oldToken = this.runtimeData[this.name + 'OAuthToken'];
+            if (this._tokenIsValid(oldToken)) {
+                this._oauthToken = oldToken;
+                return callback();
+            }
 
-        if (oldToken && oldToken.refreshToken) {
-            return this._oauthExchangeRefreshToken(callback);
+            if (oldToken && oldToken.refreshToken) {
+                return this._oauthExchangeRefreshToken(callback);
+            }
         }
-
         const session = createOAuthSession();
 
         let listener;
@@ -234,20 +234,22 @@ class StorageBase {
             session.redirectUri = this._getOauthRedirectUrl();
         }
 
-        const pkceParams = opts.pkce
+        const config = this._getOAuthConfig();
+        const pkceParams = config.pkce
             ? {
                   'code_challenge': session.codeChallenge,
                   'code_challenge_method': 'S256'
               }
             : undefined;
 
-        const url = UrlFormat.makeUrl(opts.url, {
-            'client_id': opts.clientId,
-            'scope': opts.scope,
+        const url = UrlFormat.makeUrl(config.url, {
+            'client_id': config.clientId,
+            'scope': config.scope,
             'state': session.state,
             'redirect_uri': session.redirectUri,
             'response_type': 'code',
             ...pkceParams,
+            ...config.urlParams,
             ...opts.urlParams
         });
 
@@ -261,7 +263,7 @@ class StorageBase {
             return;
         }
 
-        const popupWindow = this._openPopup(url, 'OAuth', opts.width, opts.height);
+        const popupWindow = this._openPopup(url, 'OAuth', config.width, config.height);
         if (!popupWindow) {
             return callback('OAuth: cannot open popup');
         }
@@ -355,7 +357,7 @@ class StorageBase {
         if (this._oauthToken.refreshToken) {
             this._oauthExchangeRefreshToken(callback);
         } else {
-            this._oauthAuthorize(callback);
+            this._oauthAuthorize({}, callback);
         }
     }
 
@@ -404,6 +406,8 @@ class StorageBase {
         if (Features.isDesktop) {
             Launcher.showMainWindow();
         }
+
+        this._oauthProcessCode?.(result);
         const config = this._getOAuthConfig();
         const pkceParams = config.pkce ? { 'code_verifier': session.codeVerifier } : undefined;
 
@@ -465,7 +469,7 @@ class StorageBase {
                     delete this.runtimeData[this.name + 'OAuthToken'];
                     this._oauthToken = null;
                     this.logger.error('Error exchanging refresh token, trying to authorize again');
-                    this._oauthAuthorize(callback);
+                    this._oauthAuthorize({}, callback);
                 } else {
                     this.logger.error('Error exchanging refresh token', err);
                     callback?.('Error exchanging refresh token');

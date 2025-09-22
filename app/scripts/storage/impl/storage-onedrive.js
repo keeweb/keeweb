@@ -17,7 +17,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     load(path, opts, callback) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -64,7 +64,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     stat(path, opts, callback) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -96,7 +96,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     save(path, opts, data, callback, rev) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -132,7 +132,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     list(dir, callback) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -187,7 +187,7 @@ class StorageOneDrive extends StorageBase {
     }
 
     mkdir(path, callback) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
