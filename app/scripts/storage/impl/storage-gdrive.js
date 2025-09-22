@@ -233,6 +233,7 @@ class StorageGDrive extends StorageBase {
                         const f = response;
                         const fileList = [
                             {
+                                auto: true,
                                 name: f.name,
                                 path: f.id,
                                 rev: f.headRevisionId,
