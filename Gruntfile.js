@@ -360,6 +360,11 @@ module.exports = function (grunt) {
                 dest: 'tmp/desktop/keeweb-linux-x64/resources/',
                 nonull: true
             },
+            'native-modules-linux-arm64': {
+                src: 'node_modules/@keeweb/keeweb-native-modules/*-linux-arm64.node',
+                dest: 'tmp/desktop/keeweb-linux-arm64/resources/',
+                nonull: true
+            },
             'electron-builder-dist-linux-rpm': {
                 src: `tmp/desktop/electron-builder/KeeWeb-${pkg.version}.x86_64.rpm`,
                 dest: `dist/desktop/KeeWeb-${pkg.version}.linux.x86_64.rpm`,
@@ -373,6 +378,21 @@ module.exports = function (grunt) {
             'electron-builder-dist-linux-appimage': {
                 src: `tmp/desktop/electron-builder/keeweb-${pkg.version}.AppImage`,
                 dest: `dist/desktop/KeeWeb-${pkg.version}.linux.AppImage`,
+                nonull: true
+            },
+            'electron-builder-dist-linux-arm64-rpm': {
+                src: `tmp/desktop/electron-builder-arm64/KeeWeb-${pkg.version}.aarch64.rpm`,
+                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.aarch64.rpm`,
+                nonull: true
+            },
+            'electron-builder-dist-linux-arm64-snap': {
+                src: `tmp/desktop/electron-builder-arm64/KeeWeb_${pkg.version}_arm64.snap`,
+                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.arm64.snap`,
+                nonull: true
+            },
+            'electron-builder-dist-linux-arm64-appimage': {
+                src: `tmp/desktop/electron-builder-arm64/keeweb-${pkg.version}.AppImage`,
+                dest: `dist/desktop/KeeWeb-${pkg.version}.linux.arm64.AppImage`,
                 nonull: true
             },
             'darwin-installer-icon': {
@@ -395,6 +415,13 @@ module.exports = function (grunt) {
             'native-messaging-host-linux-x64': {
                 src: 'node_modules/@keeweb/keeweb-native-messaging-host/linux-x64/keeweb-native-messaging-host',
                 dest: 'tmp/desktop/keeweb-linux-x64/keeweb-native-messaging-host',
+                nonull: true,
+                options: { mode: '0755' }
+            },
+            'native-messaging-host-linux-arm64': {
+                src:
+                    'node_modules/@keeweb/keeweb-native-messaging-host/linux-arm64/keeweb-native-messaging-host',
+                dest: 'tmp/desktop/keeweb-linux-arm64/keeweb-native-messaging-host',
                 nonull: true,
                 options: { mode: '0755' }
             },
@@ -728,6 +755,14 @@ module.exports = function (grunt) {
                     icon: 'graphics/icon.ico'
                 }
             },
+            'linux-arm64': {
+                options: {
+                    name: 'keeweb',
+                    platform: 'linux',
+                    arch: 'arm64',
+                    icon: 'graphics/icon.ico'
+                }
+            },
             'darwin-x64': {
                 options: {
                     platform: 'darwin',
@@ -809,6 +844,38 @@ module.exports = function (grunt) {
                         }
                     }
                 }
+            },
+            'linux-arm64': {
+                options: {
+                    publish: 'never',
+                    targets: 'linux',
+                    prepackaged: 'tmp/desktop/keeweb-linux-arm64',
+                    config: {
+                        appId: 'net.antelle.keeweb',
+                        productName: 'keeweb',
+                        copyright: `Copyright © ${year} Antelle`,
+                        directories: {
+                            output: 'tmp/desktop/electron-builder-arm64',
+                            app: 'desktop',
+                            buildResources: 'graphics'
+                        },
+                        fileAssociations: {
+                            ext: 'kdbx',
+                            name: 'KeePass 2 database',
+                            mimeType: 'application/x-keepass2'
+                        },
+                        linux: {
+                            target: ['AppImage', 'snap', 'rpm'],
+                            category: 'Utility'
+                        },
+                        rpm: {
+                            // depends: linuxDependencies
+                        },
+                        snap: {
+                            stagePackages: linuxDependencies
+                        }
+                    }
+                }
             }
         },
 
@@ -818,7 +885,8 @@ module.exports = function (grunt) {
             'win32-arm64': 'tmp/desktop/KeeWeb-win32-arm64/KeeWeb.exe',
             'darwin-x64': 'tmp/desktop/KeeWeb-darwin-x64/KeeWeb.app',
             'darwin-arm64': 'tmp/desktop/KeeWeb-darwin-arm64/KeeWeb.app',
-            'linux': 'tmp/desktop/KeeWeb-linux-x64/keeweb'
+            'linux': 'tmp/desktop/keeweb-linux-x64/keeweb',
+            'linux-arm64': 'tmp/desktop/keeweb-linux-arm64/keeweb'
         },
 
         osacompile: {
@@ -852,6 +920,13 @@ module.exports = function (grunt) {
                 options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.x64.zip` },
                 files: [
                     { cwd: 'tmp/desktop/keeweb-linux-x64', src: '**', expand: true },
+                    { cwd: 'graphics', src: '128x128.png', nonull: true, expand: true }
+                ]
+            },
+            'linux-arm64': {
+                options: { archive: `dist/desktop/KeeWeb-${pkg.version}.linux.arm64.zip` },
+                files: [
+                    { cwd: 'tmp/desktop/keeweb-linux-arm64', src: '**', expand: true },
                     { cwd: 'graphics', src: '128x128.png', nonull: true, expand: true }
                 ]
             }
@@ -926,6 +1001,12 @@ module.exports = function (grunt) {
                     mode: '4755'
                 },
                 src: ['tmp/desktop/keeweb-linux-x64/chrome-sandbox']
+            },
+            'linux-desktop-arm64': {
+                options: {
+                    mode: '4755'
+                },
+                src: ['tmp/desktop/keeweb-linux-arm64/chrome-sandbox']
             }
         },
 
@@ -958,6 +1039,35 @@ module.exports = function (grunt) {
                     { cwd: 'package/deb/usr', src: '**', dest: '/usr', expand: true, nonull: true },
                     {
                         cwd: 'tmp/desktop/keeweb-linux-x64/',
+                        src: '**',
+                        dest: '/usr/share/keeweb-desktop',
+                        expand: true,
+                        nonull: true
+                    },
+                    {
+                        src: 'graphics/128x128.png',
+                        dest: '/usr/share/icons/hicolor/128x128/apps/keeweb.png',
+                        nonull: true
+                    }
+                ]
+            },
+            'linux-arm64': {
+                options: {
+                    info: {
+                        arch: 'arm64',
+                        pkgName: `KeeWeb-${pkg.version}.linux.arm64.deb`,
+                        targetDir: 'dist/desktop',
+                        appName: 'KeeWeb',
+                        depends: linuxDependencies.join(', '),
+                        scripts: {
+                            postinst: 'package/deb/scripts/postinst'
+                        }
+                    }
+                },
+                files: [
+                    { cwd: 'package/deb/usr', src: '**', dest: '/usr', expand: true, nonull: true },
+                    {
+                        cwd: 'tmp/desktop/keeweb-linux-arm64/',
                         src: '**',
                         dest: '/usr/share/keeweb-desktop',
                         expand: true,

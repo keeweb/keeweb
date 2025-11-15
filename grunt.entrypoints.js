@@ -80,6 +80,15 @@ module.exports = function(grunt) {
         'copy:native-messaging-host-linux-x64'
     ]);
 
+    grunt.registerTask('dev-desktop-linux-arm64', 'Build a Linux ARM64 app in dev environment', [
+        'default',
+        'build-desktop-app-content',
+        'electron:linux-arm64',
+        'chmod:linux-desktop-arm64',
+        'copy:native-modules-linux-arm64',
+        'copy:native-messaging-host-linux-arm64'
+    ]);
+
     grunt.registerTask('test', 'Build and run tests', [
         'build-test',
         'run-test'

@@ -43,10 +43,15 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build-desktop-executables-linux', [
         'electron:linux',
+        'electron:linux-arm64',
         'electron-patch:linux',
+        'electron-patch:linux-arm64',
         'chmod:linux-desktop-x64',
+        'chmod:linux-desktop-arm64',
         'copy:native-modules-linux-x64',
-        'copy:native-messaging-host-linux-x64'
+        'copy:native-modules-linux-arm64',
+        'copy:native-messaging-host-linux-x64',
+        'copy:native-messaging-host-linux-arm64'
     ]);
 
     grunt.registerTask('build-desktop-executables-darwin', [
@@ -97,7 +102,10 @@ module.exports = function (grunt) {
         'build-desktop-executables-win32'
     ]);
 
-    grunt.registerTask('build-desktop-archives-linux', ['compress:linux-x64']);
+    grunt.registerTask('build-desktop-archives-linux', [
+        'compress:linux-x64',
+        'compress:linux-arm64'
+    ]);
 
     grunt.registerTask('build-desktop-archives-win32', [
         'compress:win32-x64',
@@ -132,10 +140,15 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build-desktop-dist-linux', [
         'deb:linux-x64',
+        'deb:linux-arm64',
         'electron-builder:linux',
+        'electron-builder:linux-arm64',
         'copy:electron-builder-dist-linux-rpm',
         'copy:electron-builder-dist-linux-snap',
-        'copy:electron-builder-dist-linux-appimage'
+        'copy:electron-builder-dist-linux-appimage',
+        'copy:electron-builder-dist-linux-arm64-rpm',
+        'copy:electron-builder-dist-linux-arm64-snap',
+        'copy:electron-builder-dist-linux-arm64-appimage'
     ]);
 
     grunt.registerTask('build-desktop-dist', [
