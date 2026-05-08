@@ -32,7 +32,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.4",
     "css-minimizer-webpack-plugin": "^8.0.0",
-    "dompurify": "^2.2.8",
+    "dompurify": "^3.4.2",
     "electron": "^13.6.9",
     "electron-builder": "^23.6.0",
     "electron-evil-feature-patcher": "^1.2.1",
