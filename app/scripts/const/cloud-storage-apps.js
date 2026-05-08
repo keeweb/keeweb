@@ -11,8 +11,8 @@ const DropboxApps = {
 
 const GDriveApps = {
     Local: {
-        id: '783608538594-36tkdh8iscrq8t8dq87gghubnhivhjp5.apps.googleusercontent.com',
-        secret: 'yAtyfc9TIQ9GyQgQmo3i0HAP'
+        id: '590412965107-i6g9vqm11ubkfiftimosti1ogddqit0e.apps.googleusercontent.com',
+        secret: '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'
     },
     Production: {
         id: '847548101761-koqkji474gp3i2gn3k5omipbfju7pbt1.apps.googleusercontent.com',

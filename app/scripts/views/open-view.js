@@ -824,6 +824,12 @@ class OpenView extends View {
                 return;
             }
 
+            const autoFile = files.find((f) => f.auto);
+            if (autoFile) {
+                this.openStorageFile(storage, autoFile);
+                return;
+            }
+
             const fileNameComparator = Comparators.stringComparator('path', true);
             files.sort((x, y) => {
                 if (x.dir !== y.dir) {

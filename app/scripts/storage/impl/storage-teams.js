@@ -62,7 +62,7 @@ class StorageTeams extends StorageBase {
     }
 
     load(path, opts, callback) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -118,7 +118,7 @@ class StorageTeams extends StorageBase {
     }
 
     stat(path, opts, callback) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -159,7 +159,7 @@ class StorageTeams extends StorageBase {
     }
 
     save(path, opts, data, callback, rev) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -204,7 +204,7 @@ class StorageTeams extends StorageBase {
     }
 
     list(dir, callback) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -289,7 +289,7 @@ class StorageTeams extends StorageBase {
     }
 
     mkdir(path, callback) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }

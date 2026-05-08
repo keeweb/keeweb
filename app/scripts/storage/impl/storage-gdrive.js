@@ -1,5 +1,4 @@
 import { StorageBase } from 'storage/storage-base';
-import { Locale } from 'util/locale';
 import { Features } from 'util/features';
 import { UrlFormat } from 'util/formatting/url-format';
 import { GDriveApps } from 'const/cloud-storage-apps';
@@ -50,7 +49,7 @@ class StorageGDrive extends StorageBase {
         if (path.lastIndexOf(NewFileIdPrefix, 0) === 0) {
             return callback && callback({ notFound: true });
         }
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -78,7 +77,7 @@ class StorageGDrive extends StorageBase {
     }
 
     save(path, opts, data, callback, rev) {
-        this._oauthAuthorize((err) => {
+        this._oauthAuthorize({}, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -164,7 +163,16 @@ class StorageGDrive extends StorageBase {
     }
 
     list(dir, callback) {
-        this._oauthAuthorize((err) => {
+        const opts = {};
+        if (dir === undefined) {
+            opts.forceAuth = true;
+            opts.urlParams = {
+                'prompt': 'consent',
+                'trigger_onepick': 'true',
+                'mimetypes': 'application/x-keepass,x-application/kdbx,application/octet-stream'
+            };
+        }
+        this._oauthAuthorize(opts, (err) => {
             if (err) {
                 return callback && callback(err);
             }
@@ -202,24 +210,15 @@ class StorageGDrive extends StorageBase {
                     }
                 });
             } else {
-                let query = 'trashed=false and ';
-                if (dir === 'shared') {
-                    query += 'sharedWithMe=true';
-                } else if (dir) {
-                    query += `"${dir}" in parents`;
-                } else {
-                    query += '"root" in parents';
-                }
-
                 const urlParams = {
-                    fields: 'files(id,name,mimeType,headRevisionId)',
-                    q: query,
-                    pageSize: 1000,
-                    includeItemsFromAllDrives: true,
+                    fields: 'id,name,mimeType,headRevisionId',
                     supportsAllDrives: true
                 };
 
-                const url = UrlFormat.makeUrl(`${this._baseUrl}/files`, urlParams);
+                const url = UrlFormat.makeUrl(
+                    `${this._baseUrl}/files/${this._pickedFileId}`,
+                    urlParams
+                );
 
                 this._xhr({
                     url,
@@ -231,26 +230,16 @@ class StorageGDrive extends StorageBase {
                         }
                         this.logger.debug('Listed', this.logger.ts(ts));
 
-                        const fileList = response.files.map((f) => ({
-                            name: f.name,
-                            path: f.id,
-                            rev: f.headRevisionId,
-                            dir: f.mimeType === 'application/vnd.google-apps.folder'
-                        }));
-                        if (!dir) {
-                            fileList.unshift({
-                                name: Locale.gdriveSharedWithMe,
-                                path: 'shared',
-                                rev: undefined,
-                                dir: true
-                            });
-                            fileList.unshift({
-                                name: Locale.gdriveSharedDrives,
-                                path: 'drives',
-                                rev: undefined,
-                                dir: true
-                            });
-                        }
+                        const f = response;
+                        const fileList = [
+                            {
+                                auto: true,
+                                name: f.name,
+                                path: f.id,
+                                rev: f.headRevisionId,
+                                dir: f.mimeType === 'application/vnd.google-apps.folder'
+                            }
+                        ];
                         return callback?.(null, fileList);
                     },
                     error: (err) => {
@@ -309,6 +298,16 @@ class StorageGDrive extends StorageBase {
             pkce: true,
             urlParams: this.appSettings.shortLivedStorageToken ? {} : { 'access_type': 'offline' }
         };
+    }
+
+    _oauthProcessCode(result) {
+        const fileId = result.picked_file_ids;
+        if (fileId) {
+            this.logger.debug('Picker success', fileId);
+            this._pickedFileId = fileId;
+        } else {
+            this.logger.error('Picker failure');
+        }
     }
 }
 
