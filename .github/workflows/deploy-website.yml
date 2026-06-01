@@ -6,7 +6,7 @@
 #   @usage              updates a website hosted on cloudflare pages
 #                           - can be activated manually
 #                           - runs when the specified branches are pushed to
-#                       
+#
 #                       If editing this workflow, all you need to edit are the INPUT values and the global
 #                       ENV variables. No need to go any deeper.
 #
@@ -33,7 +33,7 @@ on:
 
     workflow_dispatch:
         inputs:
-  
+
             # #
             #   The default values set for each input should not need to be changed as they are
             #   already set to the correct values.
@@ -81,8 +81,8 @@ on:
     #   Trigger › Push
     # #
 
-    push:	
-        branches:	
+    push:
+        branches:
             - master
             - main
 
@@ -140,7 +140,7 @@ jobs:
 
             - name: '☑️ Checkout gh-pages'
               id: task_cfpublish_checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   ref: gh-pages
                   path: gh-pages
@@ -152,7 +152,7 @@ jobs:
 
             - name: "⚙️ Setup › Node"
               id: task_cfpublish_node_setup
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version: '20.x'
                   scope: '@aetherinox'
@@ -188,8 +188,8 @@ jobs:
             #   Publish › Cloudflare › Create Project (Linked to Github)
             #
             #   This step will only success if you've already linked your Github account to cloudflare.
-            #   if you attempt to push this deployment to any github repo that is not linked to 
-            #   cloudflare; the step will fail, and then execute step 
+            #   if you attempt to push this deployment to any github repo that is not linked to
+            #   cloudflare; the step will fail, and then execute step
             #   task_cloudflare_project_create_assets
             # #
 
@@ -319,7 +319,7 @@ jobs:
             EXISTING_SITE: ${{ needs.job-cfpublish.outputs.existing_site }}
         runs-on: ubuntu-latest
         steps:
-  
+
             # #
             #   Complete › Get publish timestamp
             # #

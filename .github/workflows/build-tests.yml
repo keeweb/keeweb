@@ -102,7 +102,7 @@ jobs:
 
             - name: '☑️ Checkout'
               id: task_init_checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   fetch-depth: 0
 
@@ -112,7 +112,7 @@ jobs:
 
             - name: '⚙️ Setup Node'
               id: task_init_node_setup
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version-file: '.nvmrc'
 
@@ -157,7 +157,7 @@ jobs:
             - name: '🪪 .ENV › Get'
               id: task_init_dotenv_get
               if: steps.task_init_pkg_env_generate.outcome == 'success'
-              uses: falti/dotenv-action@v1
+              uses: falti/dotenv-action@fff81fa3263fb96221c521b5e526e57c0c56d760 # v1.2.1
 
             # #
             #   Initialize › read back guid and uuid
@@ -194,7 +194,7 @@ jobs:
 
             - name: '☑️ Checkout'
               id: task_lint_checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
             # #
             #   Lint › Setup Node
@@ -202,7 +202,7 @@ jobs:
 
             - name: '⚙️ Setup Node'
               id: task_lint_node_setup
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version-file: '.nvmrc'
                   cache: 'npm'
@@ -255,7 +255,7 @@ jobs:
 
             - name: '☑️ Checkout'
               id: task_test_checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
             # #
             #   Test › Setup Node
@@ -263,7 +263,7 @@ jobs:
 
             - name: '⚙️ Setup Node'
               id: task_test_node_setup
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version-file: '.nvmrc'
                   cache: 'npm'

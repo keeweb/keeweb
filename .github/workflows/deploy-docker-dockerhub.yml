@@ -158,7 +158,7 @@ jobs:
 
             - name: '✅ Checkout'
               id: task_release_tags_checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   fetch-depth: 0
 
@@ -187,7 +187,7 @@ jobs:
             #   only called in dispatch mode
             # #
 
-            - uses: rickstaa/action-create-tag@v1
+            - uses: rickstaa/action-create-tag@a1c7777fcb2fee4f19b0f283ba888afa11678b72 # v1.7.2
               id: task_release_tags_create
               if: ( github.event_name != 'workflow_dispatch' && inputs.DRY_RUN == false )
               with:
@@ -228,7 +228,7 @@ jobs:
 
             - name: '✅ Checkout'
               id: task_release_dh_checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   fetch-depth: 0
 
@@ -277,7 +277,7 @@ jobs:
 
             - name: '⚙️ Set up QEMU'
               id: task_release_dh_qemu
-              uses: docker/setup-qemu-action@v3
+              uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
 
             # #
             #   Release › Dockerhub › Setup BuildX › Arm64
@@ -285,7 +285,7 @@ jobs:
 
             - name: '⚙️ Setup Buildx'
               id: task_release_dh_buildx
-              uses: docker/setup-buildx-action@v3
+              uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
               with:
                   version: latest
                   driver-opts: 'image=moby/buildkit:latest'
@@ -296,7 +296,7 @@ jobs:
 
             - name: '⚙️ Login to Dockerhub'
               id: task_release_dh_registry
-              uses: docker/login-action@v3
+              uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
               with:
                   username: ${{ env.IMAGE_DOCKERHUB_USERNAME }}
                   password: ${{ secrets.IMAGE_DOCKERHUB_TOKEN }}
@@ -307,7 +307,7 @@ jobs:
 
             - name: '🔨 Dockerhub: Meta - Arm64'
               id: task_release_dh_meta
-              uses: docker/metadata-action@v5
+              uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
               with:
                   images: |
                       ${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
@@ -390,7 +390,7 @@ jobs:
 
             - name: '✅ Checkout'
               id: task_release_dh_checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   fetch-depth: 0
 
@@ -437,7 +437,7 @@ jobs:
 
             - name: '⚙️ Set up QEMU'
               id: task_release_dh_qemu
-              uses: docker/setup-qemu-action@v3
+              uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
 
             # #
             #   Release › Dockerhub › Setup BuildX › Amd64
@@ -445,7 +445,7 @@ jobs:
 
             - name: '⚙️ Setup Buildx'
               id: task_release_dh_buildx
-              uses: docker/setup-buildx-action@v3
+              uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
               with:
                   version: latest
                   driver-opts: 'image=moby/buildkit:latest'
@@ -456,7 +456,7 @@ jobs:
 
             - name: '⚙️ Login to Dockerhub'
               id: task_release_dh_registry
-              uses: docker/login-action@v3
+              uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
               with:
                   username: ${{ env.IMAGE_DOCKERHUB_USERNAME }}
                   password: ${{ secrets.IMAGE_DOCKERHUB_TOKEN }}
@@ -467,7 +467,7 @@ jobs:
 
             - name: '🔨 Dockerhub: Meta - Amd64'
               id: task_release_dh_meta
-              uses: docker/metadata-action@v5
+              uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
               with:
                   images: |
                       ${{ env.IMAGE_AUTHOR }}/${{ env.IMAGE_NAME }}
