@@ -75,13 +75,13 @@ jobs:
                   tagRegexGroup: 1
 
             - name: 'Checkout'
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   repository: keeweb/keeweb
                   ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
 
             - name: 'Upgrade Node.js'
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   registry-url: 'https://registry.npmjs.org'
 
@@ -133,7 +133,7 @@ jobs:
                   tagRegexGroup: 1
 
             - name: 'Checkout'
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   repository: keeweb/keeweb
                   ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
@@ -206,7 +206,7 @@ jobs:
                   tagRegexGroup: 1
 
             - name: 'Checkout'
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   repository: keeweb/keeweb
                   ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
@@ -218,7 +218,7 @@ jobs:
                   path: dist
 
             - name: 'Upgrade Node.js'
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   registry-url: 'https://registry.npmjs.org'
 
@@ -282,7 +282,7 @@ jobs:
                   tagRegexGroup: 1
 
             - name: 'Checkout'
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   repository: keeweb/keeweb
                   ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
@@ -294,7 +294,7 @@ jobs:
                   path: dist
 
             - name: 'Upgrade Node.js'
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   registry-url: 'https://registry.npmjs.org'
 
@@ -386,14 +386,14 @@ jobs:
                   export_default_credentials: true
 
             - name: 'Checkout'
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   repository: keeweb/keeweb
                   path: keeweb
                   ref: ${{ github.repository == 'keeweb/keeweb' && github.sha || 'develop' }}
 
             - name: 'Upgrade Node.js'
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   registry-url: 'https://registry.npmjs.org'
 
@@ -553,7 +553,7 @@ jobs:
                   body_path: keeweb/tmp/release-body.md
 
             - name: 'Checkout gh-pages'
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   ref: gh-pages
                   path: gh-pages

@@ -98,7 +98,7 @@ env:
 
     BOT_NAME_1:           EuropaServ
     BOT_NAME_DEPENDABOT:  dependabot[bot]
-    
+
 # #
 #   Jobs
 #
@@ -139,7 +139,7 @@ jobs:
 
             - name: '✅ Checkout'
               id: task_sync_checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
               with:
                   fetch-depth: 0
 
@@ -210,10 +210,10 @@ jobs:
             # #
             #   Sync › Copy Dockerfiles to Main branch
             #
-            #   this action copies all the required docker files from the docker/keeweb branch, over to 
+            #   this action copies all the required docker files from the docker/keeweb branch, over to
             #   the main branch within the subfolder `package/docker/*`
             #
-            #   to discard the actions of git checkout and not commit, run: 
+            #   to discard the actions of git checkout and not commit, run:
             #       git checkout -
             #
             #   if you are copying files from docker/keeweb which don't exist on the main branch, you must
@@ -270,7 +270,7 @@ jobs:
 
             # #
             #   Sync › Show Differences
-            # 
+            #
             #   this is just a debugging step, it shows all the files pending commit that will be committed.
             #   if you are stuck in the git pager, hit "Q" to quit.
             #
@@ -315,7 +315,7 @@ jobs:
                   git_commit_gpgsign: true
 
             # #
-            #   Sync › Checkpoint › 2 
+            #   Sync › Checkpoint › 2
             # #
 
             - name: '⚠️ Checkpoint 2'
@@ -335,7 +335,7 @@ jobs:
 
             # #
             #   Sync › Commit
-            # 
+            #
             #   commits the pending changes to the main branch
             # #
 
