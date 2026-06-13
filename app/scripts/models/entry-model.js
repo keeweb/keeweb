@@ -182,6 +182,10 @@ class EntryModel extends Model {
     }
 
     _entryModified() {
+        // Bump on every edit (even before the entry's first save) so edits made
+        // while a sync is in progress are detected by setSyncComplete. The unsaved
+        // guard below only controls history snapshots, not modification tracking.
+        this.file.registerModification();
         if (!this.unsaved) {
             this.unsaved = true;
             if (this.file.historyMaxItems !== 0) {

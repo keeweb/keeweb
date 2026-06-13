@@ -947,12 +947,21 @@ class AppModel {
             });
         }
         file.setSyncProgress();
+        // Snapshot the modification counter at the moment the to-be-synced data is
+        // serialized. Updated right before each getData() below; compared on
+        // completion to detect edits that happened during the sync.
+        let dataModificationId = file.modificationId;
         const complete = (err) => {
             if (!file.active) {
                 return callback && callback('File is closed');
             }
             logger.info('Sync finished', err || 'no error');
-            file.setSyncComplete(path, storage, err ? err.toString() : null);
+            const editedDuringSync = file.modificationId !== dataModificationId;
+            file.setSyncComplete(path, storage, err ? err.toString() : null, editedDuringSync);
+            if (!err && editedDuringSync) {
+                logger.info('File was modified during sync, scheduling another sync');
+                setTimeout(() => this.syncFile(file), 0);
+            }
             fileInfo.set({
                 name: file.name,
                 storage,
@@ -983,6 +992,7 @@ class AppModel {
                 return complete();
             }
             logger.info('Local, save to cache');
+            dataModificationId = file.modificationId;
             file.getData((data, err) => {
                 if (err) {
                     return complete(err);
@@ -1086,6 +1096,7 @@ class AppModel {
             };
             const saveToCacheAndStorage = () => {
                 logger.info('Getting file data for saving');
+                dataModificationId = file.modificationId;
                 file.getData((data, err) => {
                     if (err) {
                         return complete(err);
