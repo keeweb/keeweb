@@ -412,8 +412,17 @@ class FileModel extends Model {
 
     setModified() {
         if (!this.demo) {
+            this.registerModification();
             this.set({ modified: true, dirty: true });
         }
+    }
+
+    // Monotonic counter bumped on every change to the database. Sync uses it to
+    // detect edits that arrive after the data snapshot was taken (see syncFile /
+    // setSyncComplete), so changes made mid-sync are not silently marked as saved.
+    // Bumped silently to avoid emitting a change event on every keystroke.
+    registerModification() {
+        this.set({ modificationId: this.modificationId + 1 }, { silent: true });
     }
 
     getData(cb) {
@@ -468,17 +477,20 @@ class FileModel extends Model {
         this.set({ syncing: true });
     }
 
-    setSyncComplete(path, storage, error) {
-        if (!error) {
+    setSyncComplete(path, storage, error, editedDuringSync) {
+        // When the database was edited after the synced snapshot was taken, those
+        // changes were not uploaded. Keep the file marked as modified/dirty (and
+        // preserve the local edit state for merging) so the caller can sync again,
+        // instead of treating the un-uploaded edits as saved.
+        if (!error && !editedDuringSync) {
             this.db.removeLocalEditState();
         }
-        const modified = this.modified && !!error;
         this.set({
             created: false,
             path: path || this.path,
             storage: storage || this.storage,
-            modified,
-            dirty: error ? this.dirty : false,
+            modified: error ? this.modified : !!editedDuringSync,
+            dirty: error ? this.dirty : !!editedDuringSync,
             syncing: false,
             syncError: error
         });
@@ -490,11 +502,16 @@ class FileModel extends Model {
             });
         }
 
-        if (!this.open) {
+        if (!this.active) {
             return;
         }
         this.setOpenFile({ passwordLength: this.passwordLength });
-        this.forEachEntry({ includeDisabled: true }, (entry) => entry.setSaved());
+        // If edits arrived during the sync we don't know which entries they touched,
+        // so leave all entries marked unsaved; the scheduled follow-up sync will
+        // clear them once it completes without concurrent edits.
+        if (!editedDuringSync) {
+            this.forEachEntry({ includeDisabled: true }, (entry) => entry.setSaved());
+        }
     }
 
     setPassword(password) {
@@ -739,6 +756,7 @@ FileModel.defineModelProperties({
     storage: null,
     modified: false,
     dirty: false,
+    modificationId: 0,
     active: false,
     created: false,
     demo: false,
