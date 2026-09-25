@@ -175,6 +175,16 @@ services:
 
 <br />
 
+#### Easypanel
+
+[Easypanel](https://easypanel.io) is a self-hosted Docker deployment platform, and it maintains a one-click deployment template for KeeWeb:
+
+[![Deploy on Easypanel](https://easypanel.io/img/deploy-on-easypanel-40.svg)](https://easypanel.io/templates/keeweb)
+
+<br />
+
+<br />
+
 #### Traefik Integration
 You can put this container behind Traefik if you want to use a reverse proxy and let Traefik handle the SSL certificate management.
 
