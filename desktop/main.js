@@ -398,10 +398,19 @@ function closeMainWindow() {
 }
 
 function destroyAppIcon() {
-    if (appIcon) {
-        appIcon.destroy();
-        appIcon = null;
+    if (!appIcon) {
+        return;
     }
+    // On Linux, Tray.destroy() does not reliably unregister the StatusNotifierItem
+    // from the system tray (electron/electron#49517, #24976). Since the tray is
+    // created on minimize and destroyed on restore, the panel accumulates a stale
+    // icon on every minimize/restore cycle. Keep a single tray instance for the
+    // whole lifetime of the process instead.
+    if (process.platform === 'linux') {
+        return;
+    }
+    appIcon.destroy();
+    appIcon = null;
 }
 
 function delaySaveMainWindowPosition() {
